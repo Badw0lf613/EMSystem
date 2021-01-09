@@ -1,13 +1,12 @@
 import MySQLdb
 from django.shortcuts import render, redirect
 
-
 # Create your views here.
 # 学生信息列表处理函数
 def index(request):
-    conn = MySQLdb.connect(host="localhost", user="root", passwd="root", db="jwc", charset='utf8')
+    conn = MySQLdb.connect(host="localhost", user="root", passwd="1234", db="jwc", charset='utf8')
     with conn.cursor(cursorclass=MySQLdb.cursors.DictCursor) as cursor:
-        cursor.execute("SELECT id,student_no,student_name FROM student")
+        cursor.execute("SELECT id,student_no,student_name FROM emsystem_student")
         students = cursor.fetchall()
     return render(request, 'index.html', {'students': students})
 
@@ -18,9 +17,9 @@ def add(request):
     else:
         student_no = request.POST.get('student_no', '')
         student_name = request.POST.get('student_name', '')
-        conn = MySQLdb.connect(host="localhost", user="root", passwd="root", db="jwc", charset='utf8')
+        conn = MySQLdb.connect(host="localhost", user="root", passwd="1234", db="jwc", charset='utf8')
         with conn.cursor(cursorclass=MySQLdb.cursors.DictCursor) as cursor:
-            cursor.execute("INSERT INTO student (student_no,student_name, id) "
+            cursor.execute("INSERT INTO emsystem_student (student_no,student_name, id) "
                            "values (%s,%s,%s)", [student_no, student_name, '1'])
             conn.commit()
         return redirect('../')
@@ -30,9 +29,9 @@ def edit(request):
     if request.method == 'GET':
         id = request.GET.get("id")
         print(id)
-        conn = MySQLdb.connect(host="localhost", user="root", passwd="root", db="jwc", charset='utf8')
+        conn = MySQLdb.connect(host="localhost", user="root", passwd="1234", db="jwc", charset='utf8')
         with conn.cursor(cursorclass=MySQLdb.cursors.DictCursor) as cursor:
-            cursor.execute("SELECT id,student_no,student_name FROM student where id =%s", [id])
+            cursor.execute("SELECT id,student_no,student_name FROM emsystem_student where id =%s", [id])
             student = cursor.fetchone()
         return render(request, 'edit.html', {'student': student})
     else:
@@ -40,9 +39,9 @@ def edit(request):
         print(id)
         student_no = request.POST.get('student_no', '')
         student_name = request.POST.get('student_name', '')
-        conn = MySQLdb.connect(host="localhost", user="root", passwd="root", db="jwc", charset='utf8')
+        conn = MySQLdb.connect(host="localhost", user="root", passwd="1234", db="jwc", charset='utf8')
         with conn.cursor(cursorclass=MySQLdb.cursors.DictCursor) as cursor:
-            cursor.execute("UPDATE student set student_no=%s,student_name=%s where id =%s",
+            cursor.execute("UPDATE emsystem_student set student_no=%s,student_name=%s where id =%s",
                            [student_no, student_name, id])
             conn.commit()
         return redirect('../')
@@ -51,8 +50,8 @@ def edit(request):
 def delete(request):
     id = request.GET.get("id")
     print(id)
-    conn = MySQLdb.connect(host="localhost", user="root", passwd="root", db="jwc", charset='utf8')
+    conn = MySQLdb.connect(host="localhost", user="root", passwd="1234", db="jwc", charset='utf8')
     with conn.cursor(cursorclass=MySQLdb.cursors.DictCursor) as cursor:
-        cursor.execute("DELETE FROM student WHERE id =%s", [id])
+        cursor.execute("DELETE FROM emsystem_student WHERE id =%s", [id])
         conn.commit()
     return  redirect('../')
