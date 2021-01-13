@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
+from .models import S,D,T,C,O,E
 
 # Create your views here.
 # 学生信息列表处理函数
@@ -84,6 +85,14 @@ def login(request):
 
 
 def admin(request):
+    xh = request.POST.get('xh')
+    xm = request.POST.get('xm')
+    xb = request.POST.get('xb')
+    csrq = request.POST.get('csrq')
+    sjhm = request.POST.get('sjhm')
+    yx = request.POST.get('yx')
+    if xh is not None:
+        S.objects.create(xh=xh, xm=xm, xb=xb, csrq=csrq, sjhm=sjhm, yxh_id="null")
     return render(request, 'admin_index.html')
 
 def teacher(request):

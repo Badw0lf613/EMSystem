@@ -6,5 +6,77 @@
 </head>
 <body>
 <text> 这里是管理员主页 </text>
+    <table border="1px" width="100%" style="border-collapse: collapse;">
+        <tr>
+            <th>学号</th>
+            <th>姓名</th>
+            <th>性别</th>
+            <th>出生日期</th>
+            <th>籍贯</th>
+            <th>手机号码</th>
+            <th>院系</th>
+            <th>操作</th>
+        </tr>
+        {% for student in students %}
+            <tr>
+                <td align="center">{{ student.xh }} </td>
+                <td align="center">{{ student.xm }} </td>
+                <td align="center">{{ student.xb }} </td>
+                <td align="center">{{ student.csrq }} </td>
+                <td align="center">{{ student.jg }} </td>
+                <td align="center">{{ student.sjhm }} </td>
+                <td align="center">{{ student.yxh }} </td>
+                <td align="center">
+                    <button>编辑</button>
+                    <button>删除</button>
+                </td>
+            </tr>
+        {% endfor %}
+        <button onclick="add_student()">添加学生</button>
+        <form method="post">
+            {% csrf_token %}
+            <table id="add" style="visibility: hidden">
+                <tr>
+                    <th>学号</th>
+                    <td><input name="xh"/></td>
+                </tr>
+                <tr>
+                    <th>姓名</th>
+                    <td><input name="xm"></td>
+                </tr>
+                <tr>
+                    <th>性别</th>
+                    <td><input name="xb"/></td>
+                </tr>
+                <tr>
+                    <th>出生日期</th>
+                    <td><input name="csrq" type="date"/></td>
+                </tr>
+                <tr>
+                    <th>籍贯</th>
+                    <td><input name="jg"/></td>
+                </tr>
+                <tr>
+                    <th>手机号码</th>
+                    <td><input name="sjhm"/></td>
+                </tr>
+                <tr>
+                    <th>院系</th>
+                    <td><input name="yx"/></td>
+                </tr>
+                <tr>
+                    <td> <button type="submit"> 提交 </button> </td>
+                </tr>
+            </table>
+        </form>
+    </table>
 </body>
 </html>
+<script language="javascript" type="text/javascript">
+    function add_student(){
+        if(document.getElementById('add').style.visibility==="hidden")
+        {
+            document.getElementById('add').style.visibility="visible";
+        }
+    }
+</script>
