@@ -16,8 +16,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
+from EMSystem import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    url(r'^EMSystem/', include('EMSystem.urls'))
+    path('django_admin/', admin.site.urls),
+    # url(r'^EMSystem/', include('EMSystem.urls'))
+    path('', views.login),  # 登录
+    path('admin/', views.admin),  # 管理员
+    path('teacher/', views.teacher),  # 教师
+    path('student/', views.student),  # 学生
+
 ]

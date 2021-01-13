@@ -70,11 +70,11 @@ def login(request):
         user = authenticate(username=username, password=pass_word)
         if user is not None:
             if user.is_superuser==1 and user.is_staff==1:            # 管理员
-                return HttpResponseRedirect("/EMSystem/admin")
+                return HttpResponseRedirect("/admin")
             elif user.is_superuser==0 and user.is_staff==1:          # 老师
-                return HttpResponseRedirect("/EMSystem/teacher")
+                return HttpResponseRedirect("/teacher")
             elif user.is_superuser==0 and user.is_staff==0:          # 学生
-                return HttpResponseRedirect("/EMSystem/student")
+                return HttpResponseRedirect("/student")
         else:
             alert = "用户名或密码错误"
             print(alert)
