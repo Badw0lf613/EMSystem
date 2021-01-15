@@ -85,7 +85,7 @@ DATABASES = {
         'HOST': '127.0.0.1',  # 数据库主机
         'PORT': 3306,  # 数据库端口
         'USER': 'root',  # 数据库用户名
-        'PASSWORD': '1234',  # 数据库用户密码
+        'PASSWORD': 'root',  # 数据库用户密码
         'NAME': 'jwc'  # 数据库名字
     }
 }
@@ -128,3 +128,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)

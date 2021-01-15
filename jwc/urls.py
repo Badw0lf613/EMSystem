@@ -14,16 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from django.conf.urls import url, include
 from EMSystem import views
 
 urlpatterns = [
     path('django_admin/', admin.site.urls),
     # url(r'^EMSystem/', include('EMSystem.urls'))
-    path('', views.login),  # 登录
-    path('admin/', views.admin),  # 管理员
-    path('teacher/', views.teacher),  # 教师
-    path('student/', views.student),  # 学生
-
+    path('', views.login_view),  # 登录
+    path('admin/', views.admin_view),  # 管理员
+    path('teacher/', views.teacher_view),  # 教师
+    path('student/', views.student_view),  # 学生
+    # path('student/<username>/',views.student_view,name='username')
 ]

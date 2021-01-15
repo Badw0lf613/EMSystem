@@ -1,8 +1,11 @@
 import MySQLdb
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth import login, logout
 from django.http import HttpResponseRedirect
+from django.urls import reverse
 from .models import S,D,T,C,O,E
 
 # Create your views here.
@@ -60,21 +63,31 @@ from .models import S,D,T,C,O,E
 #         conn.commit()
 #     return  redirect('../')
 
+def get_user_info(request):
+    ret={}
+    print("request",request.user.username)
+    result = S.objects.filter(xh=request.user.username)
+    print(result)
+    if result.exists():
+        ret = {'xh': result[0].xh, 'xm': result[0].xm}
+    return ret
 
-def login(request):
+def login_view(request):
     if request.method == 'POST':
         username = request.POST.get("username")
-        pass_word = request.POST.get("password")
+        password = request.POST.get("password")
         print(username)
-        print(pass_word)
-        user = authenticate(username=username, password=pass_word)
+        print(password)
+        user = authenticate(username=username, password=password)
         if user is not None:
-            if user.is_superuser==1 and user.is_staff==1:            # 管理员
+            login(request, user)
+            if user.is_superuser==1 and user.is_staff==1:           # 管理员
                 return HttpResponseRedirect("/admin")
             elif user.is_superuser==0 and user.is_staff==1:          # 老师
                 return HttpResponseRedirect("/teacher")
             elif user.is_superuser==0 and user.is_staff==0:          # 学生
                 return HttpResponseRedirect("/student")
+                # return redirect(reverse('username',kwargs={'username':username}))
         else:
             alert = "用户名或密码错误"
             print(alert)
@@ -83,8 +96,8 @@ def login(request):
     #     user.save()
     return render(request, 'login.html')
 
-
-def admin(request):
+@login_required
+def admin_view(request):
     xh = request.POST.get('xh')
     xm = request.POST.get('xm')
     xb = request.POST.get('xb')
@@ -95,8 +108,14 @@ def admin(request):
         S.objects.create(xh=xh, xm=xm, xb=xb, csrq=csrq, sjhm=sjhm, yxh_id="null")
     return render(request, 'admin_index.html')
 
-def teacher(request):
+@login_required
+def teacher_view(request):
     return render(request, 'teacher_index.html')
 
-def student(request):
-    return render(request, 'student_index.html')
+@login_required
+def student_view(request):
+    print(">>>student")
+    # print(request.POST.get("context"))
+    context = get_user_info(request)
+    print(context)
+    return render(request, 'student_index.html',context=context)
