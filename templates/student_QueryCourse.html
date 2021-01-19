@@ -1,4 +1,4 @@
-{% load static %}
+{% load staticfiles %}
 <!DOCTYPE html>
 
 <html lang="en">
@@ -69,7 +69,7 @@
   </div>
   <div class="container-fluid">
     <div class="row">
-       <div class="col-sm-3 col-md-2 sidebar" style="min-height:800px; padding:0px 0px 0px 0px;">
+        <div class="col-sm-3 col-md-2 sidebar" style="min-height:800px; padding:0px 0px 0px 0px;">
          <ul class="nav nav-sidebar" style="background: #8ac3f0;">
            <font size="3" style="color: #385090; padding:0px;"> 学生信息 </font>
            <font size="3">
@@ -97,13 +97,70 @@
            <p style="padding: 3px 0px 0px 0px;"><font size="4" style="color: #385090; padding:30px;"> 数据查询 </font></p>
          </ul>
          <ul class="nav nav-sidebar" style="background: #FFFFFF">
-           <li><a href="/student/cjcx/"><font size="4" style="color: #385090; padding:30px;"> 成绩查询 </font></a></li>
+           <li><a href="/index/cjcx/"><font size="4" style="color: #385090; padding:30px;"> 成绩查询 </font></a></li>
            <li><a href={% url 'student_QueryCourse' %}><font size="4" style="color: #385090; padding:30px;"> 课程查询 </font></a></li>
          </ul>
          <br>
+        </div>
+        <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
+         <b><font size="4"> 课程查询： </font></b>
+         <br><br>
+         <form class="form-inline" role="form" method="POST" action="">
+           {% csrf_token %}
+               <div class="form-group">
+                 学期：
+                 <input type="text" name="xq" class="form-control form-control-inline" value={% if xq %}{{xq}}{% else %} 2020-2021学年春季学期 {% endif%}>
+                 课程号：
+                 <input type="text" name="kh" class="form-control form-control-inline" style="width:100px;" value={{kh}}>
+                 课程名称：
+                 <input type="text" name="km" class="form-control form-control-inline" style="width:150px" value={{km}}>
+               </div>
 
-      </div>
+           <div class="form-group">
+             工号：
+             <input type="text" name="gh" class="form-control form-control-inline" style="width:70px" value={{gh}}>
+             教师名称：
+             <input type="text" name="jsmc" class="form-control form-control-inline" style="width:100px" value={{jsmc}}>
+             上课时间：
+             <input type="text" name="sksj" class="form-control form-control-inline" style="width:150px" value={{sksj}}>
+           </div>
+           <br>
+           <input type="submit" value="提交">
+           <input type="submit" value="重置">
+           <br>
+         </form>
+         <br><br>
+        </div>
 
+        <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
+            <b><font size="4"> 查询结果： </font></b>
+            <table class="table">
+              <thead>
+                <tr>
+                    <th> 课程号 </th>
+                    <th> 课程名称 </th>
+                    <th> 工号 </th>
+                    <th> 教师名称 </th>
+                    <th> 上课时间 </th>
+                    <th> 学期 </th>
+                    <!--<th> 选课 </th>-->
+                </tr>
+              </thead>
+              <tbody>
+                {% for kc in classtable %}
+                <tr>
+                    <td> {{kc.kh}} </td>
+                    <td> {{kc.km}} </td>
+                    <td> {{kc.gh}} </td>
+                    <td> {{kc.jsmc}} </td>
+                    <td> {{kc.sksj}} </td>
+                    <td> {{kc.xq}} </td>
+                    <!--<td><button type="submit"> 选课 </button></td>-->
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div>
     </div>
   </div>
 

@@ -22,9 +22,10 @@ urlpatterns = [
     path('django_admin/', admin.site.urls),
     # url(r'^EMSystem/', include('EMSystem.urls'))
     path('', views.login_view),  # 登录
-    path('admin/', views.admin_view),  # 管理员
-    path('teacher/', views.teacher_view),  # 教师
-    path('student/', views.student_view),  # 学生
+    path('admin/', views.admin_index),  # 管理员
+    path('teacher/', views.teacher_index),  # 教师
+    path('student/', views.student_index),  # 学生
+    path('student/QueryCourse', views.student_QueryCourse,name="student_QueryCourse"),  # 学生课程查询
     path('admin/delete/', views.delete_student), # 删除学生
     path('admin/edit/', views.edit_student) # 编辑学生
     # path('student/<username>/',views.student_view,name='username')
