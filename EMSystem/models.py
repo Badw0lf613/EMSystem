@@ -8,7 +8,7 @@ class S(models.Model):                                                     # 学
     csrq = models.DateField()                                              # 出生日期
     jg = models.CharField(max_length=32)                                   # 籍贯
     sjhm = models.CharField(max_length=32, unique=True)                    # 手机号码
-    # yxh = models.ForeignKey('D', to_field='yxh', on_delete=models.CASCADE)      # 院系号(外键)
+    yxh = models.ForeignKey('D', to_field='yxh', on_delete=models.CASCADE)      # 院系号(外键)
 
 
 class D(models.Model):                                                     # 院系表

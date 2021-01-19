@@ -25,5 +25,7 @@ urlpatterns = [
     path('admin/', views.admin_view),  # 管理员
     path('teacher/', views.teacher_view),  # 教师
     path('student/', views.student_view),  # 学生
+    path('admin/delete/', views.delete_student), # 删除学生
+    path('admin/edit/', views.edit_student) # 编辑学生
     # path('student/<username>/',views.student_view,name='username')
 ]

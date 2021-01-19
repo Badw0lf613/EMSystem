@@ -19,17 +19,31 @@
         </tr>
         {% for student in students %}
             <tr>
+            {% if student.xh != chosen_xh %}
                 <td align="center">{{ student.xh }} </td>
                 <td align="center">{{ student.xm }} </td>
                 <td align="center">{{ student.xb }} </td>
                 <td align="center">{{ student.csrq }} </td>
                 <td align="center">{{ student.jg }} </td>
                 <td align="center">{{ student.sjhm }} </td>
-                <td align="center">{{ student.yxh }} </td>
+                <td align="center">{{ student.yxh_id }} </td>
                 <td align="center">
-                    <button>编辑</button>
-                    <button>删除</button>
+                    <a href="delete/?xh={{ student.xh }}"> 删除 </a>
+                    <a href="?chosen_xh={{ student.xh }}"> 编辑 </a>
                 </td>
+            {% else %}
+                <form method="post" action="/admin/edit/">
+                {% csrf_token %}
+                    <td align="center"><input name="xh" readonly="{{ true }}" value="{{ student.xh }}"/></td>
+                    <td align="center"><input name="xm" value="{{ student.xm }}"/></td>
+                    <td align="center"><input name="xb" value="{{ student.xb }}"/></td>
+                    <td align="center"><input name="csrq" type="date" value="{{ student.csrq }}"/></td>
+                    <td align="center"><input name="jg" value="{{ student.jg }}"/></td>
+                    <td align="center"><input name="sjhm" value="{{ student.sjhm }}"/></td>
+                    <td align="center"><input name="yxh" value="{{ student.yxh_id }}"/></td>
+                    <td align="center"> <button type="submit"> 提交 </button> </td>
+                </form>
+            {% endif %}
             </tr>
         {% endfor %}
         <button onclick="add_student()">添加学生</button>
@@ -62,7 +76,7 @@
                 </tr>
                 <tr>
                     <th>院系</th>
-                    <td><input name="yx"/></td>
+                    <td><input name="yxh"/></td>
                 </tr>
                 <tr>
                     <td> <button type="submit"> 提交 </button> </td>

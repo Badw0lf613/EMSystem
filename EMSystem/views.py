@@ -98,15 +98,54 @@ def login_view(request):
 
 @login_required
 def admin_view(request):
+    chosen_xh = request.GET.get('chosen_xh')
     xh = request.POST.get('xh')
     xm = request.POST.get('xm')
     xb = request.POST.get('xb')
+    jg = request.POST.get('jg')
     csrq = request.POST.get('csrq')
     sjhm = request.POST.get('sjhm')
-    yx = request.POST.get('yx')
-    if xh is not None:
-        S.objects.create(xh=xh, xm=xm, xb=xb, csrq=csrq, sjhm=sjhm, yxh_id="null")
-    return render(request, 'admin_index.html')
+    yxh = request.POST.get('yxh')
+    students = []                       # 获取当前学生列表
+    all_s = S.objects.all()
+    for item in all_s:                  # 将对象转换为字典
+        attdict = {}
+        for field in item._meta.fields:
+            name = field.attname
+            value = getattr(item, name)
+            attdict[name] = value
+        students.append(attdict)
+    if xh is not None:                  # 如果输入不是空，就创建一个新的学生（还没有做输入正确信息的检查）
+        d_item = D.objects.filter(yxh=yxh)
+        yxh = getattr(d_item[0], 'yxh')
+        new_s = S.objects.create(xh=xh, xm=xm, xb=xb, csrq=csrq, jg=jg, sjhm=sjhm, yxh_id=yxh)
+        new_s.save()
+        attdict={}
+        for field in new_s._meta.fields:      # 向students中添加新的学生
+            name = field.attname
+            value = getattr(new_s, name)
+            attdict[name] = value
+        students.append(attdict)
+    print(students)
+    return render(request, 'admin_index.html', {'students':students, 'chosen_xh':chosen_xh})
+
+@login_required
+def delete_student(request):                    # 学生删除
+    xh = request.GET.get("xh")
+    S.objects.filter(xh=xh).delete()
+    return redirect('../')
+
+@login_required
+def edit_student(request):
+    xh = request.POST.get('xh')
+    xm = request.POST.get('xm')
+    xb = request.POST.get('xb')
+    jg = request.POST.get('jg')
+    csrq = request.POST.get('csrq')
+    sjhm = request.POST.get('sjhm')
+    yxh = request.POST.get('yxh')
+    S.objects.filter(xh=xh).update(xh=xh, xm=xm, xb=xb, csrq=csrq, jg=jg, sjhm=sjhm, yxh_id=yxh)
+    return redirect('../')
 
 @login_required
 def teacher_view(request):
