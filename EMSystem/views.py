@@ -97,7 +97,7 @@ def login_view(request):
     return render(request, 'login.html')
 
 @login_required
-def admin_view(request):
+def admin_index(request):
     chosen_xh = request.GET.get('chosen_xh')
     xh = request.POST.get('xh')
     xm = request.POST.get('xm')
@@ -148,13 +148,59 @@ def edit_student(request):
     return redirect('../')
 
 @login_required
-def teacher_view(request):
+def teacher_index(request):
     return render(request, 'teacher_index.html')
 
 @login_required
-def student_view(request):
+def student_index(request):
     print(">>>student")
     # print(request.POST.get("context"))
     context = get_user_info(request)
     print(context)
     return render(request, 'student_index.html',context=context)
+
+@login_required
+def student_QueryCourse(request):
+    print(">>>student_QueryCourse")
+    context = get_user_info(request)
+    if request.method == 'GET':
+        print(">>>GET")
+        return render(request, 'student_QueryCourse.html', context=context)
+    elif request.method == 'POST':
+        print(">>>POST")
+        result = C.objects.all()
+        context['xq'] = request.POST['xq']
+        context['kh'] = request.POST['kh']
+        context['km'] = request.POST['km']
+        context['gh'] = request.POST['gh']
+        context['jsmc'] = request.POST['jsmc']
+        context['sksj'] = request.POST['sksj']
+        print(context)
+        if context['xq']:
+            result = result.filter(xq__contains=context['xq'])
+        if context['kh']:
+            result = result.filter(kh__startswith=context['kh'])
+        if context['km']:
+            result = result.filter(km__contains=context['km'])
+        if context['gh']:
+            result = result.filter(kh=O.objects.filter(gh='0001'))
+        if context['jsmc']:
+            result = result.filter(gh__contains=T.objects.filter(xm__contains=context['jsmc']))
+        if context['sksj']:
+            result = result.filter(sksj__contains=context['sksj'])
+        classtable = []
+        dict1 = {}
+        for kc in result[0]._meta.fields:
+            # print(kc)
+            # classtable.append(
+            #     # {'kh': kc.kh, 'km': kc.km, 'gh': kc.kh.gh, 'jsmc': kc.kh.gh.xm, 'sksj': kc.sksj, 'xq': kc.xq}
+            #     {'kh': kc.kh, 'km': kc.km, 'xq': kc.xq}
+            # )
+            name = kc.attname
+            value = getattr(result[0], name)
+            dict1[name] = value
+        classtable.append(dict1)
+        # print(dict1)
+        context['classtable'] = classtable
+        return render(request, 'student_QueryCourse.html', context=context)
+    return HttpResponseRedirect("/")
