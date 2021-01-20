@@ -6,6 +6,19 @@
 </head>
 <body>
 <text> 这里是管理员主页 </text>
+    <form method="post" action="/admin/search/">
+        {% csrf_token %}
+        <table>
+            <tr><th>学号</th><td><input name="xh"/></td></tr>
+            <tr><th>姓名</th><td><input name="xm"></td></tr>
+            <tr><th>性别</th><td><input name="xb"/></td></tr>
+            <tr><th>出生日期</th><td><input name="csrq" type="date"/></td></tr>
+            <tr><th>籍贯</th><td><input name="jg"/></td></tr>
+            <tr><th>手机号码</th><td><input name="sjhm"/></td></tr>
+            <tr><th>院系</th><td><input name="yxh"/></td></tr>
+            <tr><td> <button type="submit"> 提交 </button> </td></tr>
+        </table>
+    </form>
     <table border="1px" width="100%" style="border-collapse: collapse;">
         <tr>
             <th>学号</th>

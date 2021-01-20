@@ -27,6 +27,7 @@ urlpatterns = [
     path('student/', views.student_index),  # 学生
     path('student/QueryCourse', views.student_QueryCourse,name="student_QueryCourse"),  # 学生课程查询
     path('admin/delete/', views.delete_student), # 删除学生
-    path('admin/edit/', views.edit_student) # 编辑学生
+    path('admin/edit/', views.edit_student),  # 编辑学生
+    path('admin/search/', views.search_student)
     # path('student/<username>/',views.student_view,name='username')
 ]

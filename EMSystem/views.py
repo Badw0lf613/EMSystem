@@ -148,6 +148,46 @@ def edit_student(request):
     return redirect('../')
 
 @login_required
+def search_student(request):
+    keys = {}
+    keys['xh'] = request.POST.get('xh')
+    keys['xm'] = request.POST.get('xm')
+    keys['xb'] = request.POST.get('xb')
+    keys['jg'] = request.POST.get('jg')
+    keys['csrq'] = request.POST.get('csrq')
+    keys['sjhm'] = request.POST.get('sjhm')
+    keys['yxh'] = request.POST.get('yxh')
+    print(keys)
+    result = S.objects.all()
+    if keys['xh']:
+        result = result.filter(xh=keys['xh'])
+    if keys['xm']:
+        result = result.filter(xm__contains=keys['xm'])
+    if keys['xb']:
+        result = result.filter(xb=keys['xb'])
+    if keys['jg']:
+        result = result.filter(jg=keys['jg'])
+    if keys['csrq']:
+        result = result.filter(csrq=keys['csrq'])
+    if keys['sjhm']:
+        result = result.filter(sjhm=keys['sjhm'])
+    if keys['yxh']:
+        result = result.filter(yxh_id=keys['yxh'])
+    students = []
+    for item in result:
+        students.append(obj2dict(item))
+    print(students)
+    return render(request, 'admin_index.html', context={'students':students})
+
+def obj2dict(obj):
+    res = {}
+    for field in obj._meta.fields:
+        name = field.attname
+        val = getattr(obj, name)
+        res[name] = val
+    return res
+
+@login_required
 def teacher_index(request):
     return render(request, 'teacher_index.html')
 
@@ -158,6 +198,7 @@ def student_index(request):
     context = get_user_info(request)
     print(context)
     return render(request, 'student_index.html',context=context)
+
 
 @login_required
 def student_QueryCourse(request):
