@@ -210,6 +210,7 @@ def student_QueryCourse(request):
     elif request.method == 'POST':
         print(">>>POST")
         result = C.objects.all()
+        # result1 = O.objects.all()
         context['xq'] = request.POST['xq']
         context['kh'] = request.POST['kh']
         context['km'] = request.POST['km']
@@ -223,25 +224,86 @@ def student_QueryCourse(request):
             result = result.filter(kh__startswith=context['kh'])
         if context['km']:
             result = result.filter(km__contains=context['km'])
+        khlist = [] # 列表记录使用工号在开课表查询到的内容，从其中取出课号
+        ghcontent = [] # 列表记录使用工号在开课表查询到的内容，从其中取出工号，用于查询结果显示
         if context['gh']:
-            result = result.filter(kh=O.objects.filter(gh='0001'))
+            print('>>>gh')
+            # print(result)
+            result1 = O.objects.filter(gh=context['gh'])
+            for item in result1:  # 将对象转换为字典
+                content = obj2dict(item)
+                # content[]
+                # print(content['kh'])
+                khlist.append(content['kh'])
+                ghcontent.append(content['gh_id'])
+            print(">>>khlist")
+            print(khlist)
+            print(">>>ghcontent")
+            print(ghcontent)
+            # for i in opentable:
+            #     print(i)
+            #     context['gh_processed'] =
+            result = result.filter(kh__in=khlist) # 成功
+            # result1 = result1.filter(gh=context['gh'])
+            print(result)
+            # print(result1[0])
+            # print(context['gh'])
+        ghlist = [] # 列表记录使用教师名称在教师表查询到的内容，从其中取出工号
+        khlist1 = [] # 列表记录使用工号在开课表查询到的内容，从其中取出课号
+        jsmccontent = [] # 列表记录使用工号在教师表查询到的内容，从其中取出教师名称，用于查询结果显示
         if context['jsmc']:
-            result = result.filter(gh__contains=T.objects.filter(xm__contains=context['jsmc']))
+            # result = result.filter(gh__in=T.objects.filter(xm__contains=context['jsmc']))
+            result1 = T.objects.filter(xm__contains=context['jsmc'])
+            for item in result1:  # 将对象转换为字典
+                content = obj2dict(item)
+                # content[]
+                # print(content['kh'])
+                ghlist.append(content['gh'])
+                jsmccontent.append(content['xm'])
+            print(">>>ghlist")
+            print(ghlist)
+            print(">>>jsmccontent")
+            print(jsmccontent)
+            result2 = O.objects.filter(gh__in=ghlist) # 成功
+            for item in result2:  # 将对象转换为字典
+                content = obj2dict(item)
+                khlist1.append(content['kh'])
+            print(">>>khlist1")
+            print(khlist1)
         if context['sksj']:
             result = result.filter(sksj__contains=context['sksj'])
         classtable = []
-        dict1 = {}
-        for kc in result[0]._meta.fields:
-            # print(kc)
-            # classtable.append(
-            #     # {'kh': kc.kh, 'km': kc.km, 'gh': kc.kh.gh, 'jsmc': kc.kh.gh.xm, 'sksj': kc.sksj, 'xq': kc.xq}
-            #     {'kh': kc.kh, 'km': kc.km, 'xq': kc.xq}
-            # )
-            name = kc.attname
-            value = getattr(result[0], name)
-            dict1[name] = value
-        classtable.append(dict1)
-        # print(dict1)
+        # for kc in result[0]._meta.fields:
+        #     # print(kc)
+        #     # classtable.append(
+        #     #     # {'kh': kc.kh, 'km': kc.km, 'gh': kc.kh.gh, 'jsmc': kc.kh.gh.xm, 'sksj': kc.sksj, 'xq': kc.xq}
+        #     #     {'kh': kc.kh, 'km': kc.km, 'xq': kc.xq}
+        #     # )
+        #     name = kc.attname
+        #     value = getattr(result[0], name)
+        #     dict1[name] = value
+        i = 0
+        j = 0
+        for item in result:  # 将对象转换为字典
+            content = obj2dict(item)
+            # 需要在字典中加入gh，jsmc，sksj
+############# 考虑查询结果如何显示 #####################################
+            if context['gh']:
+                content['gh'] = ghcontent[i]
+                i = i + 1
+            if context['jsmc']:
+                content['jsmc'] = jsmccontent[j]
+                j = j + 1
+            classtable.append(content)
+            # classtable[]
+        print(">>>classtable")
+        print(classtable)
         context['classtable'] = classtable
+        # classtable1 = []
+        # for item in result1:  # 将对象转换为字典
+        #     classtable1.append(obj2dict(item))
+        # print(">>>")
+        # print(classtable1)
+        # context['classtable'] = classtable
         return render(request, 'student_QueryCourse.html', context=context)
     return HttpResponseRedirect("/")

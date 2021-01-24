@@ -108,14 +108,14 @@
          <br><br>
          <form class="form-inline" role="form" method="POST" action="">
            {% csrf_token %}
-               <div class="form-group">
-                 学期：
-                 <input type="text" name="xq" class="form-control form-control-inline" value={% if xq %}{{xq}}{% else %} 2020-2021学年春季学期 {% endif%}>
-                 课程号：
-                 <input type="text" name="kh" class="form-control form-control-inline" style="width:100px;" value={{kh}}>
-                 课程名称：
-                 <input type="text" name="km" class="form-control form-control-inline" style="width:150px" value={{km}}>
-               </div>
+           <div class="form-group">
+             学期：
+             <input type="text" name="xq" class="form-control form-control-inline" value={% if xq %}{{xq}}{% else %} 2020-2021学年春季学期 {% endif%}>
+             课程号：
+             <input type="text" name="kh" class="form-control form-control-inline" style="width:100px;" value={{kh}}>
+             课程名称：
+             <input type="text" name="km" class="form-control form-control-inline" style="width:150px" value={{km}}>
+           </div>
 
            <div class="form-group">
              工号：
@@ -140,24 +140,46 @@
                 <tr>
                     <th> 课程号 </th>
                     <th> 课程名称 </th>
-                    <th> 工号 </th>
-                    <th> 教师名称 </th>
+                    <th> 教师号 </th>
+                    <th> 教师名 </th>
                     <th> 上课时间 </th>
+                    <th> 学分 </th>
+                    <th> 学时 </th>
+                    <th> 院系号 </th>
                     <th> 学期 </th>
                     <!--<th> 选课 </th>-->
                 </tr>
               </thead>
               <tbody>
                 {% for kc in classtable %}
-                <tr>
-                    <td> {{kc.kh}} </td>
-                    <td> {{kc.km}} </td>
-                    <td> {{kc.gh}} </td>
-                    <td> {{kc.jsmc}} </td>
-                    <td> {{kc.sksj}} </td>
-                    <td> {{kc.xq}} </td>
-                    <!--<td><button type="submit"> 选课 </button></td>-->
-                </tr>
+                    {% if kc.xq == '2020-2021学年春季学期' %}
+                    <tr>
+                        <td> {{kc.kh}} </td>
+                        <td> {{kc.km}} </td>
+                        <td> {{kc.gh}} </td>
+                        <td> {{kc.jsmc}} </td>
+                        <td> {{kc.sksj}} </td>
+                        <td> {{kc.xf}} </td>
+                        <td> {{kc.xs}} </td>
+                        <td> {{kc.yxh_id}} </td>
+                        <td> {{kc.xq}} </td>
+                        <!--<td><button type="submit"> 选课 </button></td>-->
+                    </tr>
+                    {% else %}
+{#                  非当前学期#}
+                    <tr>
+                        <td> {{kc.kh}} </td>
+                        <td> {{kc.km}} </td>
+                        <td> 无 </td>
+                        <td> 无 </td>
+                        <td> 无 </td>
+                        <td> {{kc.xf}} </td>
+                        <td> {{kc.xs}} </td>
+                        <td> {{kc.yxh_id}} </td>
+                        <td> {{kc.xq}} </td>
+                        <!--<td><button type="submit"> 选课 </button></td>-->
+                    </tr>
+                    {% endif %}
                 {% endfor %}
               </tbody>
             </table>
