@@ -348,7 +348,6 @@ def student_QueryCourse(request):
                             content['jsmc'] = item1['xm']
                 # i = i + 1
             classtable.append(content)
-            # classtable[]
         print(">>>classtable")
         print(classtable)
         context['classtable'] = classtable
