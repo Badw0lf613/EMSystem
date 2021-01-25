@@ -10,27 +10,22 @@
 
 </head>
 <body>
-  <div class="row">
-{#  style="margin-bottom: -22px"#}
-    <nav class="navbar navbar">
-      <div class="container-fluid" style="background: #3c8dbc">
+{#  <div class="row">#}
+    <header class="navbar-header" style="width: 100%; height: 70px">
+        <nav class="navbar navbar-static-top" style="background: #3c8dbc;">
+{#      <div class="container-fluid" >#}
         <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
           <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
             <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="" style="padding: 25px 25px">
-              <span style="font-size: 15px; color: #ffffff">
+          <a class="navbar-brand" href="" style="height:70px; padding: 25px 25px 0px 15px; background: #367fa9">
+              <span style="text-align: center; font-size: 15px; color: #ffffff">
                   上海大学本硕博一体化选课系统
               </span>
           </a>
-        </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse">
+        <div class="collapse navbar-collapse" style="float: right">
           <ul class="nav navbar-nav">
             <li>
                 <a href="" style="padding: 25px 15px">
@@ -42,101 +37,144 @@
             </li>
             <li>
                 <a href="" style="padding: 25px 15px">
+                    <img src="/static/images/calendar.png" style="width: 20px">
                     <span style="font-size: 15px; color: #ffffff">
-                        首页
+                        &emsp;2020-2021学年春季学期
                     </span>
                 </a>
             </li>
             <li class="active">
                 <a href="" style="padding: 25px 15px">
-                    <span style="font-size: 15px; color: #ffffff">
-                        选课
+                    <img src="/static/images/user.png" style="width: 20px">
+                    <span class="nav-function-text" style="font-size: 15px; color: #ffffff">
+                        &emsp;{{request.user.username}}@S4
                     </span>
                     <span class="sr-only">(current)</span>
                 </a>
             </li>
+            <li class="active">
+                <a href="" style="padding: 25px 15px">
+                    <img src="/static/images/logout.png" style="width: 20px">
+                    <span class="nav-function-text" style="font-size: 15px; color: #ffffff">
+                        安全退出
+                    </span>
+                </a>
+            </li>
           </ul>
-          <p class="navbar-text navbar-right" style="padding: 10px 150px">
-            <img src="/static/images/calendar.png" style="width: 20px">
-            <font color="red">2020-2021学年春季学期</font>
-            <img src="/static/images/user.png" style="width: 20px">
-            <font color="black"> 欢迎 {{request.user.username}}  @S1</font>
-            <img src="/static/images/logout.png" style="width: 20px">
-            <a href="" class="navbar-link" style="color: #2866BD">安全退出</a>
-          </p>
         </div><!-- /.navbar-collapse -->
-      </div><!-- /.container-fluid -->
-    </nav>
-  </div>
-  <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-2 col-md-2" style="min-height:400px; padding:0px 0px 0px 0px; ">
-         <ul class="nav nav-sidebar" style="background: #8ac3f0;">
-           <font size="3" style="color: #385090; padding:0px;"> 学生信息 </font>
-           <font size="3">
-             <p style="padding: 2px 0px; line-height:28px;">
-               学号：{{xh}}
-               <br>
-               姓名：{{xm}}
-               <br>
-               英语等级：{{yydj}}
-               <br>
-               <font color="red"><b>完成选课后请点击 <a href="" style="color:red">[安全退出]</a></b></font>
-             </p>
-           </font>
-         </ul>
-         <ul class="nav nav-sidebar" style="background: #AFD2FC">
-           <p style="padding: 3px 0px 0px 0px;"><font size="3" style="color: #385090; padding:30px;"> 主菜单 </font></p>
-         </ul>
-         <ul class="nav nav-sidebar" style="background: #FFFFFF">
-           <li><a href="/index/xk/"><font size="3" style="color: #385090; padding:30px;"> 选课 </font></a></li>
-           <li><a href="/index/tk/"><font size="3" style="color: #385090; padding:30px;"> 退课 </font></a></li>
-         </ul>
-         <br>
+{#      </div><!-- /.container-fluid -->#}
+        </nav>
+    </header>
+{#  </div>#}
+    <div class="col-sm-3 col-md-2 sidebar" style="min-height:800px;width: 250px;padding:1px 2px 0px 0px">
+        <ul class="nav nav-sidebar" style="background: #8ac3f0 ">
+            <font size="4" style="color: #385090; padding:0px;font-weight: bold"> 学生信息 </font>
+            <font size="3">
+                <p style="padding: 2px 0px;">
+                    学号：{{xh}}
+                    <br>
+                    姓名：{{xm}}
+                    <br>
+                    英语等级：B
+                    <br>
+                    上学期平均绩点：3.99
+                    <br>
+                    <font color="red"><b>完成选课后请点击 <a href="" style="color:red;font-weight:bold;">[安全退出]</a></b></font>
+                </p>
+            </font>
+            <li class="header" style="color: #CCCCCC;background: #1a2226; height: 40px">
+                <img src="/static/images/mainmenu.png" style="width: 12px; margin-left: 15px">
+                <span style="font-size: 12px; display: inline-block; line-height: 40px">
+                    主菜单
+                </span>
+            </li>
+            <li class="dropdown" style="background: #1e282c">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <img src="/static/images/computer.png" style="width: 20px;">
+                    <span style="color: #CCCCCC;text-align: center;font-size: 14px; display: inline-block; line-height: 40px">
+                        学生选课
+                    </span>
+                    <img src="/static/images/downarrow.png" style="width: 15px; margin-left: 110px">
+                </a>
+                <ul class="dropdown-menu" style="color: #CCCCCC;background: #2C3B41; width: 250px">
+                    <li>
+                        <a href="{% url 'student_AddCourse' %}" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                选课
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'student_DeleteCourse' %}" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                退课
+                            </span>
+                        </a>
+                    <li>
+                        <a href="{% url 'student_CourseTable' %}" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                课表查询
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'student_QueryCourse' %}" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                课程查询
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'student_QueryGrades' %}" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                成绩查询
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
 
-         <ul class="nav nav-sidebar" style="background: #AFD2FC">
-           <p style="padding: 3px 0px 0px 0px;"><font size="4" style="color: #385090; padding:30px;"> 数据查询 </font></p>
-         </ul>
-         <ul class="nav nav-sidebar" style="background: #FFFFFF">
-           <li><a href="/index/cjcx/"><font size="4" style="color: #385090; padding:30px;"> 成绩查询 </font></a></li>
-           <li><a href={% url 'student_QueryCourse' %}><font size="4" style="color: #385090; padding:30px;"> 课程查询 </font></a></li>
-         </ul>
-         <br>
-        </div>
-        <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
-         <b><font size="4"> 课程查询： </font></b>
-         <br><br>
-         <form class="form-inline" role="form" method="POST" action="">
-           {% csrf_token %}
-           <div class="form-group">
-             学期：
-             <input type="text" name="xq" class="form-control form-control-inline" value={% if xq %}{{xq}}{% else %} 2020-2021学年春季学期 {% endif%}>
-             课程号：
-             <input type="text" name="kh" class="form-control form-control-inline" style="width:100px;" value={{kh}}>
-             课程名称：
-             <input type="text" name="km" class="form-control form-control-inline" style="width:150px" value={{km}}>
-           </div>
+    <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
+        <b><font size="4"> 课程查询： </font></b>
+        <br><br>
+        <form class="form-inline" role="form" method="POST" action="">
+            {% csrf_token %}
+            <div class="form-group">
+                学期：
+                <input type="text" name="xq" class="form-control form-control-inline" value={% if xq %}{{xq}}{% else %} 2020-2021学年春季学期 {% endif%}>
+                课程号：
+                <input type="text" name="kh" class="form-control form-control-inline" style="width:100px;" value={{kh}}>
+                课程名称：
+                <input type="text" name="km" class="form-control form-control-inline" style="width:150px" value={{km}}>
+            </div>
 
-           <div class="form-group">
-             工号：
-             <input type="text" name="gh" class="form-control form-control-inline" style="width:70px" value={{gh}}>
-             教师名称：
-             <input type="text" name="jsmc" class="form-control form-control-inline" style="width:100px" value={{jsmc}}>
-             上课时间：
-             <input type="text" name="sksj" class="form-control form-control-inline" style="width:150px" value={{sksj}}>
-           </div>
-           <br>
-           <input type="submit" value="提交">
-           <input type="submit" value="重置">
-           <br>
-         </form>
-         <br><br>
-        </div>
+            <div class="form-group">
+                工号：
+                <input type="text" name="gh" class="form-control form-control-inline" style="width:70px" value={{gh}}>
+                教师名称：
+                <input type="text" name="jsmc" class="form-control form-control-inline" style="width:100px" value={{jsmc}}>
+                上课时间：
+                <input type="text" name="sksj" class="form-control form-control-inline" style="width:150px" value={{sksj}}>
+            </div>
+            <br>
+            <input type="submit" value="提交">
+            <input type="submit" value="重置">
+            <br>
+        </form>
+        <br><br>
+    </div>
 
-        <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
-            <b><font size="4"> 查询结果： </font></b>
-            <table class="table">
-              <thead>
+    <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
+        <b><font size="4"> 查询结果： </font></b>
+        <table class="table">
+            <thead>
                 <tr>
                     <th> 课程号 </th>
                     <th> 课程名称 </th>
@@ -149,8 +187,8 @@
                     <th> 学期 </th>
                     <!--<th> 选课 </th>-->
                 </tr>
-              </thead>
-              <tbody>
+            </thead>
+            <tbody>
                 {% for kc in classtable %}
                     {% if kc.xq == '2020-2021学年春季学期' %}
                     <tr>
@@ -166,7 +204,7 @@
                         <!--<td><button type="submit"> 选课 </button></td>-->
                     </tr>
                     {% else %}
-{#                  非当前学期#}
+                    {#                  非当前学期#}
                     <tr>
                         <td> {{kc.kh}} </td>
                         <td> {{kc.km}} </td>
@@ -181,15 +219,13 @@
                     </tr>
                     {% endif %}
                 {% endfor %}
-              </tbody>
-            </table>
-        </div>
+            </tbody>
+        </table>
     </div>
-  </div>
 
-  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-  <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
-  <!-- Include all compiled plugins (below), or include individual files as needed -->
-  <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>
 </body>
 </html>

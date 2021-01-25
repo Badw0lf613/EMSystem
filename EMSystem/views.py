@@ -359,3 +359,37 @@ def student_QueryCourse(request):
         # context['classtable'] = classtable
         return render(request, 'student_QueryCourse.html', context=context)
     return HttpResponseRedirect("/")
+
+
+@login_required
+def student_AddCourse(request):
+    print(">>>student_AddCourse")
+    context = get_user_info(request)
+    if request.method == 'GET':
+        print(">>>GET")
+        return render(request, 'student_AddCourse.html', context=context)
+
+
+@login_required
+def student_DeleteCourse(request):
+    print(">>>student_DeleteCourse")
+    context = get_user_info(request)
+    if request.method == 'GET':
+        print(">>>GET")
+        return render(request, 'student_DeleteCourse.html', context=context)
+
+@login_required
+def student_QueryGrades(request):
+    print(">>>student_QueryGrades")
+    context = get_user_info(request)
+    if request.method == 'GET':
+        print(">>>GET")
+        return render(request, 'student_QueryGrades.html', context=context)
+
+@login_required
+def student_CourseTable(request):
+    print(">>>student_CourseTable")
+    context = get_user_info(request)
+    if request.method == 'GET':
+        print(">>>GET")
+        return render(request, 'student_CourseTable.html', context=context)

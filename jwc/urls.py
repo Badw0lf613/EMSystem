@@ -26,6 +26,10 @@ urlpatterns = [
     path('teacher/', views.teacher_index),  # 教师
     path('student/', views.student_index),  # 学生
     path('student/QueryCourse', views.student_QueryCourse,name="student_QueryCourse"),  # 学生课程查询
+    path('student/AddCourse', views.student_AddCourse, name="student_AddCourse"),  # 学生选课
+    path('student/DeleteCourse', views.student_DeleteCourse, name="student_DeleteCourse"),  # 学生退课
+    path('student/QueryGrades', views.student_QueryGrades, name="student_QueryGrades"),  # 学生成绩查询
+    path('student/CourseTable', views.student_CourseTable, name="student_CourseTable"),  # 学生课表查询
     path('admin/delete/', views.delete_student), # 删除学生
     path('admin/edit/', views.edit_student),  # 编辑学生
     path('admin/search/', views.search_student)
