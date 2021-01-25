@@ -66,84 +66,79 @@
         </nav>
     </header>
 {#  </div>#}
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-3 col-md-2 sidebar" style="min-height:800px;width: 250px;padding:1px 2px 0px 0px">
-                <ul class="nav nav-sidebar" style="background: #8ac3f0 ">
-                    <font size="4" style="color: #385090; padding:0px;font-weight: bold"> 学生信息 </font>
-                    <font size="3">
-                        <p style="padding: 2px 0px;">
-                            学号：{{xh}}
-                            <br>
-                            姓名：{{xm}}
-                            <br>
-                            英语等级：B
-                            <br>
-                            上学期平均绩点：3.99
-                            <br>
-                            <font color="red"><b>完成选课后请点击 <a href="" style="color:red;font-weight:bold;">[安全退出]</a></b></font>
-                        </p>
-                    </font>
-                    <li class="header" style="color: #CCCCCC;background: #1a2226; height: 40px">
-                        <img src="/static/images/mainmenu.png" style="width: 12px; margin-left: 15px">
-                        <span style="font-size: 12px; display: inline-block; line-height: 40px">
-                            主菜单
-                        </span>
-                    </li>
-                    <li class="dropdown" style="background: #1e282c">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <img src="/static/images/computer.png" style="width: 20px;">
-                            <span style="color: #CCCCCC;text-align: center;font-size: 14px; display: inline-block; line-height: 40px">
-                                学生选课
+    <div class="col-sm-3 col-md-2 sidebar" style="min-height:800px;width: 250px;padding:1px 2px 0px 0px">
+        <ul class="nav nav-sidebar" style="background: #8ac3f0 ">
+            <font size="4" style="color: #385090; padding:0px;font-weight: bold"> 学生信息 </font>
+            <font size="3">
+                <p style="padding: 2px 0px;">
+                    学号：{{xh}}
+                    <br>
+                    姓名：{{xm}}
+                    <br>
+                    英语等级：B
+                    <br>
+                    上学期平均绩点：3.99
+                    <br>
+                    <font color="red"><b>完成选课后请点击 <a href="" style="color:red;font-weight:bold;">[安全退出]</a></b></font>
+                </p>
+            </font>
+            <li class="header" style="color: #CCCCCC;background: #1a2226; height: 40px">
+                <img src="/static/images/mainmenu.png" style="width: 12px; margin-left: 15px">
+                <span style="font-size: 12px; display: inline-block; line-height: 40px">
+                    主菜单
+                </span>
+            </li>
+            <li class="dropdown" style="background: #1e282c">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <img src="/static/images/computer.png" style="width: 20px;">
+                    <span style="color: #CCCCCC;text-align: center;font-size: 14px; display: inline-block; line-height: 40px">
+                        学生选课
+                    </span>
+                    <img src="/static/images/downarrow.png" style="width: 15px; margin-left: 110px">
+                </a>
+                <ul class="dropdown-menu" style="color: #CCCCCC;background: #2C3B41; width: 250px">
+                    <li>
+                        <a href="{% url 'student_AddCourse' %}" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                选课
                             </span>
-                            <img src="/static/images/downarrow.png" style="width: 15px; margin-left: 110px">
                         </a>
-                        <ul class="dropdown-menu" style="color: #CCCCCC;background: #2C3B41; width: 250px">
-                            <li>
-                                <a href="{% url 'student_AddCourse' %}" style="padding: 5px 5px 5px 15px">
-                                    <img src="/static/images/circle.png" style="width: 15px;">
-                                    <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
-                                        选课
-                                    </span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'student_DeleteCourse' %}" style="padding: 5px 5px 5px 15px">
-                                    <img src="/static/images/circle.png" style="width: 15px;">
-                                    <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
-                                        退课
-                                    </span>
-                                </a>
-                            <li>
-                                <a href="{% url 'student_CourseTable' %}" style="padding: 5px 5px 5px 15px">
-                                    <img src="/static/images/circle.png" style="width: 15px;">
-                                    <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
-                                        课表查询
-                                    </span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'student_QueryCourse' %}" style="padding: 5px 5px 5px 15px">
-                                    <img src="/static/images/circle.png" style="width: 15px;">
-                                    <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
-                                        课程查询
-                                    </span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'student_QueryGrades' %}" style="padding: 5px 5px 5px 15px">
-                                    <img src="/static/images/circle.png" style="width: 15px;">
-                                    <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
-                                        成绩查询
-                                    </span>
-                                </a>
-                            </li>
-                        </ul>
+                    </li>
+                    <li>
+                        <a href="{% url 'student_DeleteCourse' %}" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                退课
+                            </span>
+                        </a>
+                    <li>
+                        <a href="{% url 'student_CourseTable' %}" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                课表查询
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'student_QueryCourse' %}" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                课程查询
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'student_QueryGrades' %}" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                成绩查询
+                            </span>
+                        </a>
                     </li>
                 </ul>
-            </div>
-
-        </div>
+            </li>
+        </ul>
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

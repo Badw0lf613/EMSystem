@@ -53,9 +53,9 @@ class E(models.Model):
     xh = models.ForeignKey('S', to_field='xh',on_delete=models.CASCADE)         # 学号(外键)
     kh = models.CharField(max_length=32)                 # 课号
     gh = models.ForeignKey('T', to_field='gh',on_delete=models.CASCADE)         # 工号(外键)
-    pscj = models.FloatField()                                             # 平时成绩
-    kscj = models.FloatField()                                             # 考试成绩
-    zpcj = models.FloatField()                                             # 总评成绩
+    pscj = models.FloatField(null=True,blank=True)       # 平时成绩
+    kscj = models.FloatField(null=True,blank=True)       # 考试成绩
+    zpcj = models.FloatField(null=True,blank=True)       # 总评成绩
     class Meta:
         unique_together = ("xn", "xq", "xh", "kh", "gh")
 

@@ -199,7 +199,6 @@ def student_index(request):
     print(context)
     return render(request, 'student_index.html',context=context)
 
-
 @login_required
 def student_QueryCourse(request):
     print(">>>student_QueryCourse")
@@ -360,15 +359,15 @@ def student_QueryCourse(request):
         return render(request, 'student_QueryCourse.html', context=context)
     return HttpResponseRedirect("/")
 
-
 @login_required
 def student_AddCourse(request):
     print(">>>student_AddCourse")
     context = get_user_info(request)
     if request.method == 'GET':
         print(">>>GET")
-        return render(request, 'student_AddCourse.html', context=context)
+        result = E.objects.filter(xq='2020-2021学年春季学期', xh=request.user.username)
 
+        return render(request, 'student_AddCourse.html', context=context)
 
 @login_required
 def student_DeleteCourse(request):
