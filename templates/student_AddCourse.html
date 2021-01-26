@@ -151,28 +151,24 @@
                 <input type="text" name="kh1" class="form-control form-control-inline" style="width:100px;" value={{kh1}}>
                 工号1：
                 <input type="text" name="gh1" class="form-control form-control-inline" style="width:70px" value={{gh1}}>
-            </div>
-            <div class="form-group">
                 课程号2：
                 <input type="text" name="kh2" class="form-control form-control-inline" style="width:100px;" value={{kh2}}>
                 工号2：
                 <input type="text" name="gh2" class="form-control form-control-inline" style="width:70px" value={{gh2}}>
             </div>
+            <br>
             <div class="form-group">
                 课程号3：
                 <input type="text" name="kh3" class="form-control form-control-inline" style="width:100px;" value={{kh3}}>
                 工号3：
                 <input type="text" name="gh3" class="form-control form-control-inline" style="width:70px" value={{gh3}}>
-            </div>
-            <div class="form-group">
                 课程号4：
                 <input type="text" name="kh4" class="form-control form-control-inline" style="width:100px;" value={{kh4}}>
                 工号4：
                 <input type="text" name="gh4" class="form-control form-control-inline" style="width:70px" value={{gh4}}>
             </div>
-
             <br>
-            <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="查询">
+            <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="确定">
             <input type="reset" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="重置">
             <br>
         </form>
@@ -192,7 +188,7 @@
                     <th> 学分 </th>
                     <th> 学时 </th>
                     <th> 院系号 </th>
-                    <th> 学期 </th>
+{#                    <th> 学期 </th>#}
                 </tr>
             </thead>
             <tbody>
@@ -205,9 +201,8 @@
                         <td> {{kc.sksj}} </td>
                         <td> {{kc.xf}} </td>
                         <td> {{kc.xs}} </td>
-                        <td> {{kc.yxh_id}} </td>
-                        <td> {{kc.xq}} </td>
-                        <!--<td><button type="submit"> 选课 </button></td>-->
+                        <td> {{kc.yxh}} </td>
+{#                        <td> {{kc.xq}} </td>#}
                     </tr>
                 {% endfor %}
             </tbody>
