@@ -425,13 +425,18 @@ def student_AddCourse(request):
         return render(request, 'student_AddCourse.html', context=context)
     elif request.method == 'POST': # 表单选课
         print(">>>POST")
+        msg = [] # 列表存储选课成功/失败信息的整条记录
         for i in range(1, 5):
+            m = {}  # 临时字典存储课号，工号和结果
             context['kh' + str(i)] = request.POST['kh' + str(i)]
             context['gh' + str(i)] = request.POST['gh' + str(i)]
             if len(context['kh' + str(i)]) and len(context['gh' + str(i)]): # 两个字段均非空，开始进行查询
                 result = O.objects.filter(kh=context['kh' + str(i)], gh=context['gh' + str(i)])
                 if not result.exists():
-                    context['msg' + str(i)] = '选课失败：不存在此门课程'
+                    m['kh'] = context['kh' + str(i)]
+                    m['gh'] = context['gh' + str(i)]
+                    m['res'] = '选课失败：不存在此门课程'
+                    msg.append(m)
                     continue
                 # 可能出现的情况：如gh，E表的外键，T表的主键，需要使用另一张表的原型
                 result_id = []
@@ -458,6 +463,11 @@ def student_AddCourse(request):
                 print(">>>item")
                 print(item)
                 item.save()
+                m['kh'] = context['kh' + str(i)]
+                m['gh'] = context['gh' + str(i)]
+                m['res'] = '选课成功'
+                msg.append(m)
+        context['msg'] = msg
         result = E.objects.filter(xq='2020-2021学年春季学期', xh=request.user.username)
         opentable = []  # 开课表，记录工号和上课时间
         teachertable = []  # 教师表，记录工号和姓名
