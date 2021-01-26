@@ -72,6 +72,16 @@ def get_user_info(request):
         ret = {'xh': result[0].xh, 'xm': result[0].xm}
     return ret
 
+def get_admin_info(request):
+    ret = {}
+    print("request", request.user.username)
+    result = User.objects.filter(username=request.user.username)
+    print(result)
+    if result.exists():
+        ret['name'] = result[0].first_name+''+result[0].last_name
+        ret['yhm'] = result[0].username
+    return ret
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get("username")
@@ -98,57 +108,19 @@ def login_view(request):
 
 @login_required
 def admin_index(request):
-    chosen_xh = request.GET.get('chosen_xh')
-    xh = request.POST.get('xh')
-    xm = request.POST.get('xm')
-    xb = request.POST.get('xb')
-    jg = request.POST.get('jg')
-    csrq = request.POST.get('csrq')
-    sjhm = request.POST.get('sjhm')
-    yxh = request.POST.get('yxh')
-    students = []                       # 获取当前学生列表
-    all_s = S.objects.all()
-    for item in all_s:                  # 将对象转换为字典
-        attdict = {}
-        for field in item._meta.fields:
-            name = field.attname
-            value = getattr(item, name)
-            attdict[name] = value
-        students.append(attdict)
-    if xh is not None:                  # 如果输入不是空，就创建一个新的学生（还没有做输入正确信息的检查）
-        d_item = D.objects.filter(yxh=yxh)
-        yxh = getattr(d_item[0], 'yxh')
-        new_s = S.objects.create(xh=xh, xm=xm, xb=xb, csrq=csrq, jg=jg, sjhm=sjhm, yxh_id=yxh)
-        new_s.save()
-        attdict={}
-        for field in new_s._meta.fields:      # 向students中添加新的学生
-            name = field.attname
-            value = getattr(new_s, name)
-            attdict[name] = value
-        students.append(attdict)
-    print(students)
-    return render(request, 'admin_index.html', {'students':students, 'chosen_xh':chosen_xh})
+    print(">>>admin")
+    user_info = get_admin_info(request)
+    print(user_info)
+    return render(request, 'admin_index.html', {'name': user_info['name'], 'yhm': user_info['yhm']})
 
 @login_required
-def delete_student(request):                    # 学生删除
-    xh = request.GET.get("xh")
-    S.objects.filter(xh=xh).delete()
-    return redirect('../')
+def student_Management(request):
+    print(">>>redirect")
+    return render(request, 'student_Management.html')
 
 @login_required
-def edit_student(request):
-    xh = request.POST.get('xh')
-    xm = request.POST.get('xm')
-    xb = request.POST.get('xb')
-    jg = request.POST.get('jg')
-    csrq = request.POST.get('csrq')
-    sjhm = request.POST.get('sjhm')
-    yxh = request.POST.get('yxh')
-    S.objects.filter(xh=xh).update(xh=xh, xm=xm, xb=xb, csrq=csrq, jg=jg, sjhm=sjhm, yxh_id=yxh)
-    return redirect('../')
-
-@login_required
-def search_student(request):
+def add_student(request):                 # 学生添加
+    print("add")
     keys = {}
     keys['xh'] = request.POST.get('xh')
     keys['xm'] = request.POST.get('xm')
@@ -156,28 +128,100 @@ def search_student(request):
     keys['jg'] = request.POST.get('jg')
     keys['csrq'] = request.POST.get('csrq')
     keys['sjhm'] = request.POST.get('sjhm')
-    keys['yxh'] = request.POST.get('yxh')
-    print(keys)
-    result = S.objects.all()
-    if keys['xh']:
-        result = result.filter(xh=keys['xh'])
-    if keys['xm']:
-        result = result.filter(xm__contains=keys['xm'])
-    if keys['xb']:
-        result = result.filter(xb=keys['xb'])
-    if keys['jg']:
-        result = result.filter(jg=keys['jg'])
-    if keys['csrq']:
-        result = result.filter(csrq=keys['csrq'])
-    if keys['sjhm']:
-        result = result.filter(sjhm=keys['sjhm'])
-    if keys['yxh']:
-        result = result.filter(yxh_id=keys['yxh'])
+    keys['yx'] = request.POST.get('yx')
+
+    if keys['xh'] is not None:
+        d_item = D.objects.filter(yxm__contains=keys['yx'])
+        yxh = getattr(d_item[0], 'yxh')
+        new_s = S.objects.create(xh=keys['xh'], xm=keys['xm'], xb=keys['xb'], csrq=keys['csrq'],
+                                 jg=keys['jg'], sjhm=keys['sjhm'], yxh_id=yxh)
+        new_s.save()
+    return redirect('/admin/StudentManagement/search/')
+
+@login_required
+def delete_student(request):                    # 学生删除
+    print(">>>delete")
+    xh = request.GET.get("xh")
+    S.objects.filter(xh=xh).delete()
+    return redirect('/admin/StudentManagement/search/')
+
+@login_required
+def edit_student(request):
+    print(">>>edit")
+    xh = request.POST.get('xh')
+    xm = request.POST.get('xm')
+    xb = request.POST.get('xb')
+    jg = request.POST.get('jg')
+    csrq = request.POST.get('csrq')
+    sjhm = request.POST.get('sjhm')
+    yx = request.POST.get('yx')
+    d = D.objects.all()
+    tmp = d.filter(yxm__contains=yx)
+    yx = obj2dict(tmp[0])['yxh']
+    S.objects.filter(xh=xh).update(xh=xh, xm=xm, xb=xb, csrq=csrq, jg=jg, sjhm=sjhm, yxh_id=yx)
+    return redirect('/admin/StudentManagement/search/')
+
+@login_required
+def search_student(request):
+    print(">>>search")
+    chosen_xh = request.GET.get('chosen_xh')
+    if request.method == 'POST':
+        keys = {}
+        keys['xh'] = request.POST.get('xh')
+        keys['xm'] = request.POST.get('xm')
+        keys['xb'] = request.POST.get('xb')
+        keys['jg'] = request.POST.get('jg')
+        keys['csrq'] = request.POST.get('csrq')
+        keys['sjhm'] = request.POST.get('sjhm')
+        keys['yx'] = request.POST.get('yx')
+        # print(keys)
+        result = S.objects.all()
+        all = True
+        if keys['xh']:
+            result = result.filter(xh=keys['xh'])
+            all = False
+        if keys['xm']:
+            result = result.filter(xm__contains=keys['xm'])
+            all = False
+        if keys['xb']:
+            result = result.filter(xb=keys['xb'])
+            all = False
+        if keys['jg']:
+            result = result.filter(jg=keys['jg'])
+            all = False
+        if keys['csrq']:
+            result = result.filter(csrq=keys['csrq'])
+            all = False
+        if keys['sjhm']:
+            result = result.filter(sjhm=keys['sjhm'])
+            all = False
+        if keys['yx']:
+            d = D.objects.all()
+            yx = d.filter(yxm__contains=keys['yx'])
+            yxh = obj2dict(yx[0])['yxh']
+            result = result.filter(yxh_id=yxh)
+            all = False
+    else:
+        result = S.objects.all()
+        result = result.filter(xh=chosen_xh)
+        all = False
+
     students = []
     for item in result:
-        students.append(obj2dict(item))
-    print(students)
-    return render(request, 'admin_index.html', context={'students':students})
+        res = obj2dict(item)
+        d = D.objects.all()
+        tmp = d.filter(yxh=res['yxh_id'])
+        yxm = obj2dict(tmp[0])['yxm']
+        del res['yxh_id']
+        res['yxm'] = yxm
+        students.append(res)
+    if all == True:
+        search = 1
+    else:
+        search = None
+    # print(students)
+    return render(request, 'student_Management.html',
+                  context={'students': students, 'chosen_xh': chosen_xh, 'search': search})
 
 def obj2dict(obj):
     res = {}

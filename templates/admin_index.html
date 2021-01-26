@@ -1,109 +1,121 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" rel="stylesheet">
     <title>Title</title>
 </head>
 <body>
-<text> 这里是管理员主页 </text>
-    <form method="post" action="/admin/search/">
-        {% csrf_token %}
-        <table>
-            <tr><th>学号</th><td><input name="xh"/></td></tr>
-            <tr><th>姓名</th><td><input name="xm"></td></tr>
-            <tr><th>性别</th><td><input name="xb"/></td></tr>
-            <tr><th>出生日期</th><td><input name="csrq" type="date"/></td></tr>
-            <tr><th>籍贯</th><td><input name="jg"/></td></tr>
-            <tr><th>手机号码</th><td><input name="sjhm"/></td></tr>
-            <tr><th>院系</th><td><input name="yxh"/></td></tr>
-            <tr><td> <button type="submit"> 提交 </button> </td></tr>
-        </table>
-    </form>
-    <table border="1px" width="100%" style="border-collapse: collapse;">
-        <tr>
-            <th>学号</th>
-            <th>姓名</th>
-            <th>性别</th>
-            <th>出生日期</th>
-            <th>籍贯</th>
-            <th>手机号码</th>
-            <th>院系</th>
-            <th>操作</th>
-        </tr>
-        {% for student in students %}
-            <tr>
-            {% if student.xh != chosen_xh %}
-                <td align="center">{{ student.xh }} </td>
-                <td align="center">{{ student.xm }} </td>
-                <td align="center">{{ student.xb }} </td>
-                <td align="center">{{ student.csrq }} </td>
-                <td align="center">{{ student.jg }} </td>
-                <td align="center">{{ student.sjhm }} </td>
-                <td align="center">{{ student.yxh_id }} </td>
-                <td align="center">
-                    <a href="delete/?xh={{ student.xh }}"> 删除 </a>
-                    <a href="?chosen_xh={{ student.xh }}"> 编辑 </a>
-                </td>
-            {% else %}
-                <form method="post" action="/admin/edit/">
-                {% csrf_token %}
-                    <td align="center"><input name="xh" readonly="{{ true }}" value="{{ student.xh }}"/></td>
-                    <td align="center"><input name="xm" value="{{ student.xm }}"/></td>
-                    <td align="center"><input name="xb" value="{{ student.xb }}"/></td>
-                    <td align="center"><input name="csrq" type="date" value="{{ student.csrq }}"/></td>
-                    <td align="center"><input name="jg" value="{{ student.jg }}"/></td>
-                    <td align="center"><input name="sjhm" value="{{ student.sjhm }}"/></td>
-                    <td align="center"><input name="yxh" value="{{ student.yxh_id }}"/></td>
-                    <td align="center"> <button type="submit"> 提交 </button> </td>
-                </form>
-            {% endif %}
-            </tr>
-        {% endfor %}
-        <button onclick="add_student()">添加学生</button>
-        <form method="post">
-            {% csrf_token %}
-            <table id="add" style="visibility: hidden">
-                <tr>
-                    <th>学号</th>
-                    <td><input name="xh"/></td>
-                </tr>
-                <tr>
-                    <th>姓名</th>
-                    <td><input name="xm"></td>
-                </tr>
-                <tr>
-                    <th>性别</th>
-                    <td><input name="xb"/></td>
-                </tr>
-                <tr>
-                    <th>出生日期</th>
-                    <td><input name="csrq" type="date"/></td>
-                </tr>
-                <tr>
-                    <th>籍贯</th>
-                    <td><input name="jg"/></td>
-                </tr>
-                <tr>
-                    <th>手机号码</th>
-                    <td><input name="sjhm"/></td>
-                </tr>
-                <tr>
-                    <th>院系</th>
-                    <td><input name="yxh"/></td>
-                </tr>
-                <tr>
-                    <td> <button type="submit"> 提交 </button> </td>
-                </tr>
-            </table>
-        </form>
-    </table>
+<header class="navbar-header" style="width: 100%; height: 70px">
+        <nav class="navbar navbar-static-top" style="background: #3c8dbc;">
+{#      <div class="container-fluid" >#}
+        <!-- Brand and toggle get grouped for better mobile display -->
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+          </button>
+          <a class="navbar-brand" href="" style="height:70px; padding: 25px 25px 0px 15px; background: #367fa9">
+              <span style="text-align: center; font-size: 15px; color: #ffffff">
+                  上海大学本硕博一体化选课管理系统
+              </span>
+          </a>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" style="float: right">
+          <ul class="nav navbar-nav">
+            <li>
+                <a href="" style="padding: 25px 15px">
+                    <img src="/static/images/calendar.png" style="width: 20px">
+                    <span style="font-size: 15px; color: #ffffff">
+                        &emsp;2020-2021学年春季学期
+                    </span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="" style="padding: 25px 15px">
+                    <img src="/static/images/user.png" style="width: 20px">
+                    <span class="nav-function-text" style="font-size: 15px; color: #ffffff">
+                        &emsp;{{ name }}@S4
+                    </span>
+                    <span class="sr-only">(current)</span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="" style="padding: 25px 15px">
+                    <img src="/static/images/logout.png" style="width: 20px">
+                    <span class="nav-function-text" style="font-size: 15px; color: #ffffff">
+                        安全退出
+                    </span>
+                </a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+{#      </div><!-- /.container-fluid -->#}
+        </nav>
+    </header>
+<div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar" style="min-height:800px;width: 250px;padding:1px 2px 0px 0px">
+                <ul class="nav nav-sidebar" style="background: #8ac3f0 ">
+                    <font size="4" style="color: #385090; padding:0px;font-weight: bold"> 管理员信息 </font>
+                    <font size="3">
+                        <p style="padding: 2px 0px;">
+                            账户：{{yhm}}
+                            <br>
+                            姓名：{{name}}
+                            <br>
+                        </p>
+                    </font>
+                    <li class="dropdown" style="background: #1e282c">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img src="/static/images/computer.png" style="width: 20px;">
+                            <span style="color: #CCCCCC;text-align: center;font-size: 14px; display: inline-block; line-height: 40px">
+                                主菜单
+                            </span>
+                            <img src="/static/images/downarrow.png" style="width: 15px; margin-left: 110px">
+                        </a>
+                        <ul class="dropdown-menu" style="color: #CCCCCC;background: #2C3B41; width: 250px">
+                            <li>
+                                <a href="{% url 'student_Management' %}" style="padding: 5px 5px 5px 15px">
+                                    <img src="/static/images/circle.png" style="width: 15px;">
+                                    <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                        学生管理
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="" style="padding: 5px 5px 5px 15px">
+                                    <img src="/static/images/circle.png" style="width: 15px;">
+                                    <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                        教师管理
+                                    </span>
+                                </a>
+                            <li>
+                                <a href="" style="padding: 5px 5px 5px 15px">
+                                    <img src="/static/images/circle.png" style="width: 15px;">
+                                    <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                        院系管理
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="" style="padding: 5px 5px 5px 15px">
+                                    <img src="/static/images/circle.png" style="width: 15px;">
+                                    <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                        课程管理
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>
 </body>
 </html>
-<script language="javascript" type="text/javascript">
-    function add_student(){
-        if(document.getElementById('add').style.visibility==="hidden")
-        {
-            document.getElementById('add').style.visibility="visible";
-        }
-    }
-</script>

@@ -30,8 +30,10 @@ urlpatterns = [
     path('student/DeleteCourse', views.student_DeleteCourse, name="student_DeleteCourse"),  # 学生退课
     path('student/QueryGrades', views.student_QueryGrades, name="student_QueryGrades"),  # 学生成绩查询
     path('student/CourseTable', views.student_CourseTable, name="student_CourseTable"),  # 学生课表查询
-    path('admin/delete/', views.delete_student), # 删除学生
-    path('admin/edit/', views.edit_student),  # 编辑学生
-    path('admin/search/', views.search_student)
+    path('admin/StudentManagement', views.student_Management, name="student_Management"),  # 学生管理
+    path('admin/StudentManagement/search/delete', views.delete_student), # 删除学生
+    path('admin/StudentManagement/search/edit', views.edit_student),  # 编辑学生
+    path('admin/StudentManagement/search/add', views.add_student),  # 添加学生
+    path('admin/StudentManagement/search/', views.search_student)
     # path('student/<username>/',views.student_view,name='username')
 ]
