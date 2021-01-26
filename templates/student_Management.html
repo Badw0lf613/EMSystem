@@ -1,0 +1,235 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/sweetalert.css' %}" rel="stylesheet">
+    <title>Title</title>
+{#    <script type="text/javascript">#}
+{#        function showtoast()#}
+{#        {#}
+{#            swal({#}
+{#                title: "<span style=\"text-align: center; font-size: 30px\">选课结果</span>",#}
+{#                text: "{% for student in students %}\n"+#}
+{#                    "                        {% if student.xh == chosen_xh %}\n"+#}
+{#                        "                            <form method=\"post\" action=\"edit\">\n"+#}
+{#                        "                            {% csrf_token %}\n"+#}
+{#                        "                                <td><input name=\"xh\" readonly=\"{{ true }}\" value=\"{{ student.xh }}\"/></td>\n"#}
+{#                        +#}
+{#                        "                                <td><input name=\"xm\" value=\"{{ student.xm }}\"/></td>\n"+#}
+{#                        "                                <td><input name=\"xb\" value=\"{{ student.xb }}\"/></td>\n"+#}
+{#                        "                                <td><input name=\"csrq\" type=\"date\" value=\"{{ student.csrq }}\"/></td>\n"#}
+{#                        +#}
+{#                        "                                <td><input name=\"jg\" value=\"{{ student.jg }}\"/></td>\n"+#}
+{#                        "                                <td><input name=\"sjhm\" value=\"{{ student.sjhm }}\"/></td>\n"#}
+{#                        +#}
+{#                        "                                <td><input name=\"yx\" value=\"{{ student.yxm }}\"/></td>\n"+#}
+{#                        "                                <td> <input type=\"submit\" style=\"color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;\" value=\"提交\"> </td>\n"#}
+{#                        +#}
+{#                        "                            </form>\n"+#}
+{#                        "                        {% endif %}\n"+#}
+{#                    "                    {% endfor %}",#}
+{#                animation: "slide-from-top",#}
+{#                html: true#}
+{#            })#}
+{#        }#}
+{#    </script>#}
+</head>
+<body>
+<header class="navbar-header" style="width: 100%; height: 70px">
+        <nav class="navbar navbar-static-top" style="background: #3c8dbc;">
+{#      <div class="container-fluid" >#}
+        <!-- Brand and toggle get grouped for better mobile display -->
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+          </button>
+          <a class="navbar-brand" href="" style="height:70px; padding: 25px 25px 0px 15px; background: #367fa9">
+              <span style="text-align: center; font-size: 15px; color: #ffffff">
+                  上海大学本硕博一体化选课管理系统
+              </span>
+          </a>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" style="float: right">
+          <ul class="nav navbar-nav">
+            <li>
+                <a href="" style="padding: 25px 15px">
+                    <img src="/static/images/calendar.png" style="width: 20px">
+                    <span style="font-size: 15px; color: #ffffff">
+                        &emsp;2020-2021学年春季学期
+                    </span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="" style="padding: 25px 15px">
+                    <img src="/static/images/user.png" style="width: 20px">
+                    <span class="nav-function-text" style="font-size: 15px; color: #ffffff">
+                        &emsp;{{ request.user.first_name }} {{ request.user.last_name }}@S4
+                    </span>
+                    <span class="sr-only">(current)</span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="" style="padding: 25px 15px">
+                    <img src="/static/images/logout.png" style="width: 20px">
+                    <span class="nav-function-text" style="font-size: 15px; color: #ffffff">
+                        安全退出
+                    </span>
+                </a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+{#      </div><!-- /.container-fluid -->#}
+        </nav>
+    </header>
+    <div class="col-sm-3 col-md-2 sidebar" style="min-height:800px;width: 250px;padding:1px 2px 0px 0px">
+        <ul class="nav nav-sidebar" style="background: #8ac3f0 ">
+            <font size="4" style="color: #385090; padding:0px;font-weight: bold"> 管理员信息 </font>
+            <font size="3">
+                <p style="padding: 2px 0px;">
+                    账户：{{ request.user.username }}
+                    <br>
+                    姓名：{{ request.user.first_name }} {{ request.user.last_name }}
+                    <br>
+                </p>
+            </font>
+            <li class="dropdown" style="background: #1e282c">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <img src="/static/images/computer.png" style="width: 20px;">
+                    <span style="color: #CCCCCC;text-align: center;font-size: 14px; display: inline-block; line-height: 40px">
+                        主菜单
+                    </span>
+                    <img src="/static/images/downarrow.png" style="width: 15px; margin-left: 110px">
+                </a>
+                <ul class="dropdown-menu" style="color: #CCCCCC;background: #2C3B41; width: 250px">
+                    <li>
+                        <a href="" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                学生管理
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                教师管理
+                            </span>
+                        </a>
+                    <li>
+                        <a href="" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                院系管理
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                课程管理
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
+        <b><font size="4"> 请输入学生信息： </font></b>
+        <br><br>
+        <form class="form-inline" role="form" method="POST" action="/admin/StudentManagement/search/">
+            {% csrf_token %}
+            <div class="form-group">学号：<input class="form-control form-control-inline" name="xh"/></div>
+            <div class="form-group">姓名：<input class="form-control form-control-inline" name="xm"/></div>
+            <div class="form-group">性别：<input class="form-control form-control-inline" name="xb"/></div>
+            <div class="form-group">出生日期：<input class="form-control form-control-inline" name="csrq" type="date"/></div>
+            <div class="form-group">籍贯：<input class="form-control form-control-inline" name="jg"/></div>
+            <div class="form-group" style="margin-top: 20px">手机号码：<input class="form-control form-control-inline" name="sjhm"/></div>
+            <div class="form-group" style="margin-top: 20px">院系：<input class="form-control form-control-inline" name="yx"/></div>
+            <br><br>
+            <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="查询">
+        </form>
+    </div>
+    <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>学号</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>出生日期</th>
+                    <th>籍贯</th>
+                    <th>手机号码</th>
+                    <th>院系</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student in students %}
+                <tr>
+                {% if student.xh != chosen_xh %}
+                    <td>{{ student.xh }} </td>
+                    <td>{{ student.xm }} </td>
+                    <td>{{ student.xb }} </td>
+                    <td>{{ student.csrq }} </td>
+                    <td>{{ student.jg }} </td>
+                    <td>{{ student.sjhm }} </td>
+                    <td>{{ student.yxm }} </td>
+                    <td>
+                        <a href="delete?xh={{ student.xh }}"> 删除 </a>
+                        <a href="?chosen_xh={{ student.xh }}"> 编辑 </a>
+                    </td>
+                {% else %}
+                    <form method="post" action="edit">
+                    {% csrf_token %}
+                        <td><input name="xh" readonly="{{ true }}" value="{{ student.xh }}"/></td>
+                        <td><input name="xm" value="{{ student.xm }}"/></td>
+                        <td><input name="xb" value="{{ student.xb }}"/></td>
+                        <td><input name="csrq" type="date" value="{{ student.csrq }}"/></td>
+                        <td><input name="jg" value="{{ student.jg }}"/></td>
+                        <td><input name="sjhm" value="{{ student.sjhm }}"/></td>
+                        <td><input name="yx" value="{{ student.yxm }}"/></td>
+                        <td> <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="提交"> </td>
+                    </form>
+                {% endif %}
+                </tr>
+                {% endfor %}
+                {% if search is not none %}
+                    <tr> <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" onclick="add_student()">添加学生</button> </tr>
+                {% endif %}
+                <tr id="add" style="visibility: hidden">
+                    <form method="post" action="add">
+                    {% csrf_token %}
+                        <td><input name="xh"/></td>
+                        <td><input name="xm"></td>
+                        <td><input name="xb"/></td>
+                        <td><input name="csrq" type="date"/></td>
+                        <td><input name="jg"/></td>
+                        <td><input name="sjhm"/></td>
+                        <td><input name="yx"/></td>
+                        <td> <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="提交"> </td>
+                    </form>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>
+    <script src="{% static 'js/sweetalert-dev.js' %}"></script>
+</body>
+</html>
+
+<script language="javascript" type="text/javascript">
+    function add_student(){
+        if(document.getElementById('add').style.visibility==="hidden")
+        {
+            document.getElementById('add').style.visibility="visible";
+        }
+    }
+</script>
