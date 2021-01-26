@@ -6,35 +6,6 @@
     <link href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/sweetalert.css' %}" rel="stylesheet">
     <title>Title</title>
-{#    <script type="text/javascript">#}
-{#        function showtoast()#}
-{#        {#}
-{#            swal({#}
-{#                title: "<span style=\"text-align: center; font-size: 30px\">选课结果</span>",#}
-{#                text: "{% for student in students %}\n"+#}
-{#                    "                        {% if student.xh == chosen_xh %}\n"+#}
-{#                        "                            <form method=\"post\" action=\"edit\">\n"+#}
-{#                        "                            {% csrf_token %}\n"+#}
-{#                        "                                <td><input name=\"xh\" readonly=\"{{ true }}\" value=\"{{ student.xh }}\"/></td>\n"#}
-{#                        +#}
-{#                        "                                <td><input name=\"xm\" value=\"{{ student.xm }}\"/></td>\n"+#}
-{#                        "                                <td><input name=\"xb\" value=\"{{ student.xb }}\"/></td>\n"+#}
-{#                        "                                <td><input name=\"csrq\" type=\"date\" value=\"{{ student.csrq }}\"/></td>\n"#}
-{#                        +#}
-{#                        "                                <td><input name=\"jg\" value=\"{{ student.jg }}\"/></td>\n"+#}
-{#                        "                                <td><input name=\"sjhm\" value=\"{{ student.sjhm }}\"/></td>\n"#}
-{#                        +#}
-{#                        "                                <td><input name=\"yx\" value=\"{{ student.yxm }}\"/></td>\n"+#}
-{#                        "                                <td> <input type=\"submit\" style=\"color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;\" value=\"提交\"> </td>\n"#}
-{#                        +#}
-{#                        "                            </form>\n"+#}
-{#                        "                        {% endif %}\n"+#}
-{#                    "                    {% endfor %}",#}
-{#                animation: "slide-from-top",#}
-{#                html: true#}
-{#            })#}
-{#        }#}
-{#    </script>#}
 </head>
 <body>
 <header class="navbar-header" style="width: 100%; height: 70px">
@@ -183,7 +154,7 @@
                         <a href="?chosen_xh={{ student.xh }}"> 编辑 </a>
                     </td>
                 {% else %}
-                    <form method="post" action="edit">
+                    <form method="POST" role="form" action="edit">
                     {% csrf_token %}
                         <td><input name="xh" readonly="{{ true }}" value="{{ student.xh }}"/></td>
                         <td><input name="xm" value="{{ student.xm }}"/></td>
@@ -201,7 +172,7 @@
                     <tr> <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" onclick="add_student()">添加学生</button> </tr>
                 {% endif %}
                 <tr id="add" style="visibility: hidden">
-                    <form method="post" action="add">
+                    <form method="POST" action="add">
                     {% csrf_token %}
                         <td><input name="xh"/></td>
                         <td><input name="xm"></td>
