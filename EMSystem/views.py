@@ -467,6 +467,11 @@ def student_AddCourse(request):
                 m['gh'] = context['gh' + str(i)]
                 m['res'] = '选课成功'
                 msg.append(m)
+            elif len(context['kh' + str(i)]) or len(context['gh' + str(i)]):
+                m['kh'] = context['kh' + str(i)]
+                m['gh'] = context['gh' + str(i)]
+                m['res'] = '选课失败：信息未填写完整'
+                msg.append(m)
         context['msg'] = msg
         result = E.objects.filter(xq='2020-2021学年春季学期', xh=request.user.username)
         opentable = []  # 开课表，记录工号和上课时间
