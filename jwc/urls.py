@@ -34,8 +34,6 @@ urlpatterns = [
     path('admin/StudentManagement/search/delete', views.delete_student), # 删除学生
     path('admin/StudentManagement/search/edit', views.edit_student),  # 编辑学生
     path('admin/StudentManagement/search/add', views.add_student),  # 添加学生
-    path('admin/StudentManagement/search/', views.search_student),
-    path('test', views.testcheckbox),  # 测试复选框样式
-    path('test2', views.testcheckbox2),  # 测试复选框样式2
+    path('admin/StudentManagement/search/', views.search_student)
     # path('student/<username>/',views.student_view,name='username')
 ]

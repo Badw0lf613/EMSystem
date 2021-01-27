@@ -136,14 +136,36 @@ def add_student(request):                 # 学生添加
         new_s = S.objects.create(xh=keys['xh'], xm=keys['xm'], xb=keys['xb'], csrq=keys['csrq'],
                                  jg=keys['jg'], sjhm=keys['sjhm'], yxh_id=yxh)
         new_s.save()
-    return redirect('/admin/StudentManagement/search/')
+
+    result = S.objects.all()
+    students = []
+    for item in result:
+        res = obj2dict(item)
+        d = D.objects.all()
+        tmp = d.filter(yxh=res['yxh_id'])
+        yxm = obj2dict(tmp[0])['yxm']
+        del res['yxh_id']
+        res['yxm'] = yxm
+        students.append(res)
+    return render(request, 'student_Management.html', {'students': students, 'search': 1})
 
 @login_required
 def delete_student(request):                    # 学生删除
     print(">>>delete")
     xh = request.GET.get("xh")
     S.objects.filter(xh=xh).delete()
-    return redirect('/admin/StudentManagement/search/')
+
+    result = S.objects.all()
+    students = []
+    for item in result:
+        res = obj2dict(item)
+        d = D.objects.all()
+        tmp = d.filter(yxh=res['yxh_id'])
+        yxm = obj2dict(tmp[0])['yxm']
+        del res['yxh_id']
+        res['yxm'] = yxm
+        students.append(res)
+    return render(request, 'student_Management.html', {'students': students, 'search': 1})
 
 @login_required
 def edit_student(request):
@@ -159,13 +181,25 @@ def edit_student(request):
     tmp = d.filter(yxm__contains=yx)
     yx = obj2dict(tmp[0])['yxh']
     S.objects.filter(xh=xh).update(xh=xh, xm=xm, xb=xb, csrq=csrq, jg=jg, sjhm=sjhm, yxh_id=yx)
-    return redirect('/admin/StudentManagement/search/')
+
+    result = S.objects.all()
+    students = []
+    for item in result:
+        res = obj2dict(item)
+        d = D.objects.all()
+        tmp = d.filter(yxh=res['yxh_id'])
+        yxm = obj2dict(tmp[0])['yxm']
+        del res['yxh_id']
+        res['yxm'] = yxm
+        students.append(res)
+    return render(request, 'student_Management.html', {'students': students, 'search': 1})
 
 @login_required
 def search_student(request):
     print(">>>search")
     chosen_xh = request.GET.get('chosen_xh')
     if request.method == 'POST':
+        print("post")
         keys = {}
         keys['xh'] = request.POST.get('xh')
         keys['xm'] = request.POST.get('xm')
@@ -202,6 +236,7 @@ def search_student(request):
             result = result.filter(yxh_id=yxh)
             all = False
     else:
+        print("get")
         result = S.objects.all()
         result = result.filter(xh=chosen_xh)
         all = False
@@ -583,69 +618,8 @@ def student_AddCourse(request):
 def student_DeleteCourse(request):
     print(">>>student_DeleteCourse")
     context = get_user_info(request)
-    if request.method == 'GET': # 首次进入显示
+    if request.method == 'GET':
         print(">>>GET")
-        result = E.objects.filter(xq='2020-2021学年春季学期', xh=request.user.username)
-        opentable = []  # 开课表，记录工号和上课时间
-        teachertable = []  # 教师表，记录工号和姓名
-        ghlist = []  # 列表记录使用教师名称在教师表查询到的内容，从其中取出工号
-        classtable1 = []  # 列表记录课程名称、学分、学时和院系号
-        classtable = []
-        for item in result:  # 将对象转换为字典
-            content = obj2dict(item)
-            result1 = O.objects.filter(id=content['id'])  # 进行提取工号和上课时间
-            for item1 in result1:  # 将对象转换为字典
-                content1 = obj2dict(item1)
-                opentable.append(content1)
-                ghlist.append(content1['gh_id'])
-                # classtable[]
-            print(">>>opentable")
-            print(opentable)
-            print(">>>ghlist")
-            print(ghlist)
-            result2 = T.objects.filter(gh__in=ghlist)  # 成功
-            for item2 in result2:  # 将对象转换为字典
-                content2 = obj2dict(item2)
-                teachertable.append(content2)
-                # classtable[]
-            print(">>>teachertable")
-            print(teachertable)
-            print(content['id'])
-            result3 = C.objects.filter(id=content['id']) # 进行提取课程名称学分学时院系号
-            for item3 in result3:  # 将对象转换为字典
-                content3 = obj2dict(item3)
-                classtable1.append(content3)
-                # classtable[]
-            print(">>>classtable1")
-            print(classtable1)
-        idlist = [] # 列表记录O表课程id
-        for t1 in opentable:
-            idlist.append(t1['id'])
-        print(">>>idlist")
-        print(idlist)
-        for item in result:  # 将对象转换为字典
-            content = obj2dict(item)
-            ############# 考虑查询结果如何显示 #####################################
-            if content['id'] in idlist: # 通过课程id将查询结果中的C表与O表T表对应
-                i = idlist.index(content['id']) # 找出下标对应的课程id
-                content['gh'] = opentable[i]['gh_id']
-                content['sksj'] = opentable[i]['sksj']
-                content['km'] = classtable1[i]['km']
-                content['xf'] = classtable1[i]['xf']
-                content['xs'] = classtable1[i]['xs']
-                content['yxh'] = classtable1[i]['yxh_id']
-                for item1 in teachertable:
-                    if item1['gh'] == opentable[i]['gh_id']:  # 存在一个老师开多门课，此时需找到每门课程对应的工号，再寻找教师名称
-                        print(">>>111")
-                        print(item1['gh'])
-                        content['jsmc'] = item1['xm']
-            classtable.append(content)
-        print(">>>classtable")
-        print(classtable)
-        context['classtable'] = classtable
-        return render(request, 'student_DeleteCourse.html', context=context)
-    elif request.method == 'POST': # 表单选课
-        print(">>>POST")
         return render(request, 'student_DeleteCourse.html', context=context)
 
 @login_required
@@ -663,19 +637,3 @@ def student_CourseTable(request):
     if request.method == 'GET':
         print(">>>GET")
         return render(request, 'student_CourseTable.html', context=context)
-
-@login_required
-def testcheckbox(request):
-    print(">>>testcheckbox")
-    context = get_user_info(request)
-    if request.method == 'GET':
-        print(">>>GET")
-        return render(request, 'testcheckbox.html', context=context)
-
-@login_required
-def testcheckbox2(request):
-    print(">>>testcheckbox2")
-    context = get_user_info(request)
-    if request.method == 'GET':
-        print(">>>GET")
-        return render(request, 'testcheckbox2.html', context=context)
