@@ -7,6 +7,7 @@ from django.contrib.auth import login, logout
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .models import S,D,T,C,O,E
+import json
 
 # Create your views here.
 # 学生信息列表处理函数
@@ -676,9 +677,17 @@ def student_DeleteCourse(request):
         print(classtable)
         context['classtable'] = classtable
         return render(request, 'student_DeleteCourse.html', context=context)
-    elif request.method == 'POST': # 表单选课
+    elif request.method == 'POST': # 表单退课
         print(">>>POST")
-        return render(request, 'student_DeleteCourse.html', context=context)
+        context['kh_array'] = request.POST.get('kh_array')
+        context['gh_array'] = request.POST.get('gh_array')
+        print(context['kh_array'])
+        print(context['gh_array'])
+        return HttpResponse(json.dumps({
+            "status": status,
+            "result": result
+        }))
+        # return render(request, 'student_DeleteCourse.html', context=context)
 
 @login_required
 def student_QueryGrades(request):

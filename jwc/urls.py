@@ -18,6 +18,8 @@ from django.urls import path, re_path
 from django.conf.urls import url, include
 from EMSystem import views
 
+# url(r'^student/DeleteCourse', views.student_DeleteCourse, name="student_DeleteCourse1"),  # 学生退课
+
 urlpatterns = [
     path('django_admin/', admin.site.urls),
     # url(r'^EMSystem/', include('EMSystem.urls'))
@@ -27,7 +29,7 @@ urlpatterns = [
     path('student/', views.student_index),  # 学生
     path('student/QueryCourse', views.student_QueryCourse,name="student_QueryCourse"),  # 学生课程查询
     path('student/AddCourse', views.student_AddCourse, name="student_AddCourse"),  # 学生选课
-    path('student/DeleteCourse', views.student_DeleteCourse, name="student_DeleteCourse"),  # 学生退课
+    url(r'^student/DeleteCourse', views.student_DeleteCourse, name="student_DeleteCourse"),  # 学生退课
     path('student/QueryGrades', views.student_QueryGrades, name="student_QueryGrades"),  # 学生成绩查询
     path('student/CourseTable', views.student_CourseTable, name="student_CourseTable"),  # 学生课表查询
     path('admin/StudentManagement', views.student_Management, name="student_Management"),  # 学生管理
