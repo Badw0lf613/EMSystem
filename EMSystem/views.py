@@ -136,14 +136,34 @@ def add_student(request):                 # 学生添加
         new_s = S.objects.create(xh=keys['xh'], xm=keys['xm'], xb=keys['xb'], csrq=keys['csrq'],
                                  jg=keys['jg'], sjhm=keys['sjhm'], yxh_id=yxh)
         new_s.save()
-    return redirect('/admin/StudentManagement/search/')
+    result = S.objects.all()
+    students = []
+    for item in result:
+        res = obj2dict(item)
+        d = D.objects.all()
+        tmp = d.filter(yxh=res['yxh_id'])
+        yxm = obj2dict(tmp[0])['yxm']
+        del res['yxh_id']
+        res['yxm'] = yxm
+        students.append(res)
+    return render(request, 'student_Management.html', {'students': students, 'search': 1})
 
 @login_required
 def delete_student(request):                    # 学生删除
     print(">>>delete")
     xh = request.GET.get("xh")
     S.objects.filter(xh=xh).delete()
-    return redirect('/admin/StudentManagement/search/')
+    result = S.objects.all()
+    students = []
+    for item in result:
+        res = obj2dict(item)
+        d = D.objects.all()
+        tmp = d.filter(yxh=res['yxh_id'])
+        yxm = obj2dict(tmp[0])['yxm']
+        del res['yxh_id']
+        res['yxm'] = yxm
+        students.append(res)
+    return render(request, 'student_Management.html', {'students': students, 'search': 1})
 
 @login_required
 def edit_student(request):
@@ -159,13 +179,24 @@ def edit_student(request):
     tmp = d.filter(yxm__contains=yx)
     yx = obj2dict(tmp[0])['yxh']
     S.objects.filter(xh=xh).update(xh=xh, xm=xm, xb=xb, csrq=csrq, jg=jg, sjhm=sjhm, yxh_id=yx)
-    return redirect('/admin/StudentManagement/search/')
+    result = S.objects.all()
+    students = []
+    for item in result:
+        res = obj2dict(item)
+        d = D.objects.all()
+        tmp = d.filter(yxh=res['yxh_id'])
+        yxm = obj2dict(tmp[0])['yxm']
+        del res['yxh_id']
+        res['yxm'] = yxm
+        students.append(res)
+    return render(request, 'student_Management.html', {'students': students, 'search': 1})
 
 @login_required
 def search_student(request):
     print(">>>search")
     chosen_xh = request.GET.get('chosen_xh')
     if request.method == 'POST':
+        print("post")
         keys = {}
         keys['xh'] = request.POST.get('xh')
         keys['xm'] = request.POST.get('xm')
@@ -202,6 +233,7 @@ def search_student(request):
             result = result.filter(yxh_id=yxh)
             all = False
     else:
+        print("get")
         result = S.objects.all()
         result = result.filter(xh=chosen_xh)
         all = False
