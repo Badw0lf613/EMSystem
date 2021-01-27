@@ -14,7 +14,7 @@
 &emsp;&emsp;是否要考虑一个老师一学期同一门课开两次的情况（如信号处理）。
 ### 学生端退课student_DeleteCourse
 ![image](https://github.com/Badw0lf613/EMSystem/blob/master/static/images/tk.png)
-&emsp;&emsp;复选框效果完成，但仍无法取框的id即无法做到删除对应的课程。
+&emsp;&emsp;复选框效果完成，但仍无法取到框的id即无法做到删除对应的课程。
 ### 学生端成绩查询student_QueryGrades
 ### 学生端课表student_CourseTable
 ### 院系号变院系
