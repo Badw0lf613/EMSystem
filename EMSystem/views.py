@@ -4,7 +4,8 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from .models import S,D,T,C,O,E
 import json
@@ -536,30 +537,37 @@ def student_AddCourse(request):
                 for item in result:
                     content = obj2dict(item)
                     result_id.append(content)
-                item = E.objects.create(
-                    id=result_id[0]['id'],
-                    xn='2020-2021学年',
-                    xq='2020-2021学年春季学期',
-                    gh=T.objects.filter(gh=context['gh' + str(i)])[0], # E表的外键，T表的主键，需要使用另一张表的原型
-                    # gh=context['gh' + str(i)],
-                    # kh=O.objects.filter(xq='2019-2020学年冬季学期', kh=context['kh' + str(i)], gh=T.objects.filter(gh=gh)[0])[0],
-                    kh=context['kh' + str(i)],
-                    xh=S.objects.filter(xh=request.user.username)[0]
-                )
-                # item = E(
-                #     xn='2020-2021学年',
-                #     xq='2020-2021学年春季学期',
-                #     gh=context['gh' + str(i)],
-                #     kh=context['kh' + str(i)],
-                #     xh=request.user.username
-                # )
-                print(">>>item")
-                print(item)
-                item.save()
-                m['kh'] = context['kh' + str(i)]
-                m['gh'] = context['gh' + str(i)]
-                m['res'] = '选课成功'
-                msg.append(m)
+                if E.objects.filter(id=result_id[0]['id'], xh=request.user.username).exists(): # xx学号的学生选课表内已有id课程
+                    m['kh'] = context['kh' + str(i)]
+                    m['gh'] = context['gh' + str(i)]
+                    m['res'] = '选课失败：已选此课程'
+                    msg.append(m)
+                    continue
+                else:
+                    item = E.objects.create(
+                        id=result_id[0]['id'],
+                        xn='2020-2021学年',
+                        xq='2020-2021学年春季学期',
+                        gh=T.objects.filter(gh=context['gh' + str(i)])[0], # E表的外键，T表的主键，需要使用另一张表的原型
+                        # gh=context['gh' + str(i)],
+                        # kh=O.objects.filter(xq='2019-2020学年冬季学期', kh=context['kh' + str(i)], gh=T.objects.filter(gh=gh)[0])[0],
+                        kh=context['kh' + str(i)],
+                        xh=S.objects.filter(xh=request.user.username)[0]
+                    )
+                    # item = E(
+                    #     xn='2020-2021学年',
+                    #     xq='2020-2021学年春季学期',
+                    #     gh=context['gh' + str(i)],
+                    #     kh=context['kh' + str(i)],
+                    #     xh=request.user.username
+                    # )
+                    print(">>>item")
+                    print(item)
+                    item.save()
+                    m['kh'] = context['kh' + str(i)]
+                    m['gh'] = context['gh' + str(i)]
+                    m['res'] = '选课成功'
+                    msg.append(m)
             elif len(context['kh' + str(i)]) or len(context['gh' + str(i)]):
                 m['kh'] = context['kh' + str(i)]
                 m['gh'] = context['gh' + str(i)]
@@ -628,6 +636,8 @@ def student_AddCourse(request):
         print(context)
         return render(request, 'student_AddCourse.html', context=context)
 
+# 针对403问题，对此次view请求取消csrf验证
+@csrf_exempt
 @login_required
 def student_DeleteCourse(request):
     print(">>>student_DeleteCourse")
@@ -695,15 +705,93 @@ def student_DeleteCourse(request):
         return render(request, 'student_DeleteCourse.html', context=context)
     elif request.method == 'POST': # 表单退课
         print(">>>POST")
-        context['kh_array'] = request.POST.get('kh_array')
-        context['gh_array'] = request.POST.get('gh_array')
+        # print(request.body)
+        # 需要使用request.body来获取内容
+        data = json.loads(request.body.decode('utf-8'))
+        context['kh_array'] = data.get('kh_array')
+        context['gh_array'] = data.get('gh_array')
+        # context['kh_array'] = request.POST.get('kh_array')
+        # context['gh_array'] = request.POST.get('gh_array')
         print(context['kh_array'])
         print(context['gh_array'])
-        return HttpResponse(json.dumps({
-            "status": status,
-            "result": result
-        }))
-        # return render(request, 'student_DeleteCourse.html', context=context)
+        # 接下来做删除课程操作
+        msg = [] # 列表存储删除的课程，后发现无法传回给前端
+        for i in range(0,len(context['kh_array'])):
+            m = {}  # 临时字典存储课号，工号和结果
+            if context['kh_array'][i] == '课程号': # 获取到了全选框所在行的内容，此次不做
+                print(context['kh_array'][i])
+                continue
+            m['kh'] = context['kh_array'][i]
+            m['gh'] = context['gh_array'][i]
+            m['res'] = '退课成功'
+            msg.append(m)
+            E.objects.filter(xq='2020-2021学年春季学期', xh=request.user.username, kh=context['kh_array'][i], gh=context['gh_array'][i]).delete()
+        print(">>>msg")
+        print(msg)
+        context['msg'] = msg
+        result = E.objects.filter(xq='2020-2021学年春季学期', xh=request.user.username)
+        opentable = []  # 开课表，记录工号和上课时间
+        teachertable = []  # 教师表，记录工号和姓名
+        ghlist = []  # 列表记录使用教师名称在教师表查询到的内容，从其中取出工号
+        classtable1 = []  # 列表记录课程名称、学分、学时和院系号
+        classtable = []
+        for item in result:  # 将对象转换为字典
+            content = obj2dict(item)
+            result1 = O.objects.filter(id=content['id'])  # 进行提取工号和上课时间
+            for item1 in result1:  # 将对象转换为字典
+                content1 = obj2dict(item1)
+                opentable.append(content1)
+                ghlist.append(content1['gh_id'])
+                # classtable[]
+            print(">>>opentable")
+            print(opentable)
+            print(">>>ghlist")
+            print(ghlist)
+            result2 = T.objects.filter(gh__in=ghlist)  # 成功
+            for item2 in result2:  # 将对象转换为字典
+                content2 = obj2dict(item2)
+                teachertable.append(content2)
+                # classtable[]
+            print(">>>teachertable")
+            print(teachertable)
+            print(content['id'])
+            result3 = C.objects.filter(id=content['id'])  # 进行提取课程名称学分学时院系号
+            for item3 in result3:  # 将对象转换为字典
+                content3 = obj2dict(item3)
+                classtable1.append(content3)
+                # classtable[]
+            print(">>>classtable1")
+            print(classtable1)
+        idlist = []  # 列表记录O表课程id
+        for t1 in opentable:
+            idlist.append(t1['id'])
+        print(">>>idlist")
+        print(idlist)
+        for item in result:  # 将对象转换为字典
+            content = obj2dict(item)
+            ############# 考虑查询结果如何显示 #####################################
+            if content['id'] in idlist:  # 通过课程id将查询结果中的C表与O表T表对应
+                i = idlist.index(content['id'])  # 找出下标对应的课程id
+                content['gh'] = opentable[i]['gh_id']
+                content['sksj'] = opentable[i]['sksj']
+                content['km'] = classtable1[i]['km']
+                content['xf'] = classtable1[i]['xf']
+                content['xs'] = classtable1[i]['xs']
+                content['yxh'] = classtable1[i]['yxh_id']
+                for item1 in teachertable:
+                    if item1['gh'] == opentable[i]['gh_id']:  # 存在一个老师开多门课，此时需找到每门课程对应的工号，再寻找教师名称
+                        print(">>>111")
+                        print(item1['gh'])
+                        content['jsmc'] = item1['xm']
+            classtable.append(content)
+        print(">>>classtable")
+        print(classtable)
+        context['classtable'] = classtable
+        return render(request, 'student_DeleteCourse.html', context=context)
+        # return HttpResponse(json.dumps({
+        #     "kh_array": context['kh_array'],
+        #     "gh_array": context['gh_array']
+        # }))
 
 @login_required
 def student_QueryGrades(request):

@@ -143,9 +143,9 @@
 
     <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
         <b><font size="4"> 已选课程： </font></b>
-        <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" onclick="showtoast()">
-            <font size="4"> 显示退课结果 </font>
-        </button>
+{#        <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" onclick="showtoast()">#}
+{#            <font size="4"> 显示退课结果 </font>#}
+{#        </button>#}
         <table class="table" id="classtable">
             <thead>
                 <tr>
@@ -261,13 +261,53 @@
                 }
             });
         })*/
+        $('html').ajaxSend(function(event, xhr, settings) {
+
+         function getCookie(name) {
+
+          var cookieValue = null;
+
+          if (document.cookie && document.cookie != '') {
+
+           var cookies = document.cookie.split(';');
+
+           for (var i = 0; i < cookies.length; i++) {
+
+            var cookie = jQuery.trim(cookies[i]);
+
+            // Does this cookie string begin with the name we want?
+
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+
+             cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+
+             break;
+
+            }
+
+           }
+
+          }
+
+          return cookieValue;
+
+         }
+
+         if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+
+          // Only send the token to relative URLs i.e. locally.
+
+          xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+
+         }
+
+        });
 		function submit(){
             var $chkBoxes = $('#classtable').find('input:checked');   //找到被选中的checkbox集
             if ($chkBoxes.length == 0) {         //如果不勾选弹出警告框
-              alert('请至少选择一个数据集');
+              swal('请至少选择一门课程！');
               return false;
             }
-
             var kh_array = new Array();
             var gh_array = new Array();
             console.log($chkBoxes);
@@ -284,51 +324,29 @@
             });
             console.log(kh_array);
             console.log(gh_array);
-            var post_data = new Array();
-            post_data['kh_array'] = kh_array;
-            post_data['gh_array'] = gh_array;
-            console.log(post_data)
+            {#var post_data = new Array();#}
+            {#post_data['kh_array'] = kh_array;#}
+            {#post_data['gh_array'] = gh_array;#}
+            {#console.log(post_data)#}
             $.ajax({
-                {#url: '', {% url 'student_DeleteCourse' %}#}
+                url: '', // http://127.0.0.1:8000/student/DeleteCourse
                 type: "POST",
-                data: post_data,
+                data: JSON.stringify({kh_array:kh_array,gh_array:gh_array}), // JSON.stringify(post_data)
+                contentType: "application/json",
                 success: function (data) {
-                    console.log(data)
-                    data = JSON.parse(data);
-                    console.log(data)
-                    if (data["status"] == 1) {
-                        setSceneTd(data["result"], scece_name, td);
-                    } else {
-                        alert(data["result"]);
-                    }
+                    // console.log(data)
+                    // data = JSON.parse(data)
+                    swal('退课成功！');
+                    setTimeout( function(){
+                        window.location.reload();
+                    }, 1500);//延迟1500毫秒
+                },
+                error: function (data) {
+                    // console.log(data)
+                    alert("ajax请求失败")
                 }
             });
             return false;
-        }
-        function showtoast(){
-            swal({
-                title: "<span style=\"text-align: center; font-size: 30px\">选课结果</span>",
-                text: "{% if msg %}<table class=\"table\" align=\"center\">\n" +
-                    "            <thead>\n" +
-                    "                <tr>\n" +
-                    "                    <th style=\"text-align: left; font-size: 20px\"> 课程号 </th>\n" +
-                    "                    <th style=\"text-align: left; font-size: 20px\"> 工号 </th>\n" +
-                    "                    <th style=\"text-align: left; font-size: 20px\"> 结果 </th>\n" +
-                    "                </tr>\n" +
-                    "            </thead>\n" +
-                    "            <tbody>\n" +
-                    "                {% for m in msg %}\n"+
-                    "                    <tr>\n"+
-                    "                        <td style=\"text-align: left; font-size: 20px\"> {{m.kh}} </td>\n"+
-                    "                        <td style=\"text-align: left; font-size: 20px\"> {{m.gh}} </td>\n"+
-                    "                        <td style=\"text-align: left; font-size: 20px\"> {{m.res}} </td>\n"+
-                    "                    </tr>\n"+
-                    "                {% endfor %}\n" +
-                    "            </tbody>\n" +
-                    "        </table>"+"{% else %}<span style=\"text-align: center; font-size: 20px\">您还未进行退课。</span>{% endif %}",
-                animation: "slide-from-top",
-                html: true
-            })
         }
     </script>
 </body>

@@ -11,10 +11,11 @@
 ### ~~学生端选课student_AddCourse~~~~选课成功/失败信息弹窗~~
 ![image](https://github.com/Badw0lf613/EMSystem/blob/master/static/images/xk.png)
 &emsp;&emsp;学生选课针对当前学期即2020-2021学年春季学期，使用课程号、工号、学期和学号对E表进行查询。首先利用这四个字段在E表中找出id，再分别到C、O、T表中通过id找出课程名称、上课时间和教师名称。<br>
-&emsp;&emsp;是否要考虑一个老师一学期同一门课开两次的情况（如信号处理）。
-### 学生端退课student_DeleteCourse
+&emsp;&emsp;是否要考虑一个老师一学期同一门课开两次的情况（如信号处理）。<br>
+&emsp;&emsp;解决重复选课的bug。
+### ~~学生端退课student_DeleteCourse选课~~
 ![image](https://github.com/Badw0lf613/EMSystem/blob/master/static/images/tk.png)
-&emsp;&emsp;复选框效果完成，但仍无法取到框的id即无法做到删除对应的课程。
+&emsp;&emsp;复选框效果完成，jQuery方法删除对应的课程，对于未选择课程和选课成功均设置弹窗。
 ### 学生端成绩查询student_QueryGrades
 ### 学生端课表student_CourseTable
 ### 院系号变院系
