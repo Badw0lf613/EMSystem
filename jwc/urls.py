@@ -24,7 +24,7 @@ urlpatterns = [
     path('django_admin/', admin.site.urls),
     # url(r'^EMSystem/', include('EMSystem.urls'))
     path('', views.login_view),  # 登录
-    path('admin/', views.admin_index),  # 管理员
+    path('admin/', views.admin_index, name="admin"),  # 管理员
     path('teacher/', views.teacher_index),  # 教师
     path('student/', views.student_index),  # 学生
     path('student/QueryCourse', views.student_QueryCourse,name="student_QueryCourse"),  # 学生课程查询

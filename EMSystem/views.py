@@ -112,11 +112,14 @@ def admin_index(request):
     print(">>>admin")
     user_info = get_admin_info(request)
     print(user_info)
-    return render(request, 'admin_index.html', {'name': user_info['name'], 'yhm': user_info['yhm']})
+    xq = request.POST.get('xq')
+    print(xq)
+    return render(request, 'admin_index.html', {'name': user_info['name'], 'yhm': user_info['yhm'], 'xq': xq})
 
 @login_required
 def student_Management(request):
     print(">>>redirect")
+    print(request.POST.get('xq'))
     return render(request, 'student_Management.html')
 
 @login_required
@@ -131,13 +134,14 @@ def add_student(request):                 # 学生添加
     keys['sjhm'] = request.POST.get('sjhm')
     keys['yx'] = request.POST.get('yx')
 
-    if keys['xh'] is not None:
+    if keys['xh'] is not None:                  # 向表中插入新学生
         d_item = D.objects.filter(yxm__contains=keys['yx'])
         yxh = getattr(d_item[0], 'yxh')
         new_s = S.objects.create(xh=keys['xh'], xm=keys['xm'], xb=keys['xb'], csrq=keys['csrq'],
                                  jg=keys['jg'], sjhm=keys['sjhm'], yxh_id=yxh)
         new_s.save()
-    result = S.objects.all()
+
+    result = S.objects.all()                   # 插入后重新渲染表中所有的学生
     students = []
     for item in result:
         res = obj2dict(item)
@@ -154,7 +158,8 @@ def delete_student(request):                    # 学生删除
     print(">>>delete")
     xh = request.GET.get("xh")
     S.objects.filter(xh=xh).delete()
-    result = S.objects.all()
+
+    result = S.objects.all()                    # 删除后重新渲染表中所有的学生
     students = []
     for item in result:
         res = obj2dict(item)
@@ -167,7 +172,7 @@ def delete_student(request):                    # 学生删除
     return render(request, 'student_Management.html', {'students': students, 'search': 1})
 
 @login_required
-def edit_student(request):
+def edit_student(request):                        # 编辑学生信息
     print(">>>edit")
     xh = request.POST.get('xh')
     xm = request.POST.get('xm')
@@ -176,11 +181,13 @@ def edit_student(request):
     csrq = request.POST.get('csrq')
     sjhm = request.POST.get('sjhm')
     yx = request.POST.get('yx')
-    d = D.objects.all()
+
+    d = D.objects.all()                           # 更新数据库记录
     tmp = d.filter(yxm__contains=yx)
     yx = obj2dict(tmp[0])['yxh']
     S.objects.filter(xh=xh).update(xh=xh, xm=xm, xb=xb, csrq=csrq, jg=jg, sjhm=sjhm, yxh_id=yx)
-    result = S.objects.all()
+
+    result = S.objects.all()                      # 更新后重新渲染表中所有的记录
     students = []
     for item in result:
         res = obj2dict(item)
@@ -193,10 +200,10 @@ def edit_student(request):
     return render(request, 'student_Management.html', {'students': students, 'search': 1})
 
 @login_required
-def search_student(request):
+def search_student(request):                     # 搜索学生
     print(">>>search")
     chosen_xh = request.GET.get('chosen_xh')
-    if request.method == 'POST':
+    if request.method == 'POST':                 # 如果点击查询，则method是post，查询并且渲染符合条件的所有学生
         print("post")
         keys = {}
         keys['xh'] = request.POST.get('xh')
@@ -233,7 +240,7 @@ def search_student(request):
             yxh = obj2dict(yx[0])['yxh']
             result = result.filter(yxh_id=yxh)
             all = False
-    else:
+    else:                                        # 如果点击编辑，则method是get，只显示当前被编辑的一条记录
         print("get")
         result = S.objects.all()
         result = result.filter(xh=chosen_xh)
@@ -248,6 +255,7 @@ def search_student(request):
         del res['yxh_id']
         res['yxm'] = yxm
         students.append(res)
+
     if all == True:
         search = 1
     else:
@@ -256,7 +264,7 @@ def search_student(request):
     return render(request, 'student_Management.html',
                   context={'students': students, 'chosen_xh': chosen_xh, 'search': search})
 
-def obj2dict(obj):
+def obj2dict(obj):                                        # 数据库记录object转换成python字典
     res = {}
     for field in obj._meta.fields:
         name = field.attname

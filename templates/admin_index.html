@@ -4,7 +4,33 @@
 <head>
     <meta charset="UTF-8">
     <link href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/sweetalert.css' %}" rel="stylesheet">
+
     <title>Title</title>
+    <script type="text/javascript">
+        function showtoast() {
+            var key = $('input')[0].attributes[2].nodeValue
+            var str = "<input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=" + key + ">"
+            swal({
+                title: "<span style=\"text-align: center; font-size: 30px\">请选择当前学期</span>",
+                text: "    <form method=\"post\" action=\"{% url 'admin' %}\">\n" + str +
+                    "        <select name=\"xq\">\n" +
+                    "            <option value =\"2020-2021学年秋季学期\"> 2020-2021学年秋季学期 <option>\n" +
+                    "            <option value =\"2020-2021学年冬季学期\"> 2020-2021学年冬季学期 <option>\n" +
+                    "            <option value =\"2020-2021学年春季学期\"> 2020-2021学年春季学期 <option>\n" +
+                    "        </select>\n" +
+                    "        <button type=\"submit\"> 确认 </button>\n" +
+                    "    </form>",
+                type: 'warning',
+                showConfirmButton: false,
+                animation: "slide-from-top",
+                html: true
+            })
+        }
+    </script>
+    <form method="post" style="visibility: hidden">
+        {% csrf_token %}
+    </form>
 </head>
 <body>
 <header class="navbar-header" style="width: 100%; height: 70px">
@@ -23,10 +49,10 @@
         <div class="collapse navbar-collapse" style="float: right">
           <ul class="nav navbar-nav">
             <li>
-                <a href="" style="padding: 25px 15px">
+                <a onclick="showtoast()" style="padding: 25px 15px">
                     <img src="/static/images/calendar.png" style="width: 20px">
                     <span style="font-size: 15px; color: #ffffff">
-                        &emsp;2020-2021学年春季学期
+                        {{ xq }}
                     </span>
                 </a>
             </li>
@@ -117,5 +143,7 @@
     <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>
+    <script src="{% static 'js/sweetalert-dev.js' %}"></script>
+
 </body>
 </html>
