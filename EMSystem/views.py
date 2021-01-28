@@ -8,6 +8,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from .models import S,D,T,C,O,E
+from django.views.decorators.csrf import csrf_exempt
 import json
 
 # Create your views here.
@@ -150,35 +151,20 @@ def add_student(request):                 # 学生添加
                                  jg=keys['jg'], sjhm=keys['sjhm'], yxh_id=yxh)
         new_s.save()
 
-    result = S.objects.all()                   # 插入后重新渲染表中所有的学生
-    students = []
-    for item in result:
-        res = obj2dict(item)
-        d = D.objects.all()
-        tmp = d.filter(yxh=res['yxh_id'])
-        yxm = obj2dict(tmp[0])['yxm']
-        del res['yxh_id']
-        res['yxm'] = yxm
-        students.append(res)
-    return render(request, 'student_Management.html', {'students': students, 'search': 1})
+    return redirect("search", id=1)
 
 @login_required
+@csrf_exempt
 def delete_student(request):                    # 学生删除
     print(">>>delete")
-    xh = request.GET.get("xh")
-    S.objects.filter(xh=xh).delete()
+    data = json.loads(request.body.decode('utf-8'))
+    xh = data.get('xh_array')
+    print(xh)
+    for num in xh[:]:
+        print(num)
+        S.objects.filter(xh=num).delete()
 
-    result = S.objects.all()                    # 删除后重新渲染表中所有的学生
-    students = []
-    for item in result:
-        res = obj2dict(item)
-        d = D.objects.all()
-        tmp = d.filter(yxh=res['yxh_id'])
-        yxm = obj2dict(tmp[0])['yxm']
-        del res['yxh_id']
-        res['yxm'] = yxm
-        students.append(res)
-    return render(request, 'student_Management.html', {'students': students, 'search': 1})
+    return redirect("search", id=1)
 
 @login_required
 def edit_student(request):                        # 编辑学生信息
@@ -195,21 +181,10 @@ def edit_student(request):                        # 编辑学生信息
     tmp = d.filter(yxm__contains=yx)
     yx = obj2dict(tmp[0])['yxh']
     S.objects.filter(xh=xh).update(xh=xh, xm=xm, xb=xb, csrq=csrq, jg=jg, sjhm=sjhm, yxh_id=yx)
-
-    result = S.objects.all()                      # 更新后重新渲染表中所有的记录
-    students = []
-    for item in result:
-        res = obj2dict(item)
-        d = D.objects.all()
-        tmp = d.filter(yxh=res['yxh_id'])
-        yxm = obj2dict(tmp[0])['yxm']
-        del res['yxh_id']
-        res['yxm'] = yxm
-        students.append(res)
-    return render(request, 'student_Management.html', {'students': students, 'search': 1})
+    return redirect("search", id=1)
 
 @login_required
-def search_student(request):                     # 搜索学生
+def search_student(request, id=None):                     # 搜索学生,id是否为None用来判别是否需要显示所有学生
     print(">>>search")
     chosen_xh = request.GET.get('chosen_xh')
     if request.method == 'POST':                 # 如果点击查询，则method是post，查询并且渲染符合条件的所有学生
@@ -252,8 +227,10 @@ def search_student(request):                     # 搜索学生
     else:                                        # 如果点击编辑，则method是get，只显示当前被编辑的一条记录
         print("get")
         result = S.objects.all()
-        result = result.filter(xh=chosen_xh)
-        all = False
+        all =  True
+        if id is None:
+            result = result.filter(xh=chosen_xh)
+            all = False
 
     students = []
     for item in result:
@@ -269,7 +246,7 @@ def search_student(request):                     # 搜索学生
         search = 1
     else:
         search = None
-    # print(students)
+    print(students)
     return render(request, 'student_Management.html',
                   context={'students': students, 'chosen_xh': chosen_xh, 'search': search})
 

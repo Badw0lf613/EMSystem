@@ -10,6 +10,7 @@
         function showtoast() {
             var key = $('input')[0].attributes[2].nodeValue
             console.log(key)
+            console.log($('input'))
             var str = "<input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=" + key + ">"
             swal({
                 title: "<span style=\"text-align: center; font-size: 30px\">请选择当前学期</span>",
@@ -150,7 +151,7 @@
         </form>
     </div>
     <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
-        <table class="table">
+        <table class="table" id="classtable">
             <thead>
                 <tr>
                     <th>学号</th>
@@ -165,7 +166,7 @@
             </thead>
             <tbody>
                 {% for student in students %}
-                <tr>
+                <tr id="normal">
                 {% if student.xh != chosen_xh %}
                     <td>{{ student.xh }} </td>
                     <td>{{ student.xm }} </td>
@@ -175,7 +176,6 @@
                     <td>{{ student.sjhm }} </td>
                     <td>{{ student.yxm }} </td>
                     <td>
-                        <a href="delete?xh={{ student.xh }}"> 删除 </a>
                         <a href="?chosen_xh={{ student.xh }}"> 编辑 </a>
                     </td>
                 {% else %}
@@ -194,11 +194,15 @@
                 </tr>
                 {% endfor %}
                 {% if search is not none %}
-                    <tr> <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" onclick="add_student()">添加学生</button> </tr>
+                    <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" onclick="add_student()">添加学生</button>
+                    <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9; margin-left: 20px" onclick="submit()">
+                        删除
+                    </button>
                 {% endif %}
                 <tr id="add" style="visibility: hidden">
                     <form method="POST" action="add">
                     {% csrf_token %}
+                        <td></td>
                         <td><input name="xh"/></td>
                         <td><input name="xm"></td>
                         <td><input name="xb"/></td>
@@ -228,4 +232,80 @@
             document.getElementById('add').style.visibility="visible";
         }
     }
+    $(function(){
+			function initTableCheckbox() {
+				var $thr = $('table thead tr');
+				console.log($thr)
+				var $checkAllTh = $('<th><input type="checkbox" id="checkAll" name="checkAll" /></th>');
+				/*将全选/反选复选框添加到表头最前，即增加一列*/
+				$thr.prepend($checkAllTh);
+				/*“全选/反选”复选框*/
+				var $checkAll = $thr.find('input');
+				$checkAll.click(function(event){
+					/*将所有行的选中状态设成全选框的选中状态*/
+					$tbr.find('input').prop('checked',$(this).prop('checked'));
+					/*并调整所有选中行的CSS样式*/
+					if ($(this).prop('checked')) {
+						$tbr.find('input').parent().parent().addClass('warning');
+					}
+					else{
+						$tbr.find('input').parent().parent().removeClass('warning');
+					}
+					/*阻止向上冒泡，以防再次触发点击操作*/
+					event.stopPropagation();
+				});
+				/*点击全选框所在单元格时也触发全选框的点击操作*/
+				$checkAllTh.click(function(){
+					$(this).find('input').click();
+				});
+				var $tbr = $('table tbody #normal');
+				var $checkItemTd = $('<td><input type="checkbox" name="checkItem" /></td>');
+				/*每一行都在最前面插入一个选中复选框的单元格*/
+				$tbr.prepend($checkItemTd);
+				/*点击每一行的选中复选框时*/
+				$tbr.find('input').click(function(event){
+					/*调整选中行的CSS样式*/
+					$(this).parent().parent().toggleClass('warning');
+					/*如果已经被选中行的行数等于表格的数据行数，将全选框设为选中状态，否则设为未选中状态*/
+					$checkAll.prop('checked',$tbr.find('input:checked').length == $tbr.length ? true : false);
+					/*阻止向上冒泡，以防再次触发点击操作*/
+					event.stopPropagation();
+				});
+				/*点击每一行时也触发该行的选中操作*/
+				$tbr.click(function(){
+					$(this).find('input').click();
+				});
+			}
+			initTableCheckbox();
+		})
+        function submit(){
+        var $chkBoxes = $('#classtable').find('input:checked');   //找到被选中的checkbox集
+        if ($chkBoxes.length == 0) {         //如果不勾选弹出警告框
+          alert('请至少选择一个数据集');
+          return false;
+        }
+
+        var xh_array = new Array();
+        console.log($chkBoxes);
+        $chkBoxes.each(function () {
+            var mytr = $(this).parent()
+            var myxh = mytr[0].nextElementSibling.innerText;
+            xh_array.push(myxh);
+        });
+        console.log(xh_array);
+        $.ajax({
+            url: '../search/delete',
+            type: "POST",
+            data: JSON.stringify({xh_array: xh_array}),
+            contentType: "application/json",
+            success: function (data) {
+                swal('删除成功！');
+                setTimeout( function(){
+                    window.location.reload();
+                }, 1500 );
+            }
+        });
+        return false;
+    }
+
 </script>
