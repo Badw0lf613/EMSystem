@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+XQ = "2020-2021学年春季学期"
 
 # Application definition
 

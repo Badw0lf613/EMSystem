@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout
 from django.http import HttpResponseRedirect
-from django.urls import reverse
+from django.conf import settings
 from .models import S,D,T,C,O,E
 import json
 
@@ -64,6 +64,7 @@ import json
 #         conn.commit()
 #     return  redirect('../')
 
+
 def get_user_info(request):
     ret={}
     print("request",request.user.username)
@@ -113,14 +114,21 @@ def admin_index(request):
     user_info = get_admin_info(request)
     print(user_info)
     xq = request.POST.get('xq')
+    if xq is None:
+        xq = settings.XQ
+    else:
+        settings.XQ = xq
+
     print(xq)
+    print(settings.XQ)
     return render(request, 'admin_index.html', {'name': user_info['name'], 'yhm': user_info['yhm'], 'xq': xq})
 
 @login_required
 def student_Management(request):
-    print(">>>redirect")
-    print(request.POST.get('xq'))
-    return render(request, 'student_Management.html')
+    print(">>>student_management")
+    xq = settings.XQ
+    print(xq)
+    return render(request, 'student_Management.html', {'xq': xq})
 
 @login_required
 def add_student(request):                 # 学生添加
