@@ -3,6 +3,7 @@
 ## 持续更新中...
 ### 登录页面
 &emsp;&emsp;背景图链接：https://oauth.shu.edu.cn/static/images/login-bg.jpg
+### 学生端选课限制（时间段or学分上限）触发器
 ### ~~学生端课程查询student_QueryCourse~~
 ![image](https://github.com/Badw0lf613/EMSystem/blob/master/static/images/kccx.png)
 &emsp;&emsp;学生查询课程时可以选择学期，因此可以查到非当前学期/当前学期未开设的课程。<br>
@@ -16,7 +17,8 @@
 ### ~~学生端退课student_DeleteCourse选课~~
 ![image](https://github.com/Badw0lf613/EMSystem/blob/master/static/images/tk.png)
 &emsp;&emsp;复选框效果完成，jQuery方法删除对应的课程，对于未选择课程和选课成功均设置弹窗。
-### 学生端成绩查询student_QueryGrades
+### ~~学生端成绩查询student_QueryGrades~~
+![image](https://github.com/Badw0lf613/EMSystem/blob/master/static/images/cjcx.png)
 ### 学生端课表student_CourseTable
 ### 院系号变院系
 ### C变O

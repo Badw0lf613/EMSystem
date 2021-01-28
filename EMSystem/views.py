@@ -774,9 +774,65 @@ def student_DeleteCourse(request):
 def student_QueryGrades(request):
     print(">>>student_QueryGrades")
     context = get_user_info(request)
-    if request.method == 'GET':
-        print(">>>GET")
-        return render(request, 'student_QueryGrades.html', context=context)
+    result = E.objects.filter(xq='2020-2021学年春季学期', xh=request.user.username)
+    opentable = []  # 开课表，记录工号和上课时间
+    teachertable = []  # 教师表，记录工号和姓名
+    ghlist = []  # 列表记录使用教师名称在教师表查询到的内容，从其中取出工号
+    classtable1 = []  # 列表记录课程名称、学分、学时和院系号
+    classtable = []
+    for item in result:  # 将对象转换为字典
+        content = obj2dict(item)
+        result1 = O.objects.filter(id=content['id'])  # 进行提取工号和上课时间
+        for item1 in result1:  # 将对象转换为字典
+            content1 = obj2dict(item1)
+            opentable.append(content1)
+            ghlist.append(content1['gh_id'])
+            # classtable[]
+        print(">>>opentable")
+        print(opentable)
+        print(">>>ghlist")
+        print(ghlist)
+        result2 = T.objects.filter(gh__in=ghlist)  # 成功
+        for item2 in result2:  # 将对象转换为字典
+            content2 = obj2dict(item2)
+            teachertable.append(content2)
+            # classtable[]
+        print(">>>teachertable")
+        print(teachertable)
+        print(content['id'])
+        result3 = C.objects.filter(id=content['id'])  # 进行提取课程名称学分学时院系号
+        for item3 in result3:  # 将对象转换为字典
+            content3 = obj2dict(item3)
+            classtable1.append(content3)
+            # classtable[]
+        print(">>>classtable1")
+        print(classtable1)
+    idlist = []  # 列表记录O表课程id
+    for t1 in opentable:
+        idlist.append(t1['id'])
+    print(">>>idlist")
+    print(idlist)
+    for item in result:  # 将对象转换为字典
+        content = obj2dict(item)
+        ############# 考虑查询结果如何显示 #####################################
+        if content['id'] in idlist:  # 通过课程id将查询结果中的C表与O表T表对应
+            i = idlist.index(content['id'])  # 找出下标对应的课程id
+            content['gh'] = opentable[i]['gh_id']
+            content['sksj'] = opentable[i]['sksj']
+            content['km'] = classtable1[i]['km']
+            content['xf'] = classtable1[i]['xf']
+            content['xs'] = classtable1[i]['xs']
+            content['yxh'] = classtable1[i]['yxh_id']
+            for item1 in teachertable:
+                if item1['gh'] == opentable[i]['gh_id']:  # 存在一个老师开多门课，此时需找到每门课程对应的工号，再寻找教师名称
+                    print(">>>111")
+                    print(item1['gh'])
+                    content['jsmc'] = item1['xm']
+        classtable.append(content)
+    print(">>>classtable")
+    print(classtable)
+    context['classtable'] = classtable
+    return render(request, 'student_QueryGrades.html', context=context)
 
 @login_required
 def student_CourseTable(request):
