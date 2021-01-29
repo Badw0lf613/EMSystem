@@ -32,12 +32,21 @@ urlpatterns = [
     path('student/DeleteCourse', views.student_DeleteCourse, name="student_DeleteCourse"),  # 学生退课
     path('student/QueryGrades', views.student_QueryGrades, name="student_QueryGrades"),  # 学生成绩查询
     path('student/CourseTable', views.student_CourseTable, name="student_CourseTable"),  # 学生课表查询
-    path('admin/StudentManagement', views.student_Management, name="student_Management"),  # 学生管理
-    path('admin/StudentManagement/search/delete', views.delete_student, name="student_Delete"), # 删除学生
-    path('admin/StudentManagement/search/edit', views.edit_student),  # 编辑学生
-    path('admin/StudentManagement/search/add', views.add_student),  # 添加学生
-    path('admin/StudentManagement/search/', views.search_student),
-    path('admin/StudentManagement/search/<int:id>', views.search_student, name="search"),
+
+    # path('admin/StudentManagement<int:type>', views.student_Management, name="student_Management"),  # 学生管理
+    # path('admin/StudentManagement<int:type>/search/delete', views.delete_student, name="student_Delete"), # 删除学生
+    # path('admin/StudentManagement<int:type>/search/edit', views.edit_student),  # 编辑学生
+    # path('admin/StudentManagement<int:type>/search/add', views.add_student),  # 添加学生
+    # path('admin/StudentManagement<int:type>/search/', views.search_student), # 搜索学生
+    # path('admin/StudentManagement<int:type>/search/<int:flag>', views.search_student, name="search"), # 搜索学生
+
+    path('admin/Management<int:type>', views.Management, name="Management"),  # 学生管理
+    path('admin/Management<int:type>/search/delete', views.delete, name="Delete"),  # 删除学生
+    path('admin/Management<int:type>/search/edit', views.edit),  # 编辑学生
+    path('admin/Management<int:type>/search/add', views.add),  # 添加学生
+    path('admin/Management<int:type>/search/', views.search, name="search_all"),  # 搜索学生
+    path('admin/Management<int:type>/search/<int:flag>', views.search, name="search"),  # 搜索学生
+
     path('test', views.testcheckbox),  # 测试复选框样式
     path('test2', views.testcheckbox2),  # 测试复选框样式2
     # path('student/<username>/',views.student_view,name='username')

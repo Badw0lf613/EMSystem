@@ -137,7 +137,7 @@
     <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
         <b><font size="4"> 请输入学生信息： </font></b>
         <br><br>
-        <form class="form-inline" role="form" method="POST" action="/admin/StudentManagement/search/">
+        <form class="form-inline" role="form" method="POST" action="{% url 'search_all' type=1 %}">
             {% csrf_token %}
             <div class="form-group">学号：<input class="form-control form-control-inline" name="xh"/></div>
             <div class="form-group">姓名：<input class="form-control form-control-inline" name="xm"/></div>
@@ -176,7 +176,7 @@
                     <td>{{ student.sjhm }} </td>
                     <td>{{ student.yxm }} </td>
                     <td>
-                        <a href="?chosen_xh={{ student.xh }}"> 编辑 </a>
+                        <a href="1?chosen_xh={{ student.xh }}"> 编辑 </a>
                     </td>
                 {% else %}
                     <form method="POST" role="form" action="edit">

@@ -126,14 +126,15 @@ def admin_index(request):
     return render(request, 'admin_index.html', {'name': user_info['name'], 'yhm': user_info['yhm'], 'xq': xq})
 
 @login_required
-def student_Management(request):
+def Management(request, type):
     print(">>>student_management")
     xq = settings.XQ
     print(xq)
+    print(type)
     return render(request, 'student_Management.html', {'xq': xq})
 
 @login_required
-def add_student(request):                 # 学生添加
+def add(request, type):                 # 学生添加
     print("add")
     keys = {}
     keys['xh'] = request.POST.get('xh')
@@ -151,11 +152,11 @@ def add_student(request):                 # 学生添加
                                  jg=keys['jg'], sjhm=keys['sjhm'], yxh_id=yxh)
         new_s.save()
 
-    return redirect("search", id=1)
+    return redirect("search", type=1, flag=1)
 
 @login_required
 @csrf_exempt
-def delete_student(request):                    # 学生删除
+def delete(request, type):                    # 学生删除
     print(">>>delete")
     data = json.loads(request.body.decode('utf-8'))
     xh = data.get('xh_array')
@@ -164,10 +165,10 @@ def delete_student(request):                    # 学生删除
         print(num)
         S.objects.filter(xh=num).delete()
 
-    return redirect("search", id=1)
+    return redirect("search", type=1, flag=1)
 
 @login_required
-def edit_student(request):                        # 编辑学生信息
+def edit(request, type):                        # 编辑学生信息
     print(">>>edit")
     xh = request.POST.get('xh')
     xm = request.POST.get('xm')
@@ -181,11 +182,12 @@ def edit_student(request):                        # 编辑学生信息
     tmp = d.filter(yxm__contains=yx)
     yx = obj2dict(tmp[0])['yxh']
     S.objects.filter(xh=xh).update(xh=xh, xm=xm, xb=xb, csrq=csrq, jg=jg, sjhm=sjhm, yxh_id=yx)
-    return redirect("search", id=1)
+    return redirect("search", type=1, flag=1)
 
 @login_required
-def search_student(request, id=None):                     # 搜索学生,id是否为None用来判别是否需要显示所有学生
+def search(request, type, flag=None):                     # 搜索学生,flag是否为None用来判别是否需要显示所有学生
     print(">>>search")
+    # print(type)
     chosen_xh = request.GET.get('chosen_xh')
     if request.method == 'POST':                 # 如果点击查询，则method是post，查询并且渲染符合条件的所有学生
         print("post")
@@ -224,11 +226,11 @@ def search_student(request, id=None):                     # 搜索学生,id是�
             yxh = obj2dict(yx[0])['yxh']
             result = result.filter(yxh_id=yxh)
             all = False
-    else:                                        # 如果点击编辑，则method是get，只显示当前被编辑的一条记录
+    else:                                              # 如果method是get则直接显示所有记录
         print("get")
         result = S.objects.all()
         all =  True
-        if id is None:
+        if flag is None:                                 # 如果点击编辑，则method是get，只显示当前被编辑的一条记录
             result = result.filter(xh=chosen_xh)
             all = False
 
