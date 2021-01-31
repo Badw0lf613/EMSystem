@@ -1,0 +1,53 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <title>仿上海大学统一身份认证</title>
+    <link href="{% static 'css/login.css' %}" rel="stylesheet">
+</head>
+<body>
+    <div class="all">
+        <div class="top">
+            <div class="block">
+                <img src="https://oauth.shu.edu.cn/static/images/logo-white.png">
+                <p>仿照上海大学统一身份认证</p>
+            </div>
+        </div>
+        <div class="center">
+            <div class="table">
+                <div class="table_all">
+                    <label class="header-title">登录</label>
+                    <div class="will_login">
+                        <span>您正在登录到：</span>
+                        <span>本硕博一体化选课系统</span>
+                    </div>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="input-item">
+                            <input type="text" class="from_input" name="username">
+                        </div>
+                        <div class="input-item" style="position:relative">
+                            <input type="password" class="from_input" name="password">
+                        </div>
+                        <button type="submit" class="submit" style="margin-top: 20px; background: rgb(39, 80, 133);"> 登录 </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="bottom">
+                <p>参考网址：上海大学统一身份认证（https://oauth.shu.edu.cn）</p>
+                <p style="color: red">如有侵权请联系删除</p>
+            </div>
+        </div>
+    </div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>
+</body>
+</html>

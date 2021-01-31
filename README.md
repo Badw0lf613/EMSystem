@@ -1,8 +1,12 @@
 # EMSystem（教务管理系统）
 ## 上海大学数据库课程项目
 ## 持续更新中...
-### 登录页面
-&emsp;&emsp;背景图链接：https://oauth.shu.edu.cn/static/images/login-bg.jpg
+### ~~登录页面~~
+背景图链接： <br>
+https://oauth.shu.edu.cn/static/images/headerbg.jpg <br>
+https://oauth.shu.edu.cn/static/images/footerbg.jpg <br>
+https://oauth.shu.edu.cn/static/images/login-bg.jpg <br>
+https://oauth.shu.edu.cn/static/images/logo-white.png
 ### 学生端选课限制（时间段or学分上限）触发器
 ### ~~学生端课程查询student_QueryCourse~~
 ![image](https://github.com/Badw0lf613/EMSystem/blob/master/static/images/kccx.png)

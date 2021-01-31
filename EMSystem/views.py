@@ -108,7 +108,7 @@ def login_view(request):
     # else:
     #     user = User.objects.create_user(username='student', email='123456@qq.com', password='1234')
     #     user.save()
-    return render(request, 'login.html')
+    return render(request, 'testlogin.html')
 
 @login_required
 def admin_index(request):

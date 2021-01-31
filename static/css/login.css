@@ -1,0 +1,131 @@
+.all,.center{
+    min-width:1100px;
+    min-height:800px
+}
+.all,.block img,.select,.top{
+     position:absolute
+ }
+.all,.block,.center{
+    min-width:1100px
+}
+* {
+    margin:0;
+    padding:0;
+    box-sizing:border-box
+}
+li,ul{
+    list-style:none
+}
+.noticejs .item{
+    background-color:#98afcc
+}
+.all{
+    overflow:hidden;
+    font-size:17px;
+    width:100%;
+    height:100%
+}
+.top{
+    width:100%;
+    height:95px;
+    background:url('https://oauth.shu.edu.cn/static/images/headerbg.jpg') repeat-x
+}
+.block{
+    width:80%;
+    height:100%;
+    margin:0 auto;
+    position:relative
+}
+.block img{
+    height:71px;
+    width:auto;
+    margin-top:12px;
+    left:0
+}
+.block p{
+    display: block;
+    line-height: 95px;
+    text-align: center;
+    height:auto;
+    color: #ffffff;
+    font-size: 48px;
+}
+.table,.table_all{
+    transform:translate(-50%,-50%);
+    width:360px;
+    position:absolute
+}
+.center{
+    height:100%;
+    background:url('https://oauth.shu.edu.cn/static/images/login-bg.jpg') center/cover repeat-x #ccc
+}
+.table{
+    left:80%;
+    top:40%
+}
+.table_all{
+    background:rgba(255,255,255,.8);
+    left:50%;
+    top:50%;
+    border-top:4px solid #275085;
+    padding:10px 25px 5px
+}
+.header-title{
+    width:100%;
+    height:30px;
+    line-height:30px;
+    font-size:22px;
+    color:#275085
+}
+.will_login{
+    overflow:auto;
+    font-size:13px;
+    color:#275085;
+    margin:5px 0 -12px
+}
+.input-item{
+    margin-top:20px
+}
+.input-item input{
+    position:relative;
+    width:100%;
+    display:block;
+    padding:10px;
+    border:1px solid #ddd;
+    color:#222;
+    background:#fff;
+    border-radius:3px;
+    outline:0
+}
+.submit {
+    text-align: center;
+    line-height: 35px;
+    height: 35px;
+    outline: 0;
+    background-color: #275085;
+    border: none;
+    color: #fff;
+    width: 100%;
+    border-radius: .2rem;
+}
+.footer{
+    font-size:12px;
+    color:#fff;
+    position:absolute;
+    bottom:0;
+    width:100%;
+    height:78px;
+    background:url('https://oauth.shu.edu.cn/static/images/footerbg.jpg') repeat-x
+}
+.bottom{
+    height:78px;
+    text-align:center;
+    width:50%;
+    margin:0 auto;
+    padding-top:10px
+}
+.bottom p{
+    margin:0;
+    height:auto;
+    font-size: 28px;
+}
