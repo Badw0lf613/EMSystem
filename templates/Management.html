@@ -135,23 +135,40 @@
         </ul>
     </div>
     <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
-        <b><font size="4"> 请输入学生信息： </font></b>
-        <br><br>
-        <form class="form-inline" role="form" method="POST" action="{% url 'search_all' type=1 %}">
-            {% csrf_token %}
-            <div class="form-group">学号：<input class="form-control form-control-inline" name="xh"/></div>
-            <div class="form-group">姓名：<input class="form-control form-control-inline" name="xm"/></div>
-            <div class="form-group">性别：<input class="form-control form-control-inline" name="xb"/></div>
-            <div class="form-group">出生日期：<input class="form-control form-control-inline" name="csrq" type="date"/></div>
-            <div class="form-group">籍贯：<input class="form-control form-control-inline" name="jg"/></div>
-            <div class="form-group">手机号码：<input class="form-control form-control-inline" name="sjhm"/></div>
-            <div class="form-group" style="margin-top: 20px">院系：<input class="form-control form-control-inline" name="yx"/></div>
+        {% if type == 1 %}
+            <b><font size="4"> 请输入学生信息： </font></b>
             <br><br>
-            <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="查询">
-        </form>
+            <form class="form-inline" role="form" method="POST" action="{% url 'search_all' type=1 %}">
+                {% csrf_token %}
+                <div class="form-group">学号：<input class="form-control form-control-inline" name="xh"/></div>
+                <div class="form-group">姓名：<input class="form-control form-control-inline" name="xm"/></div>
+                <div class="form-group">性别：<input class="form-control form-control-inline" name="xb"/></div>
+                <div class="form-group">出生日期：<input class="form-control form-control-inline" name="csrq" type="date"/></div>
+                <div class="form-group">籍贯：<input class="form-control form-control-inline" name="jg"/></div>
+                <div class="form-group">手机号码：<input class="form-control form-control-inline" name="sjhm"/></div>
+                <div class="form-group" style="margin-top: 20px">院系：<input class="form-control form-control-inline" name="yx"/></div>
+                <br><br>
+                <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="查询">
+            </form>
+        {% elif type == 2 %}
+            <b><font size="4"> 请输入教师信息： </font></b>
+            <br><br>
+            <form class="form-inline" role="form" method="POST" action="{% url 'search_all' type=2 %}">
+                {% csrf_token %}
+                <div class="form-group">工号：<input class="form-control form-control-inline" name="gh"/></div>
+                <div class="form-group">姓名：<input class="form-control form-control-inline" name="xm"/></div>
+                <div class="form-group">性别：<input class="form-control form-control-inline" name="xb"/></div>
+                <div class="form-group">出生日期：<input class="form-control form-control-inline" name="csrq" type="date"/></div>
+                <div class="form-group">学历：<input class="form-control form-control-inline" name="xl"/></div>
+                <div class="form-group">院系：<input class="form-control form-control-inline" name="yx"/></div>
+                <br><br>
+                <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="查询">
+            </form>
+        {% endif %}
     </div>
     <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
         <table class="table" id="classtable">
+        {% if type == 1 %}
             <thead>
                 <tr>
                     <th>学号</th>
@@ -194,7 +211,7 @@
                 </tr>
                 {% endfor %}
                 {% if search is not none %}
-                    <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" onclick="add_student()">添加学生</button>
+                    <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" onclick="add()">添加学生</button>
                     <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9; margin-left: 20px" onclick="submit()">
                         删除
                     </button>
@@ -214,6 +231,75 @@
                     </form>
                 </tr>
             </tbody>
+
+        {% elif type == 2 %}
+            <thead>
+                <tr>
+                    <th>工号</th>
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>出生日期</th>
+                    <th>学历</th>
+                    <th>工资</th>
+                    <th>院系</th>
+                    <th>评分</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for teacher in teachers %}
+                <tr id="normal">
+                {% if teacher.gh != chosen_gh %}
+                    <td>{{ teacher.gh }} </td>
+                    <td>{{ teacher.xm }} </td>
+                    <td>{{ teacher.xb }} </td>
+                    <td>{{ teacher.csrq }} </td>
+                    <td>{{ teacher.xl }} </td>
+                    <td>{{ teacher.gz }} </td>
+                    <td>{{ teacher.yxm }} </td>
+                    <td>{{ teacher.pf }} </td>
+                    <td>
+                        <a href="1?chosen_gh={{ teacher.gh }}"> 编辑 </a>
+                    </td>
+                {% else %}
+                    <form method="POST" role="form" action="edit">
+                    {% csrf_token %}
+                        <td><input name="gh" readonly="{{ true }}" value="{{ teacher.gh }}"/></td>
+                        <td><input name="xm" value="{{ teacher.xm }}"/></td>
+                        <td><input name="xb" value="{{ teacher.xb }}"/></td>
+                        <td><input name="csrq" type="date" value="{{ teacher.csrq }}"/></td>
+                        <td><input name="xl" value="{{ teacher.xl }}"/></td>
+                        <td><input name="gz" value="{{ teacher.gz }}"/></td>
+                        <td><input name="yxm" value="{{ teacher.yxm }}"/></td>
+                        <td><input name="pf" value="{{ teacher.pf }}"/></td>
+                        <td> <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="提交"> </td>
+                    </form>
+                {% endif %}
+                </tr>
+                {% endfor %}
+                {% if search is not none %}
+                    <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" onclick="add()">添加教师</button>
+                    <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9; margin-left: 20px" onclick="submit()">
+                        删除
+                    </button>
+                {% endif %}
+                <tr id="add" style="visibility: hidden">
+                    <form method="POST" action="add">
+                    {% csrf_token %}
+                        <td></td>
+                        <td><input name="gh"/></td>
+                        <td><input name="xm"></td>
+                        <td><input name="xb"/></td>
+                        <td><input name="csrq" type="date"/></td>
+                        <td><input name="xl"/></td>
+                        <td><input name="gz"/></td>
+                        <td><input name="yx"/></td>
+                        <td><input name="pf"/></td>
+                        <td> <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="提交"> </td>
+                    </form>
+                </tr>
+            </tbody>
+        {% endif %}
         </table>
     </div>
 
@@ -226,7 +312,7 @@
 </html>
 
 <script language="javascript" type="text/javascript">
-    function add_student(){
+    function add(){
         if(document.getElementById('add').style.visibility==="hidden")
         {
             document.getElementById('add').style.visibility="visible";
@@ -292,6 +378,7 @@
             var myxh = mytr[0].nextElementSibling.innerText;
             xh_array.push(myxh);
         });
+
         console.log(xh_array);
         $.ajax({
             url: '../search/delete',
