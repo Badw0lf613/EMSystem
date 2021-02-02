@@ -164,6 +164,17 @@
                 <br><br>
                 <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="查询">
             </form>
+        {% elif type == 3 %}
+            <b><font size="4"> 请输入院系信息： </font></b>
+            <br><br>
+            <form class="form-inline" role="form" method="POST" action="{% url 'search_all' type=3 %}">
+                {% csrf_token %}
+                <div class="form-group">院系号：<input class="form-control form-control-inline" name="yxh"/></div>
+                <div class="form-group">院系名：<input class="form-control form-control-inline" name="yxm"/></div>
+                <div class="form-group">地址：<input class="form-control form-control-inline" name="dz"/></div>
+                <br><br>
+                <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="查询">
+            </form>
         {% endif %}
     </div>
     <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
@@ -295,6 +306,57 @@
                         <td><input name="gz"/></td>
                         <td><input name="yx"/></td>
                         <td><input name="pf"/></td>
+                        <td> <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="提交"> </td>
+                    </form>
+                </tr>
+            </tbody>
+        {% elif type == 3 %}
+            <thead>
+                <tr>
+                    <th>院系号</th>
+                    <th>院系名</th>
+                    <th>联系电话</th>
+                    <th>地址</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for department in departments %}
+                <tr id="normal">
+                {% if department.yxh != chosen_yxh %}
+                    <td>{{ department.yxh }} </td>
+                    <td>{{ department.yxm }} </td>
+                    <td>{{ department.lxdh }} </td>
+                    <td>{{ department.dz }} </td>
+                    <td>
+                        <a href="1?chosen_yxh={{ department.yxh }}"> 编辑 </a>
+                    </td>
+                {% else %}
+                    <form method="POST" role="form" action="edit">
+                    {% csrf_token %}
+                        <td><input name="yxh" readonly="{{ true }}" value="{{ department.yxh }}"/></td>
+                        <td><input name="yxm" value="{{ department.yxm }}"/></td>
+                        <td><input name="lxdh" value="{{ department.lxdh }}"/></td>
+                        <td><input name="dz" value="{{ department.dz }}"/></td>
+                        <td> <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="提交"> </td>
+                    </form>
+                {% endif %}
+                </tr>
+                {% endfor %}
+                {% if search is not none %}
+                    <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" onclick="add()">添加院系</button>
+                    <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9; margin-left: 20px" onclick="submit()">
+                        删除
+                    </button>
+                {% endif %}
+                <tr id="add" style="visibility: hidden">
+                    <form method="POST" action="add">
+                    {% csrf_token %}
+                        <td></td>
+                        <td><input name="yxh"/></td>
+                        <td><input name="yxm"></td>
+                        <td><input name="lxdh"/></td>
+                        <td><input name="dz"/></td>
                         <td> <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="提交"> </td>
                     </form>
                 </tr>

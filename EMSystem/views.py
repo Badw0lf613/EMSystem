@@ -136,9 +136,9 @@ def Management(request, type):
 @login_required
 def add(request, type):                 # 添加
     print(">>>add")
-
+    keys = {}
     if type == 1:                          # 添加学生
-        keys = {}
+
         keys['xh'] = request.POST.get('xh')
         keys['xm'] = request.POST.get('xm')
         keys['xb'] = request.POST.get('xb')
@@ -157,7 +157,6 @@ def add(request, type):                 # 添加
         return redirect("search", type=1, flag=1)
 
     elif type == 2:                              # 添加老师
-        keys = {}
         keys['gh'] = request.POST.get('gh')
         keys['xm'] = request.POST.get('xm')
         keys['xb'] = request.POST.get('xb')
@@ -175,6 +174,18 @@ def add(request, type):                 # 添加
             new_t.save()
 
         return redirect("search", type=2, flag=1)
+
+    elif type == 3:                              # 添加院系
+        keys['yxh'] = request.POST.get('yxh')
+        keys['yxm'] = request.POST.get('yxm')
+        keys['lxdh'] = request.POST.get('lxdh')
+        keys['dz'] = request.POST.get('dz')
+
+        if keys['yxh'] is not None:             # 向表中插入新院系
+            new_d = D.objects.create(yxh=keys['yxh'], yxm=keys['yxm'], lxdh=keys['lxdh'], dz=keys['dz'])
+            new_d.save()
+        return redirect("search", type=3, flag=1)
+
 
 @login_required
 @csrf_exempt
@@ -201,10 +212,19 @@ def delete(request, type):                    # 删除
 
         return redirect("search", type=2, flag=1)
 
+    elif type == 3:
+        data = json.loads(request.body.decode('utf-8'))
+        yxh = data.get('xh_array')
+        print(yxh)
+        for num in yxh[:]:
+            print(num)
+            D.objects.filter(yxh=num).delete()
+
+        return redirect("search", type=3, flag=1)
+
 @login_required
 def edit(request, type):                        # 编辑信息
     print(">>>edit")
-
     if type == 1:                             # 编辑学生
         xh = request.POST.get('xh')
         xm = request.POST.get('xm')
@@ -218,6 +238,7 @@ def edit(request, type):                        # 编辑信息
         tmp = d.filter(yxm__contains=yx)
         yx = obj2dict(tmp[0])['yxh']
         S.objects.filter(xh=xh).update(xh=xh, xm=xm, xb=xb, csrq=csrq, jg=jg, sjhm=sjhm, yxh_id=yx)
+
         return redirect("search", type=1, flag=1)
 
     elif type == 2:                            # 编辑老师
@@ -234,7 +255,17 @@ def edit(request, type):                        # 编辑信息
         tmp = d.filter(yxm__contains=yx)
         yx = obj2dict(tmp[0])['yxh']
         T.objects.filter(gh=gh).update(gh=gh, xm=xm, xb=xb, csrq=csrq, xl=xl, gz=gz, yxh_id=yx, pf=pf)
+
         return redirect("search", type=2, flag=1)
+
+    elif type == 3:
+        yxh = request.POST.get('yxh')
+        yxm = request.POST.get('yxm')
+        lxdh = request.POST.get('lxdh')
+        dz = request.POST.get('dz')
+        D.objects.filter(yxh=yxh).update(yxh=yxh, yxm=yxm, lxdh=lxdh, dz=dz)
+
+        return redirect("search", type=3, flag=1)
 
 @login_required
 def search(request, type, flag=None):                     # 搜索学生,flag是否为None用来判别是否需要显示所有学生
@@ -366,6 +397,49 @@ def search(request, type, flag=None):                     # 搜索学生,flag是
         print(teachers)
         return render(request, 'Management.html',
                       context={'teachers': teachers, 'chosen_gh': chosen_gh, 'search': search, 'type': type})
+
+    elif type == 3:
+        chosen_yxh = request.GET.get('chosen_yxh')
+        if request.method == 'POST':  # 如果点击查询，则method是post，查询并且渲染符合条件的所有学生
+            print("post")
+            keys = {}
+            keys['yxh'] = request.POST.get('yxh')
+            keys['yxm'] = request.POST.get('yxm')
+            keys['dz'] = request.POST.get('dz')
+
+            # print(keys)
+            result = D.objects.all()
+            all = True
+            if keys['yxh']:
+                result = result.filter(yxh=keys['yxh'])
+                all = False
+            if keys['yxm']:
+                result = result.filter(yxm__contains=keys['yxm'])
+                all = False
+            if keys['dz']:
+                result = result.filter(dz=keys['dz'])
+                all = False
+
+        else:  # 如果method是get则直接显示所有记录
+            print("get")
+            result = D.objects.all()
+            all = True
+            if flag is None:  # 如果点击编辑，则method是get，只显示当前被编辑的一条记录
+                result = result.filter(yxh=chosen_yxh)
+                all = False
+
+        departments = []
+        for item in result:
+            res = obj2dict(item)
+            departments.append(res)
+
+        if all == True:
+            search = 1
+        else:
+            search = None
+        print(departments)
+        return render(request, 'Management.html',
+                      context={'departments': departments, 'chosen_yxh': chosen_yxh, 'search': search, 'type': type})
 
 def obj2dict(obj):                                        # 数据库记录object转换成python字典
     res = {}
