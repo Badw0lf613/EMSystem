@@ -1,0 +1,150 @@
+
+/*    按钮操作td    */
+.tdSubmit
+{
+	text-align:center;
+}
+
+/*    操作表单TABLE       */
+.tblop
+{
+	width:100%;
+	border:dotted 1px #ccc;
+	border-collapse:collapse;
+}
+.tblop tr th
+{
+	color: Black;
+	padding:3px;
+	vertical-align:middle;
+	border:dotted 1px #ccc;
+	background-color:#E5E6FA;
+    text-align: center;
+}
+.tblop tr td
+{
+	padding:3px;
+	vertical-align:middle;
+	border:dotted 1px #ccc;
+	color: Black;
+}
+
+/*     列表类表格      */
+.tbllist
+{
+	width:100%;
+	border:solid 2px #6187B3;
+	border-collapse:collapse;
+	
+}
+.tbllist tr th
+{
+	color: Black;
+	padding:4px;
+	vertical-align:middle;
+	border:solid 1px #BCBCBE;	
+	background-color:#CFE4F7;
+	border-bottom:none;
+    text-align: center;
+}
+.tbllist tr td
+{
+	padding:4px;
+	vertical-align:middle;
+	border:solid 1px #BCBCBE;
+	color: Black;
+}
+.tbllist tr td a
+{
+	cursor:pointer;
+}
+.td_centercontent
+{
+	text-align:center;
+}
+.tdCheck
+{
+	cursor:pointer;
+}
+/*     列表类表格      */
+.tbllistNoimage
+{
+	width:100%;
+	border:solid 2px #6187B3;
+	border-collapse:collapse;
+	
+}
+.tbllistNoimage > tr > th
+{
+	color: Black;
+	padding:4px;
+	vertical-align:middle;
+	border:solid 1px #BCBCBE;
+	
+	background-color:#CFE4F7;
+	border-bottom:none;
+}
+.tbllistNoimage > tr > td
+{
+	padding:4px;
+	vertical-align:middle;
+	border:solid 1px #BCBCBE;
+}
+.tbllistNoimage > tr > td a
+{
+	cursor:pointer;
+}
+
+table.tblnoborder
+{
+	width:100%;
+	border:solid 1px #BCBCBE;
+	border-collapse:collapse;
+}
+    table.tblnoborder tr th {
+        color: Black;
+        padding: 4px;
+        vertical-align: middle;
+        border: solid 1px #BCBCBE;
+        background-color: #CFE4F7;
+        border-bottom: none;
+        text-align: center;
+    }
+table.tblnoborder tr td
+{
+	padding:4px;
+	vertical-align:middle;
+	border:solid 1px #BCBCBE;
+	color: Black;
+}
+table.tblnoborder tr td a
+{
+	cursor:pointer;
+}
+
+.tblouter
+{
+    width:100%;
+	border:solid 2px #6187B3;
+	border-collapse:collapse;
+}
+    .tblouter tr th {
+        color: Black;
+        padding: 4px;
+        vertical-align: middle;
+        border: solid 1px #BCBCBE;
+        background-color: #CFE4F7;
+        text-align: center;
+    }
+.tblouter tr td
+{
+	padding:4px;
+	vertical-align:middle;
+	border:solid 1px #BCBCBE;
+	color: Black;
+}
+
+td.class2
+{
+    color:Blue;
+}
