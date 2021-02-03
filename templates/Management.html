@@ -175,6 +175,21 @@
                 <br><br>
                 <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="查询">
             </form>
+
+        {% elif type  == 4 %}
+            <b><font size="4"> 请输入课程信息： </font></b>
+            <br><br>
+            <form class="form-inline" role="form" method="POST" action="{% url 'search_all' type=4 %}">
+                {% csrf_token %}
+                <div class="form-group">学期：<input class="form-control form-control-inline" name="xq"/></div>
+                <div class="form-group">课程号：<input class="form-control form-control-inline" name="kh"/></div>
+                <div class="form-group">课程名：<input class="form-control form-control-inline" name="km"/></div>
+                <div class="form-group">学分：<input class="form-control form-control-inline" name="xf"/></div>
+                <div class="form-group">学时：<input class="form-control form-control-inline" name="xs"/></div>
+                <div class="form-group">院系：<input class="form-control form-control-inline" name="yx"/></div>
+                <br><br>
+                <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="查询">
+            </form>
         {% endif %}
     </div>
     <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
@@ -361,6 +376,65 @@
                     </form>
                 </tr>
             </tbody>
+        {% elif type == 4 %}
+            <thead>
+                <tr>
+                    <th>学期</th>
+                    <th>课号</th>
+                    <th>课名</th>
+                    <th>学分</th>
+                    <th>学时</th>
+                    <th>院系</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                <tr id="normal">
+                {% if course.kh != chosen_kh and course.xq != chosen_xq%}
+                    <td>{{ course.xq }} </td>
+                    <td>{{ course.kh }} </td>
+                    <td>{{ course.km }} </td>
+                    <td>{{ course.xf }} </td>
+                    <td>{{ course.xs }} </td>
+                    <td>{{ course.yxm }} </td>
+                    <td>
+                        <a href="1?chosen_xh={{ course.kh }}&chosen_xq={{ course.xq }}"> 编辑 </a>
+                    </td>
+                {% else %}
+                    <form method="POST" role="form" action="edit">
+                    {% csrf_token %}
+                        <td><input name="xq" readonly="{{ true }}" value="{{ course.xq }}"/></td>
+                        <td><input name="kh" readonly="{{ true }}" value="{{ course.kh }}"/></td>
+                        <td><input name="km" value="{{ course.km }}"/></td>
+                        <td><input name="xf" value="{{ course.xf }}"/></td>
+                        <td><input name="xs" value="{{ course.xs }}"/></td>
+                        <td><input name="yx" value="{{ course.yxm }}"/></td>
+                        <td> <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="提交"> </td>
+                    </form>
+                {% endif %}
+                </tr>
+                {% endfor %}
+                {% if search is not none %}
+                    <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" onclick="add()">添加课程</button>
+                    <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9; margin-left: 20px" onclick="submit()">
+                        删除
+                    </button>
+                {% endif %}
+                <tr id="add" style="visibility: hidden">
+                    <form method="POST" action="add">
+                    {% csrf_token %}
+                        <td></td>
+                        <td><input name="xq"/></td>
+                        <td><input name="kh"></td>
+                        <td><input name="km"/></td>
+                        <td><input name="xf"/></td>
+                        <td><input name="xs"/></td>
+                        <td><input name="yx"/></td>
+                        <td> <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="提交"> </td>
+                    </form>
+                </tr>
+            </tbody>
         {% endif %}
         </table>
     </div>
@@ -434,18 +508,21 @@
         }
 
         var xh_array = new Array();
+        var kh_array = new Array();
         console.log($chkBoxes);
         $chkBoxes.each(function () {
             var mytr = $(this).parent()
             var myxh = mytr[0].nextElementSibling.innerText;
+            var mykh = mytr[0].nextElementSibling.nextElementSibling.innerText;
             xh_array.push(myxh);
+            kh_array.push(mykh)
         });
 
         console.log(xh_array);
         $.ajax({
             url: '../search/delete',
             type: "POST",
-            data: JSON.stringify({xh_array: xh_array}),
+            data: JSON.stringify({data_array: xh_array, kh_array: kh_array}),
             contentType: "application/json",
             success: function (data) {
                 swal('删除成功！');
