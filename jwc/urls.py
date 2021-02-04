@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path
 from django.conf.urls import url, include
-from EMSystem import views
+from EMSystem import views, teacher_views
 
 # url(r'^student/DeleteCourse', views.student_DeleteCourse, name="student_DeleteCourse1"),  # 学生退课
 
@@ -25,13 +25,16 @@ urlpatterns = [
     # url(r'^EMSystem/', include('EMSystem.urls'))
     path('', views.login_view),  # 登录
     path('admin/', views.admin_index, name="admin"),  # 管理员
-    path('teacher/', views.teacher_index),  # 教师
+    path('teacher/', teacher_views.index),  # 教师
+    path('teacher/check',teacher_views.check,name="teacher_check"),
+    path('teacher/write',teacher_views.write,name='teacher_write'),
     path('student/', views.student_index),  # 学生
     path('student/QueryCourse', views.student_QueryCourse,name="student_QueryCourse"),  # 学生课程查询
     path('student/AddCourse', views.student_AddCourse, name="student_AddCourse"),  # 学生选课
     path('student/DeleteCourse', views.student_DeleteCourse, name="student_DeleteCourse"),  # 学生退课
     path('student/QueryGrades', views.student_QueryGrades, name="student_QueryGrades"),  # 学生成绩查询
     path('student/CourseTable', views.student_CourseTable, name="student_CourseTable"),  # 学生课表查询
+
 
     # path('admin/StudentManagement<int:type>', views.student_Management, name="student_Management"),  # 学生管理
     # path('admin/StudentManagement<int:type>/search/delete', views.delete_student, name="student_Delete"), # 删除学生

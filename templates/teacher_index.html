@@ -1,10 +1,154 @@
+{% load static %}
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>教师主页</title>
+    <link href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" rel="stylesheet">
 </head>
 <body>
-<text> 这里是老师主页 </text>
+  <div class="row">
+    <header class="navbar-header" style="width: 100%; height: 70px">
+        <nav class="navbar navbar-static-top" style="background: #3c8dbc;">
+      <div class="container-fluid" >
+        <!-- Brand and toggle get grouped for better mobile display -->
+          <button type="button" class="navbar-toggle collapsed"
+                  data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"
+                  aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+          </button>
+          <a class="navbar-brand" href="" style="height:70px; padding: 25px 25px 0px 15px; background: #367fa9">
+              <span style="text-align: center; font-size: 16px; color: #ffffff">
+                  上海大学本硕博一体化选课系统
+              </span>
+          </a>
+        <div class="collapse navbar-collapse" style="float: right">
+          <ul class="nav navbar-nav">
+            <li>
+                <a href="" style="padding: 25px 15px">
+                    <img src="/static/images/chat.png" style="width: 20px">
+                    <span style="font-size: 15px; color: #ffffff">
+                        选课问题咨询解答
+                    </span>
+                </a>
+            </li>
+            <li>
+                <a href="" style="padding: 25px 15px">
+                    <img src="/static/images/calendar.png" style="width: 20px">
+                    <span style="font-size: 15px; color: #ffffff">
+                        &emsp;2020-2021学年春季学期
+                    </span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="" style="padding: 25px 15px">
+                    <img src="/static/images/user.png" style="width: 20px">
+                    <span class="nav-function-text" style="font-size: 15px; color: #ffffff">
+                        &emsp;{{request.user.username}}@S4
+                    </span>
+                    <span class="sr-only">(current)</span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="" style="padding: 25px 15px">
+                    <img src="/static/images/logout.png" style="width: 20px">
+                    <span class="nav-function-text" style="font-size: 15px; color: #ffffff">
+                        安全退出
+                    </span>
+                </a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+        </nav>
+    </header>
+  </div>
+
+  <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3 col-md-2 sidebar" style="min-height:800px;width: 250px;padding:1px 2px 0px 0px">
+                <ul class="nav nav-sidebar" style="background: #8ac3f0 ">
+                    <font size="4" style="color: #385090; padding:0px;font-weight: bold"> 教师信息 </font>
+                    <font size="3">
+                        <p style="padding: 2px 0px;">
+                            教职工号：{{gh}}
+                            <br>
+                            姓名：{{xm}}
+                            <br>
+                            职称（需要修改数据库）：{{zc}}
+                            <br>
+                            所属院系：{{yx}}
+                            <br>
+                            <font color="red"><b><a href="" style="color:red;font-weight:bold;">【安全退出】</a></b></font>
+                        </p>
+                    </font>
+                    <li class="header" style="color: #CCCCCC;background: #1a2226; height: 40px">
+                        <img src="/static/images/mainmenu.png" style="width: 12px; margin-left: 15px">
+                        <span style="font-size: 12px; display: inline-block; line-height: 40px">
+                            主菜单
+                        </span>
+                    </li>
+                    <li class="dropdown" style="background: #1e282c">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img src="/static/images/computer.png" style="width: 20px;">
+                            <span style="color: #CCCCCC;text-align: center;font-size: 14px; display: inline-block; line-height: 40px">
+                                教务操作
+                            </span>
+                            <img src="/static/images/downarrow.png" style="width: 15px; margin-left: 110px">
+                        </a>
+                        <ul class="dropdown-menu" style="color: #CCCCCC;background: #2C3B41; width: 250px">
+                            <li>
+                                <a href="{% url 'teacher_check' %}" style="padding: 5px 5px 5px 15px">
+                                    <img src="/static/images/circle.png" style="width: 15px;">
+                                    <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                        任课查询
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'teacher_write' %}" style="padding: 5px 5px 5px 15px">
+                                    <img src="/static/images/circle.png" style="width: 15px;">
+                                    <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                        学生成绩登录
+                                    </span>
+                                </a>
+                            <li>
+                                <a href="{% url 'student_CourseTable' %}" style="padding: 5px 5px 5px 15px">
+                                    <img src="/static/images/circle.png" style="width: 15px;">
+                                    <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                        开课申请
+                                    </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'student_QueryCourse' %}" style="padding: 5px 5px 5px 15px">
+                                    <img src="/static/images/circle.png" style="width: 15px;">
+                                    <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                        任课申请
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown" style="background: #1e282c">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <img src="/static/images/computer.png" style="width: 20px;">
+                            <span style="color: #CCCCCC;text-align: center;font-size: 14px; display: inline-block; line-height: 40px">
+                                科研操作
+                            </span>
+                            <img src="/static/images/downarrow.png" style="width: 15px; margin-left: 110px">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>
 </body>
 </html>
