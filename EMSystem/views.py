@@ -278,7 +278,7 @@ def edit(request, type):                        # 编辑信息
         yx = request.POST.get('yxm')
         pf = request.POST.get('pf')
 
-        d = D.objects.all()
+        d = D.objects.all()                                  # 更新数据库记录
         tmp = d.filter(yxm__contains=yx)
         yx = obj2dict(tmp[0])['yxh']
         T.objects.filter(gh=gh).update(gh=gh, xm=xm, xb=xb, csrq=csrq, xl=xl, gz=gz, yxh_id=yx, pf=pf)
@@ -574,9 +574,9 @@ def student_index(request):
 def student_QueryCourse(request):
     print(">>>student_QueryCourse")
     context = get_user_info(request)
+    context['xq_now'] = settings.XQ
     if request.method == 'GET':
         print(">>>GET")
-        context['xq_now'] = settings.XQ
         return render(request, 'student_QueryCourse.html', context=context)
     elif request.method == 'POST':
         print(">>>POST")
@@ -706,7 +706,7 @@ def student_QueryCourse(request):
             # 需要在字典中加入gh，jsmc，sksj
             # print(">>>i")
             # print(i)
-            if content['xq'] == '2020-2021学年春季学期':
+            if content['xq'] == context['xq_now']:
                 ############# 考虑查询结果如何显示 #####################################
                 if content['id'] in idlist: # 通过课程id将查询结果中的C表与O表T表对应
                     i = idlist.index(content['id']) # 找出下标对应的课程id
@@ -734,12 +734,10 @@ def student_QueryCourse(request):
 def student_AddCourse(request):
     print(">>>student_AddCourse")
     context = get_user_info(request)
+    context['xq_now'] = settings.XQ
     if request.method == 'GET': # 首次进入显示
         print(">>>GET")
-        context['xq_now'] = settings.XQ
-        print(">>>context['xq_now']")
-        print(context['xq_now'])
-        result = E.objects.filter(xq=str(context['xq_now']), xh=request.user.username)
+        result = E.objects.filter(xq=context['xq_now'], xh=request.user.username)
         opentable = []  # 开课表，记录工号和上课时间
         teachertable = []  # 教师表，记录工号和姓名
         ghlist = []  # 列表记录使用教师名称在教师表查询到的内容，从其中取出工号
@@ -747,8 +745,6 @@ def student_AddCourse(request):
         classtable = []
         for item in result:  # 将对象转换为字典
             content = obj2dict(item)
-            print(">>>content")
-            print(content)
             result1 = O.objects.filter(id=content['id'])  # 进行提取工号和上课时间
             for item1 in result1:  # 将对象转换为字典
                 content1 = obj2dict(item1)
@@ -802,7 +798,6 @@ def student_AddCourse(request):
         return render(request, 'student_AddCourse.html', context=context)
     elif request.method == 'POST': # 表单选课
         print(">>>POST")
-        context['xq_now'] = settings.XQ
         msg = [] # 列表存储选课成功/失败信息的整条记录
         for i in range(1, 5):
             m = {}  # 临时字典存储课号，工号和结果
@@ -926,9 +921,9 @@ def student_AddCourse(request):
 def student_DeleteCourse(request):
     print(">>>student_DeleteCourse")
     context = get_user_info(request)
+    context['xq_now'] = settings.XQ
     if request.method == 'GET': # 首次进入显示
         print(">>>GET")
-        context['xq_now'] = settings.XQ
         result = E.objects.filter(xq=context['xq_now'], xh=request.user.username)
         opentable = []  # 开课表，记录工号和上课时间
         teachertable = []  # 教师表，记录工号和姓名
@@ -992,7 +987,6 @@ def student_DeleteCourse(request):
         print(">>>POST")
         # print(request.body)
         # 需要使用request.body来获取内容
-        context['xq_now'] = settings.XQ
         data = json.loads(request.body.decode('utf-8'))
         context['kh_array'] = data.get('kh_array')
         context['gh_array'] = data.get('gh_array')
