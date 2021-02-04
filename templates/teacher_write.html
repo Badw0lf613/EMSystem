@@ -1,0 +1,201 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>教师详情页</title>
+    <link href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/sweetalert.css' %}" rel="stylesheet">
+</head>
+
+<body>
+    <header class="navbar-header" style="width: 100%; height: 70px">
+        <nav class="navbar navbar-static-top" style="background: #3c8dbc;">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+          </button>
+          <a class="navbar-brand" href="" style="height:70px; padding: 25px 25px 0px 15px; background: #367fa9">
+              <span style="text-align: center; font-size: 15px; color: #ffffff">
+                  上海大学本硕博一体化选课系统
+              </span>
+          </a>
+        <div class="collapse navbar-collapse" style="float: right">
+          <ul class="nav navbar-nav">
+            <li>
+                <a href="" style="padding: 25px 15px">
+                    <img src="/static/images/chat.png" style="width: 20px">
+                    <span style="font-size: 15px; color: #ffffff">
+                        选课问题咨询解答
+                    </span>
+                </a>
+            </li>
+            <li>
+                <a href="" style="padding: 25px 15px">
+                    <img src="/static/images/calendar.png" style="width: 20px">
+                    <span style="font-size: 15px; color: #ffffff">
+                        &emsp;2020-2021学年春季学期
+                    </span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="" style="padding: 25px 15px">
+                    <img src="/static/images/user.png" style="width: 20px">
+                    <span class="nav-function-text" style="font-size: 15px; color: #ffffff">
+                        &emsp;{{request.user.username}}@S4
+                    </span>
+                    <span class="sr-only">(current)</span>
+                </a>
+            </li>
+            <li class="active">
+                <a href="" style="padding: 25px 15px">
+                    <img src="/static/images/logout.png" style="width: 20px">
+                    <span class="nav-function-text" style="font-size: 15px; color: #ffffff">
+                        安全退出
+                    </span>
+                </a>
+            </li>
+          </ul>
+        </div>
+        </nav>
+    </header>
+
+    <div class="col-sm-3 col-md-2 sidebar" style="min-height:800px;width: 250px;padding:1px 2px 0px 0px">
+        <ul class="nav nav-sidebar" style="background: #8ac3f0 ">
+            <font size="4" style="color: #385090; padding:0px;font-weight: bold"> 教师信息 </font>
+            <font size="3">
+                <p style="padding: 2px 0px;">
+                    教职工号：{{gh}}
+                    <br>
+                    姓名：{{xm}}
+                    <br>
+                    职称：{{zc}}
+                    <br>
+                    所属院系：{{yx}}
+                    <br>
+                    <font color="red"><b><a href="" style="color:red;font-weight:bold;">【安全退出】</a></b></font>
+                </p>
+            </font>
+            <li class="header" style="color: #CCCCCC;background: #1a2226; height: 40px">
+                <img src="/static/images/mainmenu.png" style="width: 12px; margin-left: 15px">
+                <span style="font-size: 12px; display: inline-block; line-height: 40px">
+                    主菜单
+                </span>
+            </li>
+            <li class="dropdown" style="background: #1e282c">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <img src="/static/images/computer.png" style="width: 20px;">
+                    <span style="color: #CCCCCC;text-align: center;font-size: 14px; display: inline-block; line-height: 40px">
+                        教务操作
+                    </span>
+                    <img src="/static/images/downarrow.png" style="width: 15px; margin-left: 110px">
+                </a>
+                <ul class="dropdown-menu" style="color: #CCCCCC;background: #2C3B41; width: 250px">
+                    <li>
+                        <a href="{% url 'teacher_check' %}" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                任课查询
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'teacher_write' %}" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                学生成绩登录
+                            </span>
+                        </a>
+                    <li>
+                        <a href="{% url 'student_CourseTable' %}" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                开课申请
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'student_QueryCourse' %}" style="padding: 5px 5px 5px 15px">
+                            <img src="/static/images/circle.png" style="width: 15px;">
+                            <span style="color: #8aa4af;text-align: center;font-size: 14px; display: inline-block; line-height: 40px;">
+                                任课申请
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="dropdown" style="background: #1e282c">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <img src="/static/images/computer.png" style="width: 20px;">
+                    <span style="color: #CCCCCC;text-align: center;font-size: 14px; display: inline-block; line-height: 40px">
+                        科研操作
+                    </span>
+                    <img src="/static/images/downarrow.png" style="width: 15px; margin-left: 110px">
+                </a>
+            </li>
+            </li>
+        </ul>
+    </div>
+
+    <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
+        <b><font size="4"> 课程打分： </font></b>
+        <br><br>
+        <form class="form-inline" role="form" method="POST" action="" >
+            {% csrf_token %}
+            <select name = "kc" type = "submit">
+                {% for kc in k %}
+                    <option value={{ kc.km }}>{{ kc.km }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="确定">
+            <br>
+        </form>
+        <br><br>
+    </div>
+
+    <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
+        <b size = "4">目前正在查询：{{ Xq }}</b>
+        <form class="form-inline" role="form" method="POST" action="" >
+            {% csrf_token %}
+            <input hidden type='text' name='m' value={{ Xq }} >
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th> 学号 </th>
+                        <th> 姓名 </th>
+                        <th> 平时成绩 </th>
+                        <th> 期末考试成绩 </th>
+                        <th> 总评成绩 </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if x != null %}
+                    {% for xs in x %}
+                        <tr>
+                            <td> {{xs.xh}} </td>
+                            <td> {{xs.xm}} </td>
+                            <td><input type="text" name="pscj" class="form-control form-control-inline" style="width:100px;" value={{pscj}}></td>
+                            <td><input type="text" name="kscj" class="form-control form-control-inline" style="width:100px;" value={{kscj}}></td>
+                            <td><input type="text" name="zpcj" class="form-control form-control-inline" style="width:100px;" value={{zpcj}}></td>
+                        </tr>
+                    {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+            <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="确定">
+        </form>
+        {% if messages %}
+        <script>
+            {% for msg in messages %}
+                alert('{{ msg.message }}');
+            {% endfor %}
+        </script>
+        {% endif %}
+    </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>
+</body>
+</html>

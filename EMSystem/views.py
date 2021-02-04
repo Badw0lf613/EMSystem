@@ -557,9 +557,6 @@ def obj2dict(obj):                                        # 数据库记录objec
         res[name] = val
     return res
 
-@login_required
-def teacher_index(request):
-    return render(request, 'teacher_index.html')
 
 @login_required
 def student_index(request):
