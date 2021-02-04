@@ -278,7 +278,7 @@ def edit(request, type):                        # 编辑信息
         yx = request.POST.get('yxm')
         pf = request.POST.get('pf')
 
-        d = D.objects.all()                                  # 更新数据库记录
+        d = D.objects.all()
         tmp = d.filter(yxm__contains=yx)
         yx = obj2dict(tmp[0])['yxh']
         T.objects.filter(gh=gh).update(gh=gh, xm=xm, xb=xb, csrq=csrq, xl=xl, gz=gz, yxh_id=yx, pf=pf)
