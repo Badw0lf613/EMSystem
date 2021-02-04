@@ -35,3 +35,4 @@ https://oauth.shu.edu.cn/static/images/logo-white.png
 管理员：添加角色再加入auth_user表<br>
 开课申请表&认领课程表（0、1区分）：开课人工号，课名，学期，学分
 开课表：加一列，对该老师的评价
+### 管理员切换学期时需要将开课表内容更新！！！
