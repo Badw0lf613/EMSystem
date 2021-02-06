@@ -563,6 +563,7 @@ def student_index(request):
     print(">>>student")
     # print(request.POST.get("context"))
     context = get_user_info(request)
+    context['xq_now'] = settings.XQ
     print(context)
     return render(request, 'student_index.html',context=context)
 
@@ -570,6 +571,7 @@ def student_index(request):
 def student_QueryCourse(request):
     print(">>>student_QueryCourse")
     context = get_user_info(request)
+    context['xq_now'] = settings.XQ
     if request.method == 'GET':
         print(">>>GET")
         return render(request, 'student_QueryCourse.html', context=context)
@@ -701,7 +703,7 @@ def student_QueryCourse(request):
             # 需要在字典中加入gh，jsmc，sksj
             # print(">>>i")
             # print(i)
-            if content['xq'] == '2020-2021学年春季学期':
+            if content['xq'] == context['xq_now']:
                 ############# 考虑查询结果如何显示 #####################################
                 if content['id'] in idlist: # 通过课程id将查询结果中的C表与O表T表对应
                     i = idlist.index(content['id']) # 找出下标对应的课程id
@@ -729,9 +731,10 @@ def student_QueryCourse(request):
 def student_AddCourse(request):
     print(">>>student_AddCourse")
     context = get_user_info(request)
+    context['xq_now'] = settings.XQ
     if request.method == 'GET': # 首次进入显示
         print(">>>GET")
-        result = E.objects.filter(xq='2020-2021学年春季学期', xh=request.user.username)
+        result = E.objects.filter(xq=context['xq_now'], xh=request.user.username)
         opentable = []  # 开课表，记录工号和上课时间
         teachertable = []  # 教师表，记录工号和姓名
         ghlist = []  # 列表记录使用教师名称在教师表查询到的内容，从其中取出工号
@@ -820,7 +823,7 @@ def student_AddCourse(request):
                     item = E.objects.create(
                         id=result_id[0]['id'],
                         xn='2020-2021学年',
-                        xq='2020-2021学年春季学期',
+                        xq=context['xq_now'],
                         gh=T.objects.filter(gh=context['gh' + str(i)])[0], # E表的外键，T表的主键，需要使用另一张表的原型
                         # gh=context['gh' + str(i)],
                         # kh=O.objects.filter(xq='2019-2020学年冬季学期', kh=context['kh' + str(i)], gh=T.objects.filter(gh=gh)[0])[0],
@@ -847,7 +850,7 @@ def student_AddCourse(request):
                 m['res'] = '选课失败：信息未填写完整'
                 msg.append(m)
         context['msg'] = msg
-        result = E.objects.filter(xq='2020-2021学年春季学期', xh=request.user.username)
+        result = E.objects.filter(xq=context['xq_now'], xh=request.user.username)
         opentable = []  # 开课表，记录工号和上课时间
         teachertable = []  # 教师表，记录工号和姓名
         ghlist = []  # 列表记录使用教师名称在教师表查询到的内容，从其中取出工号
@@ -915,9 +918,10 @@ def student_AddCourse(request):
 def student_DeleteCourse(request):
     print(">>>student_DeleteCourse")
     context = get_user_info(request)
+    context['xq_now'] = settings.XQ
     if request.method == 'GET': # 首次进入显示
         print(">>>GET")
-        result = E.objects.filter(xq='2020-2021学年春季学期', xh=request.user.username)
+        result = E.objects.filter(xq=context['xq_now'], xh=request.user.username)
         opentable = []  # 开课表，记录工号和上课时间
         teachertable = []  # 教师表，记录工号和姓名
         ghlist = []  # 列表记录使用教师名称在教师表查询到的内容，从其中取出工号
@@ -998,11 +1002,11 @@ def student_DeleteCourse(request):
             m['gh'] = context['gh_array'][i]
             m['res'] = '退课成功'
             msg.append(m)
-            E.objects.filter(xq='2020-2021学年春季学期', xh=request.user.username, kh=context['kh_array'][i], gh=context['gh_array'][i]).delete()
+            E.objects.filter(xq=context['xq_now'], xh=request.user.username, kh=context['kh_array'][i], gh=context['gh_array'][i]).delete()
         print(">>>msg")
         print(msg)
         context['msg'] = msg
-        result = E.objects.filter(xq='2020-2021学年春季学期', xh=request.user.username)
+        result = E.objects.filter(xq=context['xq_now'], xh=request.user.username)
         opentable = []  # 开课表，记录工号和上课时间
         teachertable = []  # 教师表，记录工号和姓名
         ghlist = []  # 列表记录使用教师名称在教师表查询到的内容，从其中取出工号
@@ -1070,7 +1074,8 @@ def student_DeleteCourse(request):
 def student_QueryGrades(request):
     print(">>>student_QueryGrades")
     context = get_user_info(request)
-    result = E.objects.filter(xq='2020-2021学年春季学期', xh=request.user.username)
+    context['xq_now'] = settings.XQ
+    result = E.objects.filter(xq=context['xq_now'], xh=request.user.username)
     opentable = []  # 开课表，记录工号和上课时间
     teachertable = []  # 教师表，记录工号和姓名
     ghlist = []  # 列表记录使用教师名称在教师表查询到的内容，从其中取出工号
@@ -1134,6 +1139,7 @@ def student_QueryGrades(request):
 def student_CourseTable(request):
     print(">>>student_CourseTable")
     context = get_user_info(request)
+    context['xq_now'] = settings.XQ
     if request.method == 'GET':
         print(">>>GET")
         return render(request, 'student_CourseTable.html', context=context)
