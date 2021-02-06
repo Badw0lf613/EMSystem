@@ -7,6 +7,11 @@
     <title>教师详情页</title>
     <link href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/sweetalert.css' %}" rel="stylesheet">
+    <script>
+        function ggg(){
+            document.getElementById("t").submit();
+        }
+    </script>
 </head>
 
 <body>
@@ -130,60 +135,69 @@
     </div>
 
     <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
-        <b><font size="4"> 课程打分： </font></b>
+        <b><font size="4"> 新学期课程管理： </font></b>
         <br><br>
         <form class="form-inline" role="form" method="POST" action="" >
             {% csrf_token %}
-            <select name = "kc" type = "submit">
-                {% for kc in k %}
-                    <option value={{ kc.km }}>{{ kc.km }}</option>
-                {% endfor %}
-            </select>
-            <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="确定">
-            <br>
-        </form>
-        <br><br>
-    </div>
-
-    <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
-        <b size = "4">目前正在查询：{{ Xq }}</b>
-        <form class="form-inline" role="form" method="POST" action="" >
-            {% csrf_token %}
-            <input hidden type='text' name='m' value={{ Xq }} >
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th> 学号 </th>
-                        <th> 姓名 </th>
-                        <th> 平时成绩 </th>
-                        <th> 期末考试成绩 </th>
-                        <th> 总评成绩 </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if x != null %}
-                    {% for xs in x %}
-                        <tr>
-                            <td> {{xs.xh}} </td>
-                            <td> {{xs.xm}} </td>
-                            <td><input type="text" name="pscj" class="form-control form-control-inline" style="width:100px;" value={{xs.pscj}} ></td>
-                            <td><input type="text" name="kscj" class="form-control form-control-inline" style="width:100px;" value={{xs.kscj}}></td>
-                            <td><input type="text" name="zpcj" class="form-control form-control-inline" style="width:100px;" value={{xs.zpcj}}></td>
-                        </tr>
-                    {% endfor %}
-                    {% endif %}
-                </tbody>
-            </table>
-            <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="确定">
+                <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" name='stats' value="开设新课程">
+                <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" name='stats' value="下学期课程提交">
         </form>
         {% if messages %}
-        <script>
-            {% for msg in messages %}
-                alert('{{ msg.message }}');
-            {% endfor %}
-        </script>
+                <script>
+                    {% for msg in messages %}
+                        alert('{{ msg.message }}');
+                    {% endfor %}
+                </script>
         {% endif %}
     </div>
+
+    {% if ck > 0.5 %}
+        <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
+        {% if ck == 1 %}
+            <b><font size="3"> 新课程信息 </font></b>
+            <form class="form-inline" role="form" method="POST" action="" >
+            {% csrf_token %}
+                <div class="form-group">
+                开课学期：
+                    <input type="Radio" name='xq' style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="春季学期">{{ xueqi }}春季学期
+                    <input type="Radio" name='xq' style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="夏季学期">{{ xueqi }}夏季学期
+                    <input type="Radio" name='xq' style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="秋季学期">{{ xueqi }}秋季学期
+                    <input type="Radio" name='xq' style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="冬季学期">{{ xueqi }}冬季学期
+                </div>
+                <br>
+                <div class="form-group">
+                课程详细信息：<br><br>
+                    课名：<input type="text" name="km" class="form-control form-control-inline" style="width:100px;" ><br>
+                    学分：<input type="text" name="xf" class="form-control form-control-inline" style="width:100px;" ><br>
+                    预计人数：<input type="text" name="rs" class="form-control form-control-inline" style="width:100px;"><br>
+                </div><br><br>
+                <input hidden type='text' name='m' value={{ ck }} >
+            <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="提交">
+        </form>
+        {% endif %}
+
+        {% if ck == 2 %}
+            <b><font size="4"> 任课信息登记： </font></b>
+            <br><br>
+            <form class="form-inline" role="form" method="POST" action="" >
+                {% csrf_token %}
+                <div class="form-group">
+                    课程号：<br>
+                    <input type="text" name="kh1" class="form-control form-control-inline" style="width:100px;">
+                    <input type="text" name="kh2" class="form-control form-control-inline" style="width:100px;">
+                    <input type="text" name="kh3" class="form-control form-control-inline" style="width:100px;">
+                    <br>
+                    <input type="text" name="kh4" class="form-control form-control-inline" style="width:100px;">
+                    <input type="text" name="kh5" class="form-control form-control-inline" style="width:100px;">
+                    <input type="text" name="kh6" class="form-control form-control-inline" style="width:100px;">
+                    <br><br>
+                </div><br>
+            <input hidden type='text' name='m' value={{ ck }} >
+            <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="提交">
+        </form>
+        {% endif %}
+    </div>
+    {% endif %}
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="{% static 'js/jquery-3.4.1.js' %}"></script>

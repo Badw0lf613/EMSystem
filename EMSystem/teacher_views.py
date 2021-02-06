@@ -14,13 +14,17 @@ from pymysql import NULL
 from jwc.settings import XQ
 from .models import S,D,T,C,O,E
 
-def toast(request,a):
+def toast(request,a,x = ''):
     if(a == 1):
         messages.success(request,"本学期没有课程")
     elif(a == 2):
         messages.success(request, "提交成功")
     elif(a == 3):
         messages.success(request,"没有需要打分的学生")
+    elif(a == 4):
+        messages.success(request,"已经有本课程")
+    elif(a == 5):
+        messages.success(request,"课程号错误："+x)
 
 def get_from_table(sql,param):
     cursor = connection.cursor()
@@ -50,7 +54,7 @@ def find(request):
         sql = 'select * from emsystem_d where yxh = %s'%x
         ot = D.objects.raw(sql)
         for k in ot:
-            content={"xm" : i.xm,'gh':i.gh,'yx':k.yxm,'zc':i.xl}
+            content={"xm" : i.xm,'gh':i.gh,'yx':k.yxm,'zc':i.xl,'yxh_id':i.yxh_id}
     return content
 
 def index(request):
@@ -79,7 +83,6 @@ def check(request):
                 if(temp['pscj'] == NULL):
                     temp['pscj'] = '暂未打分'
                 k.append(temp)
-            print(k)
             b['k'] = k
             return render(request, "teacher_check_detial.html", context=b)
         except:
@@ -140,7 +143,6 @@ def write(request):
             b['k'] = k
             return render(request, "teacher_write.html", context=b)
         except:
-            print(2.2)
             z = b
             k = write_ready(request)
             z['k'] = k
@@ -166,3 +168,50 @@ def write(request):
                 toast(request,3)
             return render(request, "teacher_write.html",context = z)
 
+def open(request):
+    b = find(request)
+    try:
+        stats = request.POST['stats']
+        if (stats == '开设新课程'):
+            b['ck'] = 1
+        elif(stats == '下学期课程提交'):
+            b['ck'] = 2
+        return render(request, "teacher_open.html", context=b)
+    except:
+        if request.POST.getlist('m') != []:
+            xq = request.POST['m']
+            x = request.POST
+            if(xq == '1'):
+                sql = 'insert into emsystem_temp (xq,km,xf,gh,yxh_id,stats) values (%s,%s,%s,%s,%s,%s)'
+                param = [XQ+x['xq'],x['km'],x['xf'],b['gh'],b['yxh_id'],'0']
+                print(param)
+                sql2 = 'select km,xq,yxh_id from emsystem_temp where km=%s and xq=%s and yxh_id=%s'
+                param2 = [x['km'],XQ+x['xq'],b['yxh_id']]
+                t_d = get_from_table(sql2,param2)
+                if t_d ==[] :
+                    update_from_table(sql,param)
+                    b['ck'] = 0
+                    toast(request,2)
+                else:
+                    toast(request,4)
+            elif(xq == '2'):
+                n = ['kh1','kh2','kh3','kh3','kh4','kh5','kh6']
+                for i in n:
+                    if (x[i] == ''):
+                        continue
+                    sql = 'insert into emsystem_temp (xq,km,xf,gh,yxh_id,stats) values (%s,%s,%s,%s,%s,%s)'
+                    param = [XQ,x[i],0,b['gh'],b['yxh_id'],'1']
+                    sql2 = 'select kh from emsystem_o where kh=%s'
+                    param2 = [x[i]]
+                    t_d = get_from_table(sql2, param2)
+                    if(t_d == []):
+                        toast(request,5,x[i])
+                        continue
+                    update_from_table(sql,param)
+                b['ck'] = 0
+                toast(request, 2)
+            return render(request, "teacher_open.html", context=b)
+        else:
+            b['ck'] = 0
+            b['xueqi'] = XQ
+            return render(request, "teacher_open.html", context=b)

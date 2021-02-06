@@ -59,5 +59,10 @@ class E(models.Model):
     class Meta:
         unique_together = ("xn", "xq", "xh", "kh", "gh")
 
-
-
+class TEMP(models.Model):
+    xq = models.CharField(max_length=32)
+    km = models.CharField(max_length=32)
+    yxh = models.ForeignKey('D', to_field='yxh',on_delete=models.CASCADE)
+    xf = models.IntegerField()
+    gh = models.CharField(max_length=32)
+    stats = models.CharField(max_length=32)

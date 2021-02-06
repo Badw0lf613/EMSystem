@@ -28,6 +28,7 @@ urlpatterns = [
     path('teacher/', teacher_views.index),  # 教师
     path('teacher/check',teacher_views.check,name="teacher_check"),
     path('teacher/write',teacher_views.write,name='teacher_write'),
+    path('teacher/open',teacher_views.open,name='teacher_open'),
     path('student/', views.student_index),  # 学生
     path('student/QueryCourse', views.student_QueryCourse,name="student_QueryCourse"),  # 学生课程查询
     path('student/AddCourse', views.student_AddCourse, name="student_AddCourse"),  # 学生选课
