@@ -9,6 +9,8 @@ from django.contrib.auth import login, logout
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.contrib import messages
+from pymysql import NULL
+
 from jwc.settings import XQ
 from .models import S,D,T,C,O,E
 
@@ -61,25 +63,45 @@ def check(request):
         b = find(request)
         return render(request, "teacher_check.html", context=b)
     elif request.method == 'POST':
-        b = find(request)
-        x = str(request.POST['xq'])
-        gg = b['gh']
-        sql = 'select * from emsystem_c c join emsystem_o o on c.kh=o.kh where c.xq = %s and o.gh_id = %s'
-        param = [x,gg]
-        result = get_from_table(sql,param)
-        k=[]
-        for i in result:
-            temp = {'kh' : i['kh'],'km' : i['km'],'xf' : i['xf'],'xs':i['xs'],'ct':0}
-            sql = 'select * from emsystem_e where kh = %s and gh_id = %s'
-            param = [i['kh'],gg]
-            rt = get_from_table(sql,param)
-            temp['ct']=len(rt)
-            k.append(temp)
-        b['k'] = k
-        b['Xq'] = x
-        if(k == []):
-            toast(request,1)
-        return render(request, "teacher_check.html",context = b)
+        try:
+            gt = request.POST['rdy']
+            b = find(request)
+            sql = 'select * from emsystem_e e join emsystem_s s on e.xh_id = s.xh where e.kh=%s and e.xq=%s and e.gh_id=%s'
+            param = [gt,XQ,b['gh']]
+            result0 = get_from_table(sql,param)
+            k = []
+            for i in result0:
+                temp = {'xh':i['xh'],'xm':i['xm'],'xb':i['xb'],'sjhm':i['sjhm'],'xy':'','pscj':i['pscj']}
+                sql = 'select yxm from emsystem_d where yxh=%s'
+                param =[i['yxh_id']]
+                r = get_from_table(sql,param)
+                temp['xy'] = r[0]['yxm']
+                if(temp['pscj'] == NULL):
+                    temp['pscj'] = '暂未打分'
+                k.append(temp)
+            print(k)
+            b['k'] = k
+            return render(request, "teacher_check_detial.html", context=b)
+        except:
+            b = find(request)
+            x = str(request.POST['xq'])
+            gg = b['gh']
+            sql = 'select * from emsystem_c c join emsystem_o o on c.kh=o.kh where c.xq = %s and o.gh_id = %s'
+            param = [x,gg]
+            result = get_from_table(sql,param)
+            k=[]
+            for i in result:
+                temp = {'kh' : i['kh'],'km' : i['km'],'xf' : i['xf'],'xs':i['xs'],'ct':0}
+                sql = 'select * from emsystem_e where kh = %s and gh_id = %s'
+                param = [i['kh'],gg]
+                rt = get_from_table(sql,param)
+                temp['ct']=len(rt)
+                k.append(temp)
+            b['k'] = k
+            b['Xq'] = x
+            if(k == []):
+                toast(request,1)
+            return render(request, "teacher_check.html",context = b)
 
 def write_ready(request):
     x = XQ

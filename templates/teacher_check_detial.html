@@ -138,19 +138,7 @@
     </div>
 
     <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
-        <b><font size="4"> 任教课程查询： </font></b>
-        <br><br>
-        <form class="form-inline" role="form" method="POST" action="" >
-            {% csrf_token %}
-            <select name = "xq" type = "submit">
-                <option value="2020-2021学年春季学期">2020-2021学年春季学期</option>
-                <option value="2020-2021学年夏季学期">2020-2021学年夏季学期</option>
-                <option value="2020-2021学年秋季学期">2020-2021学年秋季学期</option>
-                <option value="2020-2021学年冬季学期">2020-2021学年冬季学期</option>
-            </select>
-            <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="确定">
-            <br>
-        </form>
+        <b><font size="4"> 详情查询： </font></b>
         <br><br>
     </div>
 
@@ -159,26 +147,25 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th> 课程号 </th>
-                    <th> 课程名称 </th>
-                    <th> 学分 </th>
-                    <th> 本学期学时 </th>
-                    <th> 选课人数 </th>
+                    <th> 学号 </th>
+                    <th> 姓名 </th>
+                    <th> 性别 </th>
+                    <th> 学院 </th>
+                    <th> 联系方式 </th>
+                    <th> 平时成绩 </th>
                 </tr>
             </thead>
             <tbody>
-                <form class="form-inline" role="form" method="POST" action="" >
-                {% csrf_token %}
                 {% for kc in k %}
                     <tr>
-                        <td><input type="submit" value={{kc.kh}} name='rdy' style="border:0;cursor:pointer" /></td>
-                        <td><input type="submit" value={{kc.km}} name='rdy' style="border:0;cursor:pointer" /></td>
-                        <td> {{kc.xf}} </td>
-                        <td> {{kc.xs}} </td>
-                        <td> {{kc.ct}} </td>
+                        <td> {{kc.xh}} </td>
+                        <td> {{kc.xm}} </td>
+                        <td> {{kc.xb}} </td>
+                        <td> {{kc.xy}} </td>
+                        <td> {{kc.sjhm}} </td>
+                        <td> {{kc.pscj}}</td>
                     </tr>
                 {% endfor %}
-                </form>
             </tbody>
         </table>
         {% if messages %}
