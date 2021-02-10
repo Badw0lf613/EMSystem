@@ -572,6 +572,7 @@ def student_QueryCourse(request):
     print(">>>student_QueryCourse")
     context = get_user_info(request)
     context['xq_now'] = settings.XQ
+    print("settings.XQ",settings.XQ)
     if request.method == 'GET':
         print(">>>GET")
         return render(request, 'student_QueryCourse.html', context=context)
@@ -665,9 +666,11 @@ def student_QueryCourse(request):
             ghlist = []  # 列表记录使用教师名称在教师表查询到的内容，从其中取出工号
             for item in result:  # 将对象转换为字典
                 content = obj2dict(item)
+                print(">>>item content", content)
                 result1 = O.objects.filter(id=content['id'])  # 进行提取工号和上课时间
                 for item1 in result1:  # 将对象转换为字典
                     content = obj2dict(item1)
+                    print(">>>item1 content",content)
                     opentable.append(content)
                     ghlist.append(content['gh_id'])
                     # classtable[]
@@ -703,7 +706,7 @@ def student_QueryCourse(request):
             # 需要在字典中加入gh，jsmc，sksj
             # print(">>>i")
             # print(i)
-            if content['xq'] == context['xq_now']:
+            if content['xq'] == context['xq']:
                 ############# 考虑查询结果如何显示 #####################################
                 if content['id'] in idlist: # 通过课程id将查询结果中的C表与O表T表对应
                     i = idlist.index(content['id']) # 找出下标对应的课程id
