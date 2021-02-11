@@ -391,7 +391,7 @@
             <tbody>
                 {% for course in courses %}
                 <tr id="normal">
-                {% if course.kh != chosen_kh and course.xq != chosen_xq%}
+                {% if course.kh != chosen_kh or course.xq != chosen_xq%}
                     <td>{{ course.xq }} </td>
                     <td>{{ course.kh }} </td>
                     <td>{{ course.km }} </td>
@@ -399,7 +399,7 @@
                     <td>{{ course.xs }} </td>
                     <td>{{ course.yxm }} </td>
                     <td>
-                        <a href="1?chosen_xh={{ course.kh }}&chosen_xq={{ course.xq }}"> 编辑 </a>
+                        <a href="1?chosen_kh={{ course.kh }}&chosen_xq={{ course.xq }}"> 编辑 </a>
                     </td>
                 {% else %}
                     <form method="POST" role="form" action="edit">

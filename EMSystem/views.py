@@ -357,9 +357,6 @@ def search(request, type, flag=None):                     # 搜索学生,flag是
             print("get")
             result = S.objects.all()
             all =  True
-            if flag is None:                                 # 如果点击编辑，则method是get，只显示当前被编辑的一条记录
-                result = result.filter(xh=chosen_xh)
-                all = False
 
         students = []
         for item in result:
@@ -419,9 +416,6 @@ def search(request, type, flag=None):                     # 搜索学生,flag是
             print("get")
             result = T.objects.all()
             all = True
-            if flag is None:  # 如果点击编辑，则method是get，只显示当前被编辑的一条记录
-                result = result.filter(gh=chosen_gh)
-                all = False
 
         teachers = []
         for item in result:
@@ -467,9 +461,7 @@ def search(request, type, flag=None):                     # 搜索学生,flag是
             print("get")
             result = D.objects.all()
             all = True
-            if flag is None:  # 如果点击编辑，则method是get，只显示当前被编辑的一条记录
-                result = result.filter(yxh=chosen_yxh)
-                all = False
+
 
         departments = []
         for item in result:
@@ -526,9 +518,6 @@ def search(request, type, flag=None):                     # 搜索学生,flag是
             print("get")
             result = C.objects.all()
             all = True
-            if flag is None:                                 # 如果点击编辑，则method是get，只显示当前被编辑的一条记录
-                result = result.filter(xq=chosen_xq ,kh=chosen_kh)
-                all = False
 
         courses = []
         for item in result:
