@@ -9,7 +9,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from .models import S,D,T,C,O,E
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
 import json
+
 
 # Create your views here.
 # 学生信息列表处理函数
@@ -138,7 +140,6 @@ def add(request, type):                 # 添加
     print(">>>add")
     keys = {}
     if type == 1:                          # 添加学生
-
         keys['xh'] = request.POST.get('xh')
         keys['xm'] = request.POST.get('xm')
         keys['xb'] = request.POST.get('xb')
@@ -146,6 +147,13 @@ def add(request, type):                 # 添加
         keys['csrq'] = request.POST.get('csrq')
         keys['sjhm'] = request.POST.get('sjhm')
         keys['yx'] = request.POST.get('yx')
+
+        if User.objects.filter(username=keys['xh']).count() == 0:
+            user = User.objects.create_user(username=keys['xh'])      # 向S表插入学生的同时，也向User表中插入学生
+            user.is_staff = False
+            user.is_superuser = False
+            user.set_password(keys['xh'])                             # 设置初始密码为学号
+            user.save()
 
         if keys['xh'] is not None:                  # 向表中插入新学生
             d_item = D.objects.filter(yxm__contains=keys['yx'])
@@ -165,6 +173,13 @@ def add(request, type):                 # 添加
         keys['gz'] = request.POST.get('gz')
         keys['yx'] = request.POST.get('yx')
         keys['pf'] = request.POST.get('pf')
+
+        if User.objects.filter(username=keys['gh']).count() == 0:
+            user = User.objects.create_user(username=keys['gh'])      # 向T表插入老师的同时，也向User表中插入老师
+            user.is_staff = True
+            user.is_superuser = False
+            user.set_password(keys['gh'])                             # 设置初始密码为工号
+            user.save()
 
         if keys['gh'] is not None:                # 向表中插入新老师
             d_item = D.objects.filter(yxm__contains=keys['yx'])
@@ -215,6 +230,8 @@ def delete(request, type):                    # 删除
         for num in xh[:]:
             print(num)
             S.objects.filter(xh=num).delete()
+            if User.objects.filter(username=num).count() != 0:
+                User.objects.filter(username=num).delete()   # 从用户表里面也删除这个学生
 
         return redirect("search", type=1, flag=1)
 
@@ -225,6 +242,8 @@ def delete(request, type):                    # 删除
         for num in gh[:]:
             print(num)
             T.objects.filter(gh=num).delete()
+            if User.objects.filter(username=num).count() != 0:
+                User.objects.filter(username__exact=num).delete()  # 从用户表里面也删除这个老师
 
         return redirect("search", type=2, flag=1)
 
