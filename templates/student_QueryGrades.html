@@ -153,10 +153,11 @@
                     <th> 上课时间 </th>
                     <th> 学分 </th>
                     <th> 学时 </th>
-                    <th> 院系号 </th>
+                    <th> 院系名 </th>
                     <th> 平时成绩 </th>
                     <th> 考试成绩 </th>
                     <th> 总评成绩 </th>
+                    <th> 绩点 </th>
                 </tr>
             </thead>
             <tbody>
@@ -174,7 +175,7 @@
                         <td> {{kc.sksj}} </td>
                         <td> {{kc.xf}} </td>
                         <td> {{kc.xs}} </td>
-                        <td> {{kc.yxh}} </td>
+                        <td> {{kc.yxm}} </td>
                         <td>
                           {% if kc.pscj is not None %}
                             {{kc.pscj}}
@@ -196,7 +197,7 @@
                             尚未发布
                           {% endif %}
                         </td>
-{#                        <td> {{kc.xq}} </td>#}
+                        <td> {{kc.grade}} </td>
                     </tr>
                 {% endfor %}
             </tbody>

@@ -714,7 +714,7 @@ def student_QueryCourse(request):
             # 需要在字典中加入gh，jsmc，sksj
             # print(">>>i")
             # print(i)
-            if content['xq'] == context['xq']:
+            if content['xq'] == context['xq_now']:
                 ############# 考虑查询结果如何显示 #####################################
                 if content['id'] in idlist: # 通过课程id将查询结果中的C表与O表T表对应
                     i = idlist.index(content['id']) # 找出下标对应的课程id
@@ -725,6 +725,10 @@ def student_QueryCourse(request):
                             print(">>>111")
                             print(item1['gh'])
                             content['jsmc'] = item1['xm']
+            # 查学院
+            tmp = D.objects.filter(yxh=content['yxh_id'])
+            yxm = obj2dict(tmp[0])['yxm']
+            content['yxm'] = yxm
                 # i = i + 1
             classtable.append(content)
         print(">>>classtable")
@@ -794,6 +798,10 @@ def student_AddCourse(request):
                 content['xf'] = classtable1[i]['xf']
                 content['xs'] = classtable1[i]['xs']
                 content['yxh'] = classtable1[i]['yxh_id']
+                # 查学院
+                tmp = D.objects.filter(yxh=content['yxh'])
+                yxm = obj2dict(tmp[0])['yxm']
+                content['yxm'] = yxm
                 for item1 in teachertable:
                     if item1['gh'] == opentable[i]['gh_id']:  # 存在一个老师开多门课，此时需找到每门课程对应的工号，再寻找教师名称
                         print(">>>111")
@@ -910,6 +918,10 @@ def student_AddCourse(request):
                 content['xf'] = classtable1[i]['xf']
                 content['xs'] = classtable1[i]['xs']
                 content['yxh'] = classtable1[i]['yxh_id']
+                # 查学院
+                tmp = D.objects.filter(yxh=content['yxh'])
+                yxm = obj2dict(tmp[0])['yxm']
+                content['yxm'] = yxm
                 for item1 in teachertable:
                     if item1['gh'] == opentable[i]['gh_id']:  # 存在一个老师开多门课，此时需找到每门课程对应的工号，再寻找教师名称
                         print(">>>111")
@@ -981,6 +993,10 @@ def student_DeleteCourse(request):
                 content['xf'] = classtable1[i]['xf']
                 content['xs'] = classtable1[i]['xs']
                 content['yxh'] = classtable1[i]['yxh_id']
+                # 查学院
+                tmp = D.objects.filter(yxh=content['yxh'])
+                yxm = obj2dict(tmp[0])['yxm']
+                content['yxm'] = yxm
                 for item1 in teachertable:
                     if item1['gh'] == opentable[i]['gh_id']:  # 存在一个老师开多门课，此时需找到每门课程对应的工号，再寻找教师名称
                         print(">>>111")
@@ -1066,6 +1082,10 @@ def student_DeleteCourse(request):
                 content['xf'] = classtable1[i]['xf']
                 content['xs'] = classtable1[i]['xs']
                 content['yxh'] = classtable1[i]['yxh_id']
+                # 查学院
+                tmp = D.objects.filter(yxh=content['yxh'])
+                yxm = obj2dict(tmp[0])['yxm']
+                content['yxm'] = yxm
                 for item1 in teachertable:
                     if item1['gh'] == opentable[i]['gh_id']:  # 存在一个老师开多门课，此时需找到每门课程对应的工号，再寻找教师名称
                         print(">>>111")
@@ -1135,11 +1155,17 @@ def student_QueryGrades(request):
             content['xf'] = classtable1[i]['xf']
             content['xs'] = classtable1[i]['xs']
             content['yxh'] = classtable1[i]['yxh_id']
+            # 查学院
+            tmp = D.objects.filter(yxh=content['yxh'])
+            yxm = obj2dict(tmp[0])['yxm']
+            content['yxm'] = yxm
             for item1 in teachertable:
                 if item1['gh'] == opentable[i]['gh_id']:  # 存在一个老师开多门课，此时需找到每门课程对应的工号，再寻找教师名称
                     print(">>>111")
                     print(item1['gh'])
                     content['jsmc'] = item1['xm']
+            # 计算绩点
+        content['grade'] = calGrade(content['zpcj'])
         classtable.append(content)
     print(">>>classtable")
     print(classtable)
@@ -1170,3 +1196,35 @@ def testcheckbox2(request):
     if request.method == 'GET':
         print(">>>GET")
         return render(request, 'testcheckbox2.html', context=context)
+
+# 计算绩点
+def calGrade(score):
+    print(">>>calGrade",score, type(score))
+    if score is None: # 还未登录
+        grade = 0.0
+        return grade
+    if score >= 90:
+        grade = 4.0
+    elif score >= 85 and score < 90:
+        grade = 3.7
+    elif score >= 82 and score < 85:
+        grade = 3.3
+    elif score >= 78 and score < 82:
+        grade = 3.0
+    elif score >= 75 and score < 78:
+        grade = 2.7
+    elif score >= 72 and score < 75:
+        grade = 2.3
+    elif score >= 68 and score < 72:
+        grade = 2.0
+    elif score >= 66 and score < 68:
+        grade = 1.7
+    elif score >= 64 and score < 66:
+        grade = 1.5
+    elif score >= 60 and score < 63:
+        grade = 1.0
+    elif score < 60:
+        grade = 0.0
+    else:
+        grade = 666
+    return grade
