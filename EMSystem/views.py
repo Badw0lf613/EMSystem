@@ -7,10 +7,12 @@ from django.contrib.auth import login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-from .models import S,D,T,C,O,E
+from .models import S,D,T,C,O,E,TEMP
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 import json
+import random
+from math import floor
 
 
 # Create your views here.
@@ -123,9 +125,67 @@ def admin_index(request):
     else:
         settings.XQ = xq
 
-    print(xq)
-    print(settings.XQ)
+    if O.objects.all().count() != 0:          # 如果O表不为空，则首先清空O表
+        O.objects.all().delete()
+    res = C.objects.all()
+    res = res.filter(xq=xq)
+
+    days = ['一', '二', '三', '四', '五']
+    times = ['1-2', '3-4', '5-6', '7-8', '9-10', '11-13']
+    dt = []
+    for i in range(5):
+        for j in range(6):
+            dt.append([days[i], times[j]])
+
+    for item in res:
+        dt_temp = dt[:]
+        item_dict = obj2dict(item)
+        kh = item_dict['kh']
+        xf = item_dict['xf']
+        print(kh)
+        temp = TEMP.objects.all()
+
+        if temp.filter(km=kh).count() != 0:               # 如果需要有教师认领课程，那么就把课程分配给他
+            gh = obj2dict(temp.filter(km=kh)[0])['gh']
+
+            sksj = get_sksj(gh, xf, dt_temp)
+            t = T.objects.get(gh=gh)
+            new_o = O.objects.create(kh=kh, gh=t, sksj=sksj)
+
+        else:                                             # 如果还没有教师认领课程，那么久随机分配一个本院系的老师上这门课
+            yxh = obj2dict(item)['yxh_id']
+            t = T.objects.filter(yxh_id=yxh)
+            num = t.count()
+            idx = random.randint(0, num-1)
+            gh = getattr(t[idx], 'gh')
+            sksj = get_sksj(gh, xf, dt_temp)              # 上课时间也需要重新分配
+            new_o = O.objects.create(kh=kh, gh=t[idx], sksj=sksj)
+        new_o.save()
+
+    # print(xq)
+    # print(settings.XQ)
     return render(request, 'admin_index.html', {'name': user_info['name'], 'yhm': user_info['yhm'], 'xq': xq})
+
+def get_sksj(gh, xf, dt_temp):
+    old_times = []
+    o_item = O.objects.filter(gh=gh)
+    for o in o_item:
+        sj_str = obj2dict(o)['sksj']
+        sj_str = sj_str.strip()
+        sj = sj_str.split(' ')
+        for s in sj:
+            old_times.append(s.split(':'))
+    for tt in old_times:
+        dt_temp.remove(tt)
+    l = len(dt_temp)
+    print("xf", xf)
+    id = random.sample(range(0, l - 1), floor((int(xf) + 1) / 2))
+    sksj = ''  # 可能还需要根据他已有的上课时间来分配新课程的时间
+    for i in id:
+        sksj = sksj + str(dt_temp[i][0]) + ":" + str(dt_temp[i][1])
+        if i != len(id) - 1:
+            sksj = sksj + " "
+    return sksj
 
 @login_required
 def Management(request, type):
