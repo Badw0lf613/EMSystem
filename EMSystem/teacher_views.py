@@ -80,7 +80,7 @@ def check(request):
                 param =[i['yxh_id']]
                 r = get_from_table(sql,param)
                 temp['xy'] = r[0]['yxm']
-                if(temp['pscj'] == NULL):
+                if(temp['pscj'] == None):
                     temp['pscj'] = '暂未打分'
                 k.append(temp)
             b['k'] = k
@@ -93,6 +93,11 @@ def check(request):
             param = [x,gg]
             result = get_from_table(sql,param)
             k=[]
+            kb=[['','','','',''],['','','','',''],['','','','',''],['','','','',''],
+                ['','','','',''],['','','','',''],['','','','',''],['','','','',''],
+                ['','','','',''],['','','','',''],['','','','',''],['','','','',''],['','','','','']]
+            print(kb)
+            lax = ['一','二','三','四','五']
             for i in result:
                 temp = {'kh' : i['kh'],'km' : i['km'],'xf' : i['xf'],'xs':i['xs'],'ct':0}
                 sql = 'select * from emsystem_e where kh = %s and gh_id = %s'
@@ -100,8 +105,40 @@ def check(request):
                 rt = get_from_table(sql,param)
                 temp['ct']=len(rt)
                 k.append(temp)
+                temp = {'km':i['km'],'sj':''}
+                for xt in i['sksj'].strip('上机').split('-'):
+                    print(xt)
+                    if xt[0].isdigit():
+                        try:
+                            if(xt[1].isdigit()):
+                                second = int(xt[0:2])-1
+                                rest = xt[2:]
+                            else:
+                                second = int(xt[0])-1
+                                rest = xt[1:]
+                            while first <= second:
+                                print(pos,first,second)
+                                kb[first][pos] = i['km']
+                                first = first + 1
+                            print(kb)
+                            pos = lax.index(rest[0])
+                            first = int(rest[1:])-1
+                        except:
+                            second = int(xt)-1
+                            print(pos, first, second)
+                            while first <= second:
+                                kb[first][pos] = i['km']
+                                first = first + 1
+                    else:
+                        pos = lax.index(xt[0])
+                        first = int(xt[1:])-1
+            print('end')
             b['k'] = k
             b['Xq'] = x
+            time = ['8:00-8:45','8:55-9:40','10:00-10:45','10:55-11:40','12:10-12:55','13:05-13:50','14:10-14:55','15:05-15:50','16:00-16:45','16:55-17:40','18:00-18:45','18:55-19:40','19:50-20:35']
+            for i,j in zip(kb,time):
+                i.insert(0,j)
+            b['kb'] = kb
             if(k == []):
                 toast(request,1)
             return render(request, "teacher_check.html",context = b)
@@ -183,10 +220,10 @@ def open(request):
             x = request.POST
             if(xq == '1'):
                 sql = 'insert into emsystem_temp (xq,km,xf,gh,yxh_id,stats) values (%s,%s,%s,%s,%s,%s)'
-                param = [XQ+x['xq'],x['km'],x['xf'],b['gh'],b['yxh_id'],'0']
+                param = [XQ[0:-4]+x['xq'],x['km'],x['xf'],b['gh'],b['yxh_id'],'0']
                 print(param)
                 sql2 = 'select km,xq,yxh_id from emsystem_temp where km=%s and xq=%s and yxh_id=%s'
-                param2 = [x['km'],XQ+x['xq'],b['yxh_id']]
+                param2 = [x['km'],XQ[0:-4]+x['xq'],b['yxh_id']]
                 t_d = get_from_table(sql2,param2)
                 if t_d ==[] :
                     update_from_table(sql,param)

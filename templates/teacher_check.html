@@ -164,7 +164,7 @@
                 {% for kc in k %}
                     <tr>
                         <td><input type="submit" value={{kc.kh}} name='rdy' style="border:0;cursor:pointer" /></td>
-                        <td><input type="submit" value={{kc.km}} name='rdy' style="border:0;cursor:pointer" /></td>
+                        <td> {{kc.km}} </td>
                         <td> {{kc.xf}} </td>
                         <td> {{kc.xs}} </td>
                         <td> {{kc.ct}} </td>
@@ -181,6 +181,34 @@
         </script>
         {% endif %}
     </div>
+
+    <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
+        <b><font size="4"> 课程表： </font></b>
+        <br><br>
+        <table style=“table-layout:fixed” width="100%" border="1px" cellspacing="0px" style="border-collapse:collapse">
+            <thead><tr>
+                <th>时间</th>
+                <th>周一</th>
+                <th>周二</th>
+                <th>周三</th>
+                <th>周四</th>
+                <th>周五</th>
+            </tr></thead>
+            <tbody >
+                {% for ti in kb %}
+                    <tr>
+                    {% for t in ti %}
+                        <td style="width: 15%">{{ t }}</td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+
+
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
