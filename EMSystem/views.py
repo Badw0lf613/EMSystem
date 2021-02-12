@@ -13,6 +13,7 @@ from django.contrib.auth.models import User
 import json
 import random
 from math import floor
+from django.db.models import Q
 
 
 # Create your views here.
@@ -70,6 +71,11 @@ from math import floor
 #         conn.commit()
 #     return  redirect('../')
 
+dt = [['一', '1-2'], ['一', '3-4'], ['一', '5-6'], ['一', '7-8'], ['一', '9-10'], ['一', '11-13'],
+      ['二', '1-2'], ['二', '3-4'], ['二', '5-6'], ['二', '7-8'], ['二', '9-10'], ['二', '11-13'],
+      ['三', '1-2'], ['三', '3-4'], ['三', '5-6'], ['三', '7-8'], ['三', '9-10'], ['三', '11-13'],
+      ['四', '1-2'], ['四', '3-4'], ['四', '5-6'], ['四', '7-8'], ['四', '9-10'], ['四', '11-13'],
+      ['五', '1-2'], ['五', '3-4'], ['五', '5-6'], ['五', '7-8'], ['五', '9-10'], ['五', '11-13']]
 
 def get_user_info(request):
     ret={}
@@ -116,6 +122,7 @@ def login_view(request):
 
 @login_required
 def admin_index(request):
+    global dt
     print(">>>admin")
     user_info = get_admin_info(request)
     print(user_info)
@@ -130,12 +137,12 @@ def admin_index(request):
     res = C.objects.all()
     res = res.filter(xq=xq)
 
-    days = ['一', '二', '三', '四', '五']
-    times = ['1-2', '3-4', '5-6', '7-8', '9-10', '11-13']
-    dt = []
-    for i in range(5):
-        for j in range(6):
-            dt.append([days[i], times[j]])
+    # days = ['一', '二', '三', '四', '五']
+    # times = ['1-2', '3-4', '5-6', '7-8', '9-10', '11-13']
+    # dt = []
+    # for i in range(5):
+    #     for j in range(6):
+    #         dt.append([days[i], times[j]])
 
     for item in res:
         dt_temp = dt[:]
@@ -147,7 +154,6 @@ def admin_index(request):
 
         if temp.filter(km=kh).count() != 0:               # 如果需要有教师认领课程，那么就把课程分配给他
             gh = obj2dict(temp.filter(km=kh)[0])['gh']
-
             sksj = get_sksj(gh, xf, dt_temp)
             t = T.objects.get(gh=gh)
             new_o = O.objects.create(kh=kh, gh=t, sksj=sksj)
@@ -166,7 +172,8 @@ def admin_index(request):
     # print(settings.XQ)
     return render(request, 'admin_index.html', {'name': user_info['name'], 'yhm': user_info['yhm'], 'xq': xq})
 
-def get_sksj(gh, xf, dt_temp):
+def get_sksj(gh, xf, dt):
+    dt_temp = dt
     old_times = []
     o_item = O.objects.filter(gh=gh)
     for o in o_item:
@@ -197,6 +204,7 @@ def Management(request, type):
 
 @login_required
 def add(request, type):                 # 添加
+    global dt
     print(">>>add")
     keys = {}
     if type == 1:                          # 添加学生
@@ -275,6 +283,15 @@ def add(request, type):                 # 添加
             new_c = C.objects.create(xq=keys['xq'], kh=keys['kh'], km=keys['km'], xf=keys['xf'],
                                      xs=keys['xs'], yxh_id=yxh)
             new_c.save()
+            if keys['xq'] == settings.XQ:
+                yxh = obj2dict(new_c)['yxh_id']
+                t = T.objects.filter(yxh_id=yxh)
+                num = t.count()
+                idx = random.randint(0, num - 1)
+                gh = getattr(t[idx], 'gh')
+                sksj = get_sksj(gh, keys['xf'], dt[:])               # 上课时间也需要重新分配
+                new_o = O.objects.create(kh=keys['kh'], gh=t[idx], sksj=sksj)
+
         return redirect("search", type=4, flag=1)
 
 
@@ -325,11 +342,14 @@ def delete(request, type):                    # 删除
         print(kh)
         for i, j in zip(xq[:], kh[:]):
             C.objects.filter(xq=i, kh=j).delete()
+            if i == settings.XQ:
+                O.objects.filter(kh=j).delete()
 
         return redirect("search", type=4, flag=1)
 
 @login_required
 def edit(request, type):                        # 编辑信息
+    global dt
     print(">>>edit")
     if type == 1:                             # 编辑学生
         xh = request.POST.get('xh')
@@ -377,14 +397,33 @@ def edit(request, type):                        # 编辑信息
         xq = request.POST.get('xq')
         kh = request.POST.get('kh')
         km = request.POST.get('km')
+        gh = request.POST.get('gh')
+        sksj = request.POST.get('sksj')
         xf = request.POST.get('xf')
         xs = request.POST.get('xs')
         yx = request.POST.get('yx')
+        if xq == settings.XQ:
+            q = Q()
+            q.connector = 'AND'
+            q.children.append(('kh', kh))
+            q.children.append(('sksj', sksj))
+            temp_o = O.objects.get(q)
+            old_gh = getattr(temp_o, 'gh')
 
-        d = D.objects.all()                                                                    # 更新数据库记录
-        tmp = d.filter(yxm__contains=yx)
-        yx = obj2dict(tmp[0])['yxh']
-        C.objects.filter(xq=xq, kh=kh).update(xq=xq, kh=kh, km=km, xf=xf, xs=xs, yxh_id=yx)                    # 现在xq不可修改，学期可修改的情况可以做成触发器
+            if old_gh != gh:
+                sksj = get_sksj(gh, xf, dt)
+
+            d = D.objects.all()                                                                    # 更新数据库记录
+            tmp = d.filter(yxm__contains=yx)
+            yx = obj2dict(tmp[0])['yxh']
+            C.objects.filter(xq=xq, kh=kh).update(xq=xq, kh=kh, km=km, xf=xf, xs=int(xf)*10, yxh_id=yx)
+            O.objects.filter(kh=kh, gh=old_gh).update(kh=kh, gh=gh, sksj=sksj)
+
+        else:
+            d = D.objects.all()  # 更新数据库记录
+            tmp = d.filter(yxm__contains=yx)
+            yx = obj2dict(tmp[0])['yxh']
+            C.objects.filter(xq=xq, kh=kh).update(xq=xq, kh=kh, km=km, xf=xf, xs=int(xf) * 10, yxh_id=yx)
 
         return redirect("search", type=4, flag=1)
 
@@ -563,16 +602,20 @@ def search(request, type, flag=None):                     # 搜索学生,flag是
             print("post")
             keys = {}
             keys['xq'] = request.POST.get('xq')
+            print(keys['xq'])
             keys['kh'] = request.POST.get('kh')
             keys['km'] = request.POST.get('km')
+            keys['gh'] = request.POST.get('gh')
+            keys['sksj'] = request.POST.get('sksj')
             keys['xf'] = request.POST.get('xf')
             keys['xs'] = request.POST.get('xs')
             keys['yx'] = request.POST.get('yx')
             print(keys)
             result = C.objects.all()
             all = True
+
             if keys['xq']:
-                result = result.filter(xq__contains=keys['xq'])
+                result = result.filter(xq=keys['xq'])
                 all = False
             if keys['kh']:
                 result = result.filter(kh=keys['kh'])
@@ -580,6 +623,41 @@ def search(request, type, flag=None):                     # 搜索学生,flag是
             if keys['km']:
                 result = result.filter(km__contains=keys['km'])
                 all = False
+            if keys['gh']:
+                result_o = O.objects.all()
+                result_o = result_o.filter(gh=keys['gh'])
+                khs = []
+                for item in result_o:
+                    khs.append(getattr(item, 'kh'))
+                q = Q()
+                q.connector = 'OR'
+                for k in khs:
+                    q.children.append(('kh', k))
+                if len(q) == 0:
+                    res_temp = C.objects.none()
+                else:
+                    res_temp = C.objects.filter(q)
+                result = result & res_temp
+                all = False
+
+            if keys['sksj']:
+                result_o = O.objects.all()
+                result_o = result_o.filter(sksj__contains=keys['sksj'])
+                kh = []
+                for item in result_o:
+                    kh.append(getattr(item, 'kh'))
+                q = Q()
+                q.connector = 'OR'
+                for k in kh:
+                    q.children.append(('kh', k))
+
+                if len(q) == 0:
+                    res_temp = C.objects.none()
+                else:
+                    res_temp = C.objects.filter(q)
+                result = res_temp & result
+                all = False
+
             if keys['xf']:
                 result = result.filter(xf=keys['xf'])
                 all = False
@@ -599,14 +677,25 @@ def search(request, type, flag=None):                     # 搜索学生,flag是
             all = True
 
         courses = []
+        print(result.count())
         for item in result:
             res = obj2dict(item)
             d = D.objects.all()
-            tmp = d.filter(yxh=res['yxh_id'])
-            yxm = obj2dict(tmp[0])['yxm']
+            tmp_d = d.filter(yxh=res['yxh_id'])
+            yxm = obj2dict(tmp_d[0])['yxm']
             del res['yxh_id']
             res['yxm'] = yxm
-            courses.append(res)
+
+            o = O.objects.all()
+            tmp_o = o.filter(kh=res['kh'])
+            if tmp_o.count() > 0 and res['xq'] == xq:
+                for i in range(tmp_o.count()):
+                    gh_obj = getattr(tmp_o[i], 'gh')
+                    res['gh'] = getattr(gh_obj, 'gh')
+                    res['sksj'] = getattr(tmp_o[i], 'sksj')
+                    courses.append(res)
+            elif keys['gh'] == '':
+                courses.append(res)
 
         if all == True:
             search = 1

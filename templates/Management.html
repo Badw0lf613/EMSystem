@@ -184,6 +184,8 @@
                 <div class="form-group">学期：<input class="form-control form-control-inline" name="xq"/></div>
                 <div class="form-group">课程号：<input class="form-control form-control-inline" name="kh"/></div>
                 <div class="form-group">课程名：<input class="form-control form-control-inline" name="km"/></div>
+                <div class="form-group">工号：<input class="form-control form-control-inline" name="gh"/></div>
+                <div class="form-group">上课时间：<input class="form-control form-control-inline" name="sksj"/></div>
                 <div class="form-group">学分：<input class="form-control form-control-inline" name="xf"/></div>
                 <div class="form-group">学时：<input class="form-control form-control-inline" name="xs"/></div>
                 <div class="form-group">院系：<input class="form-control form-control-inline" name="yx"/></div>
@@ -382,6 +384,8 @@
                     <th>学期</th>
                     <th>课号</th>
                     <th>课名</th>
+                    <th>工号</th>
+                    <th>上课时间</th>
                     <th>学分</th>
                     <th>学时</th>
                     <th>院系</th>
@@ -395,6 +399,8 @@
                     <td>{{ course.xq }} </td>
                     <td>{{ course.kh }} </td>
                     <td>{{ course.km }} </td>
+                    <td>{{ course.gh }}</td>
+                    <td>{{ course.sksj }}</td>
                     <td>{{ course.xf }} </td>
                     <td>{{ course.xs }} </td>
                     <td>{{ course.yxm }} </td>
@@ -407,8 +413,14 @@
                         <td><input name="xq" readonly="{{ true }}" value="{{ course.xq }}"/></td>
                         <td><input name="kh" readonly="{{ true }}" value="{{ course.kh }}"/></td>
                         <td><input name="km" value="{{ course.km }}"/></td>
+                        {% if course.xq == xq %}
+                            <td><input name="gh" value="{{ course.gh }}"/></td>
+                        {% else %}
+                            td><input name="gh" value="{{ course.gh }}"/></td>
+                        {% endif %}
+                        <td><input name="sksj" readonly="{{ true }}" value="{{ course.sksj }}"/></td>
                         <td><input name="xf" value="{{ course.xf }}"/></td>
-                        <td><input name="xs" value="{{ course.xs }}"/></td>
+                        <td><input name="xs" readonly="{{ true }}" value="{{ course.xs }}"/></td>
                         <td><input name="yx" value="{{ course.yxm }}"/></td>
                         <td> <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="提交"> </td>
                     </form>
@@ -425,9 +437,15 @@
                     <form method="POST" action="add">
                     {% csrf_token %}
                         <td></td>
-                        <td><input name="xq"/></td>
+                        <td><select name="xq">
+                            <option value ="2020-2021学年秋季学期"> 2020-2021学年秋季学期 <option>
+                            <option value ="2020-2021学年冬季学期"> 2020-2021学年冬季学期 <option>
+                            <option value ="2020-2021学年春季学期"> 2020-2021学年春季学期 <option>
+                        </select></td>
                         <td><input name="kh"></td>
                         <td><input name="km"/></td>
+                        <td></td>
+                        <td></td>
                         <td><input name="xf"/></td>
                         <td><input name="xs"/></td>
                         <td><input name="yx"/></td>
