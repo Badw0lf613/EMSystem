@@ -41,6 +41,7 @@ class C(models.Model):
 
 
 class O(models.Model):
+    cid = models.ForeignKey('C', to_field='id',on_delete=models.CASCADE)      # 课程序号(外键)
     kh = models.CharField(max_length=32)                 # 课号
     gh = models.ForeignKey('T', to_field='gh',on_delete=models.CASCADE)         # 工号(外键)
     sksj = models.CharField(max_length=32)               # 上课时间
@@ -48,6 +49,7 @@ class O(models.Model):
         unique_together = ("kh", "gh", "sksj")
 
 class E(models.Model):
+    cid = models.ForeignKey('C', to_field='id',on_delete=models.CASCADE)      # 课程序号(外键)
     xn = models.CharField(max_length=32)                 # 学年
     xq = models.CharField(max_length=32)                 # 学期
     xh = models.ForeignKey('S', to_field='xh',on_delete=models.CASCADE)         # 学号(外键)
