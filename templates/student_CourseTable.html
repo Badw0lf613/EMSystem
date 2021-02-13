@@ -6,11 +6,39 @@
     <meta charset="UTF-8">
     <title>学生主页</title>
     <link href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %}" rel="stylesheet">
-{#    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">#}
-
+    <link href="{% static 'css/sweetalert.css' %}" rel="stylesheet">
+    <link href="{% static 'css/StyleTables.css' %}" rel="stylesheet">
+    <script type="text/javascript">
+        function showtoast()
+        {
+            swal({
+                title: "<span style=\"text-align: center; font-size: 30px\">选课结果</span>",
+                text: "{% if msg %}<table class=\"table\" align=\"center\">\n" +
+                    "            <thead>\n" +
+                    "                <tr>\n" +
+                    "                    <th style=\"text-align: left; font-size: 20px\"> 课程号 </th>\n" +
+                    "                    <th style=\"text-align: left; font-size: 20px\"> 工号 </th>\n" +
+                    "                    <th style=\"text-align: left; font-size: 20px\"> 结果 </th>\n" +
+                    "                </tr>\n" +
+                    "            </thead>\n" +
+                    "            <tbody>\n" +
+                    "                {% for m in msg %}\n"+
+                    "                    <tr>\n"+
+                    "                        <td style=\"text-align: left; font-size: 20px\"> {{m.kh}} </td>\n"+
+                    "                        <td style=\"text-align: left; font-size: 20px\"> {{m.gh}} </td>\n"+
+                    "                        <td style=\"text-align: left; font-size: 20px\"> {{m.res}} </td>\n"+
+                    "                    </tr>\n"+
+                    "                {% endfor %}\n" +
+                    "            </tbody>\n" +
+                    "        </table>"+"{% else %}<span style=\"text-align: center; font-size: 20px\">您还未进行快捷录入。</span>{% endif %}",
+                animation: "slide-from-top",
+                html: true
+            })
+        }
+    </script>
 </head>
 <body>
-{#  <div class="row">#}
+
     <header class="navbar-header" style="width: 100%; height: 70px">
         <nav class="navbar navbar-static-top" style="background: #3c8dbc;">
 {#      <div class="container-fluid" >#}
@@ -65,7 +93,7 @@
 {#      </div><!-- /.container-fluid -->#}
         </nav>
     </header>
-{#  </div>#}
+
     <div class="col-sm-3 col-md-2 sidebar" style="min-height:800px;width: 250px;padding:1px 2px 0px 0px">
         <ul class="nav nav-sidebar" style="background: #8ac3f0 ">
             <font size="4" style="color: #385090; padding:0px;font-weight: bold"> 学生信息 </font>
@@ -141,9 +169,84 @@
         </ul>
     </div>
 
+    <div class="col-sm-3 col-md-8" style="padding: 10px 15px;">
+        <table class="tblouter">
+            <tr>
+                <td style="color:Blue; font-weight:bold;">
+                     《{{ xq_now }}》课程表
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:0px;">
+                <table class="tblnoborder">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th> 课程号 </th>
+                            <th> 课程名称 </th>
+                            <th> 教师号 </th>
+                            <th> 教师名 </th>
+                            <th> 上课时间 </th>
+                            <th> 学分 </th>
+                            <th> 学时 </th>
+                            <th> 院系名 </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for kc in classtable %}
+                            <tr>
+                                <td style="text-align:center;"> {{kc.letter}} </td>
+                                <td style="text-align:center;"> {{kc.kh}} </td>
+                                <td> {{kc.km}} </td>
+                                <td style="text-align:center;"> {{kc.gh_id}} </td>
+                                <td> {{kc.jsmc}} </td>
+                                <td> {{kc.sksj}} </td>
+                                <td style="text-align:center;"> {{kc.xf}} </td>
+                                <td style="text-align:center;"> {{kc.xs}} </td>
+                                <td> {{kc.yxm}} </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tr>
+                        <td colspan="20">
+                            合计学分/Total credit：{{ xftotal }}（计算学分/Calculate credit：{{ xftotal }}）
+                        </td>
+                    </tr>
+                </table>
+            </tr>
+            <tr>
+                <td style="padding:0px;">
+                <table class="tblnoborder">
+                    <thead>
+                        <tr>
+                            <th style="width: 2em;">#</th>
+                            <th style="width: 7em;">上课时间</th>
+                            <th>一</th>
+                            <th>二</th>
+                            <th>三</th>
+                            <th>四</th>
+                            <th>五</th>
+                        </tr>
+                    </thead>
+                    <tbody >
+                        {% for ti in kb %}
+                            <tr>
+                            {% for t in ti %}
+                                <td style="text-align: center">{{ t }}</td>
+                            {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </tr>
+        </table>
+    </div>
+
+
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="{% static 'js/jquery-3.4.1.js' %}"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>
+    <script src="{% static 'js/sweetalert-dev.js' %}"></script>
 </body>
 </html>

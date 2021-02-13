@@ -18,7 +18,7 @@ https://oauth.shu.edu.cn/static/images/logo-white.png
 学生选课针对当前学期即2020-2021学年春季学期，使用课程号、工号、学期和学号对E表进行查询。首先利用这四个字段在E表中找出id，再分别到C、O、T表中通过id找出课程名称、上课时间和教师名称。<br>
 是否要考虑一个老师一学期同一门课开两次的情况（如信号处理）。<br>
 解决重复选课的bug。<br>
-**选课时间段冲突。**
+~~**选课时间段冲突。**~~
 ### ~~学生端退课student_DeleteCourse选课~~
 ![image](https://github.com/Badw0lf613/EMSystem/blob/master/static/images/tk.png)
 复选框效果完成，jQuery方法删除对应的课程，对于未选择课程和选课成功均设置弹窗。
@@ -26,6 +26,7 @@ https://oauth.shu.edu.cn/static/images/logo-white.png
 ![image](https://github.com/Badw0lf613/EMSystem/blob/master/static/images/cjcx.png)
 触发器：更新GPA
 ### 学生端课表student_CourseTable
+![image](https://github.com/Badw0lf613/EMSystem/blob/master/static/images/kb.png)
 ### 院系号变院系
 ### C变O
 方案：老师发申请，放入一张新表（一个字段表示课程状态，课程变开课表|认领页面|申请页面），管理员去读，类似于借阅表，管理员给课号，输入课名时（触发器），不重复就可以

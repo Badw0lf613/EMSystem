@@ -14,6 +14,7 @@ import json
 import random
 from math import floor
 from django.db.models import Q
+import numpy as np
 
 
 # Create your views here.
@@ -935,6 +936,16 @@ def student_AddCourse(request):
         return render(request, 'student_AddCourse.html', context=context)
     elif request.method == 'POST': # 表单选课
         print(">>>POST")
+        print(">>>context before")
+        print(context)
+        context=filterEnew(context,request)
+        print(">>>context after")
+        print(context)
+        # print(">>>context['kb']",context['kb'])
+        kbtmp = np.array(context['kb']) # 转numpy数组，方便进行切片
+        kbtmp = kbtmp[:,2:] # 用于选课时暂存课程表，以此来判断时间段是否冲突，切掉序号和上课时间
+        print(">>>kbtmp",kbtmp)
+        lax = ['一', '二', '三', '四', '五']
         msg = [] # 列表存储选课成功/失败信息的整条记录
         for i in range(1, 5):
             m = {}  # 临时字典存储课号，工号和结果
@@ -954,18 +965,66 @@ def student_AddCourse(request):
                     content = obj2dict(item)
                     print(">>>content",content)
                     result_id.append(content)
-                print("result_id[0]['cid_id']",result_id[0]['cid_id'])
+                # 切出上课时间，判断时间段是否冲突
+                print("result_id[0]['sksj']",result_id[0]['sksj'])
+                flag = 0
+                for xt in content['sksj'].strip('上机').split('-'):
+                    print("xt", xt)
+                    if xt[0].isdigit():
+                        try:
+                            print("try")
+                            if (xt[1].isdigit()):
+                                second = int(xt[0:2]) - 1
+                                rest = xt[2:]
+                            else:
+                                second = int(xt[0]) - 1
+                                rest = xt[1:]
+                            while first <= second:
+                                print("pos", pos, "first", first, "second", second)
+                                print("kbtmp[first][pos]", kbtmp[first][pos])
+                                if kbtmp[first][pos] != '': # 不为空，设置不能填
+                                    flag = 1 # 不能填
+                                    print("!!!kbtmp[first][pos]", kbtmp[first][pos])
+                                else: # 可以填，先把当前课程填上
+                                    print("!!!kbtmp[first][pos]", kbtmp[first][pos])
+                                    kbtmp[first][pos] = 'wrong'  # 填充内容
+                                first = first + 1
+                            # print("kb", kb)
+                            pos = lax.index(rest[0])
+                            first = int(rest[1:]) - 1
+                        except:
+                            second = int(xt) - 1
+                            print("except")
+                            print("pos", pos, "first", first, "second", second)
+                            while first <= second:
+                                print("kbtmp[first][pos]", kbtmp[first][pos])
+                                if kbtmp[first][pos] != '':
+                                    flag = 1 # 不能填
+                                    print("!!!kbtmp[first][pos]", kbtmp[first][pos])
+                                else: # 可以填，先把当前课程填上
+                                    print("!!!kbtmp[first][pos]", kbtmp[first][pos])
+                                    kbtmp[first][pos] = 'wrong'  # 填充内容
+                                first = first + 1
+                    else:
+                        pos = lax.index(xt[0])
+                        first = int(xt[1:]) - 1
                 if E.objects.filter(cid=result_id[0]['cid_id'], xh=request.user.username).exists(): # xx学号的学生选课表内已有id课程
                     m['kh'] = context['kh' + str(i)]
                     m['gh'] = context['gh' + str(i)]
                     m['res'] = '选课失败：已选此课程'
                     msg.append(m)
                     continue
+                elif flag == 1: # 时间段有冲突
+                    m['kh'] = context['kh' + str(i)]
+                    m['gh'] = context['gh' + str(i)]
+                    m['res'] = '选课失败：时间段冲突'
+                    msg.append(m)
+                    continue
                 else:
                     item = E.objects.create(
                         # cid=result_id[0]['id'],
                         cid=C.objects.filter(kh=context['kh' + str(i)])[0],  # 课程序号
-                        xn='2020-2021学年',
+                        xn='2020-2021学年', # 当前学年
                         xq=context['xq_now'],
                         gh=T.objects.filter(gh=context['gh' + str(i)])[0], # E表的外键，T表的主键，需要使用另一张表的原型
                         # gh=context['gh' + str(i)],
@@ -973,13 +1032,6 @@ def student_AddCourse(request):
                         kh=context['kh' + str(i)],
                         xh=S.objects.filter(xh=request.user.username)[0]
                     )
-                    # item = E(
-                    #     xn='2020-2021学年',
-                    #     xq='2020-2021学年春季学期',
-                    #     gh=context['gh' + str(i)],
-                    #     kh=context['kh' + str(i)],
-                    #     xh=request.user.username
-                    # )
                     print(">>>item")
                     print(item)
                     item.save()
@@ -1064,6 +1116,10 @@ def student_CourseTable(request):
     context['xq_now'] = settings.XQ
     if request.method == 'GET':
         print(">>>GET")
+        context = filterEnew(context, request)
+        print(">>>context after")
+        print(context)
+        calGPA(context)
         return render(request, 'student_CourseTable.html', context=context)
 
 @login_required
@@ -1084,7 +1140,7 @@ def testcheckbox2(request):
 
 # 计算绩点
 def calGrade(score):
-    print(">>>calGrade",score, type(score))
+    # print(">>>calGrade",score, type(score))
     if score is None: # 还未登录
         grade = 0.0
         return grade
@@ -1184,20 +1240,27 @@ def filterE(context,request):
 def filterEnew(context,request):
     result = E.objects.filter(xq=context['xq_now'], xh=request.user.username)
     classtable = []
+    letterlist = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N']
+    kb = [['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''],
+          ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''],
+          ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', ''], ['', '', '', '', '']]
+    # print("kb", kb)
+    lax = ['一', '二', '三', '四', '五']
+    idx = 0 # 当前课程下标
     for item in result:  # 将对象转换为字典
         content = obj2dict(item)
-        print(">>>classtable content", content)
+        # print(">>>classtable content before", content)
         # 查课程
         resultC = C.objects.filter(id=content['cid_id'])
         contentC = obj2dict(resultC[0])
-        print(">>>contentC", contentC)
+        # print(">>>contentC", contentC)
         content['km'] = contentC['km']
         content['xf'] = contentC['xf']
         content['xs'] = contentC['xs']
         # 查开课
         resultO = O.objects.filter(cid=content['cid_id'],gh=content['gh_id']) # 同一课程序号加工号只能在开课表查出一门课程，而且选课只能选一门
         contentO = obj2dict(resultO[0])
-        print(">>>contentO", contentO)
+        # print(">>>contentO", contentO)
         content['sksj'] = contentO['sksj']
         # 查教师名称
         resultT = T.objects.filter(gh=content['gh_id']) # 一个工号对应一个教师
@@ -1207,9 +1270,50 @@ def filterEnew(context,request):
         resultD = D.objects.filter(yxh=contentC['yxh_id'])
         yxm = obj2dict(resultD[0])['yxm']
         content['yxm'] = yxm
-        classtable.append(content)
         # 计算绩点
         content['grade'] = calGrade(content['zpcj'])
+        # 添加字母序号
+        content['letter'] = letterlist[idx]
+        # print(">>>classtable content after", content)
+        classtable.append(content)
+        # 提取上课时间
+        for xt in content['sksj'].strip('上机').split('-'):
+            # print("xt", xt)
+            if xt[0].isdigit():
+                try:
+                    if (xt[1].isdigit()):
+                        second = int(xt[0:2]) - 1
+                        rest = xt[2:]
+                    else:
+                        second = int(xt[0]) - 1
+                        rest = xt[1:]
+                    while first <= second:
+                        # print("pos", pos, "first", first, "second", second)
+                        kb[first][pos] = content['letter'] # 填充内容
+                        first = first + 1
+                    # print("kb", kb)
+                    pos = lax.index(rest[0])
+                    first = int(rest[1:]) - 1
+                except:
+                    second = int(xt) - 1
+                    # print("pos", pos, "first", first, "second", second)
+                    while first <= second:
+                        kb[first][pos] = content['letter']
+                        first = first + 1
+            else:
+                pos = lax.index(xt[0])
+                first = int(xt[1:]) - 1
+        idx = idx + 1
+    # print(">>>kb",kb)
+    time = ['8:00 ~ 8:45', '8:55 ~ 9:40', '10:00 ~ 10:45', '10:55 ~ 11:40', '12:10 ~ 12:55', '13:05 ~ 13:50', '14:10 ~ 14:55',
+            '15:05 ~ 15:50', '16:00 ~ 16:45', '16:55 ~ 17:40', '18:00 ~ 18:45', '18:55 ~ 19:40', '19:50 ~ 20:35']
+    cnt = 1 # 课程表序号
+    for i, j in zip(kb, time):
+        i.insert(0, cnt)
+        i.insert(1, j)
+        # print(">>>i insert",i)
+        cnt = cnt + 1
+    context['kb'] = kb
     print(">>>classtable")
     print(classtable)
     context['classtable'] = classtable
@@ -1217,16 +1321,19 @@ def filterEnew(context,request):
 
 # 计算总学分和均绩
 def calGPA(context):
-    print(">>>calGPA")
-    print(">>>classtable",context['classtable'])
+    # print(">>>calGPA")
+    # print(">>>classtable",context['classtable'])
     xftotal = 0 # 总计学分
     gradetotal = 0 # 所有课程绩点总和
     for i in context['classtable']:
         xftotal = xftotal + i['xf']
         gradetotal = gradetotal + i['xf'] * i['grade']
-    print(">>>xftotal",xftotal)
-    print(">>>gradetotal",gradetotal)
-    GPA = round(gradetotal / xftotal + 0.001, 2) # 四舍五入
+    # print(">>>xftotal",xftotal)
+    # print(">>>gradetotal",gradetotal)
+    if xftotal != 0:
+        GPA = round(gradetotal / xftotal + 0.00001, 2) # 四舍五入
+    else: # 防止除0
+        GPA = 0
     print(">>>gradetotal / xftotal",gradetotal / xftotal)
     print(">>>GPA",GPA)
     context['xftotal'] = xftotal
