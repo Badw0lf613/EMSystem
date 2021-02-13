@@ -823,16 +823,6 @@ def student_QueryCourse(request):
                 restmp = C.objects.filter(q)
             result = result & restmp
         classtable = []
-        # for kc in result[0]._meta.fields:
-        #     # print(kc)
-        #     # classtable.append(
-        #     #     # {'kh': kc.kh, 'km': kc.km, 'gh': kc.kh.gh, 'jsmc': kc.kh.gh.xm, 'sksj': kc.sksj, 'xq': kc.xq}
-        #     #     {'kh': kc.kh, 'km': kc.km, 'xq': kc.xq}
-        #     # )
-        #     name = kc.attname
-        #     value = getattr(result[0], name)
-        #     dict1[name] = value
-        # i = 0
         for item in result:  # 将对象转换为字典
             content = obj2dict(item)
             tmp_o = O.objects.filter(kh=content['kh'])
@@ -850,25 +840,20 @@ def student_QueryCourse(request):
                     print(">>>classtable before",classtable)
                     classtable.append(tmp)
                     print(">>>classtable after",classtable)
+                    # 查学院
+                    tmpD = D.objects.filter(yxh=content['yxh_id'])
+                    yxm = obj2dict(tmpD[0])['yxm']
+                    # print(">>>yxm",yxm)
+                    tmp['yxm'] = yxm
             else:
                 print("else>>>classtable before", classtable)
                 classtable.append(content)
                 print("else>>>classtable after", classtable)
-            # t = T.objects.all()
-            # tmp_t = T.filter(kh=content['kh'])
-            # if tmp_o.count() > 0 and content['xq'] == context['xq_now']:
-            #     for i in range(tmp_o.count()):
-            #         gh_obj = getattr(tmp_o[i], 'gh')
-            #         content['gh'] = getattr(gh_obj, 'gh')
-            #         content['sksj'] = getattr(tmp_o[i], 'sksj')
-            #         print(">>>classtable content", content)
-            #         classtable.append(content)
-            # else:
-            #     classtable.append(content)
-            # 查学院
-            tmp = D.objects.filter(yxh=content['yxh_id'])
-            yxm = obj2dict(tmp[0])['yxm']
-            content['yxm'] = yxm
+                # 查学院
+                tmpD = D.objects.filter(yxh=content['yxh_id'])
+                yxm = obj2dict(tmpD[0])['yxm']
+                # print(">>>yxm", yxm)
+                content['yxm'] = yxm
         print(">>>classtable",classtable)
         context['classtable'] = classtable
         # classtable1 = []
@@ -886,68 +871,12 @@ def student_AddCourse(request):
     context['xq_now'] = settings.XQ
     if request.method == 'GET': # 首次进入显示
         print(">>>GET")
-        result = E.objects.filter(xq=context['xq_now'], xh=request.user.username)
-        opentable = []  # 开课表，记录工号和上课时间
-        teachertable = []  # 教师表，记录工号和姓名
-        ghlist = []  # 列表记录使用教师名称在教师表查询到的内容，从其中取出工号
-        classtable1 = []  # 列表记录课程名称、学分、学时和院系号
-        classtable = []
-        for item in result:  # 将对象转换为字典
-            content = obj2dict(item)
-            result1 = O.objects.filter(id=content['id'])  # 进行提取工号和上课时间
-            for item1 in result1:  # 将对象转换为字典
-                content1 = obj2dict(item1)
-                opentable.append(content1)
-                ghlist.append(content1['gh_id'])
-                # classtable[]
-            print(">>>opentable")
-            print(opentable)
-            print(">>>ghlist")
-            print(ghlist)
-            result2 = T.objects.filter(gh__in=ghlist)  # 成功
-            for item2 in result2:  # 将对象转换为字典
-                content2 = obj2dict(item2)
-                teachertable.append(content2)
-                # classtable[]
-            print(">>>teachertable")
-            print(teachertable)
-            print(content['id'])
-            result3 = C.objects.filter(id=content['id']) # 进行提取课程名称学分学时院系号
-            for item3 in result3:  # 将对象转换为字典
-                content3 = obj2dict(item3)
-                classtable1.append(content3)
-                # classtable[]
-            print(">>>classtable1")
-            print(classtable1)
-        idlist = [] # 列表记录O表课程id
-        for t1 in opentable:
-            idlist.append(t1['id'])
-        print(">>>idlist")
-        print(idlist)
-        for item in result:  # 将对象转换为字典
-            content = obj2dict(item)
-            ############# 考虑查询结果如何显示 #####################################
-            if content['id'] in idlist: # 通过课程id将查询结果中的C表与O表T表对应
-                i = idlist.index(content['id']) # 找出下标对应的课程id
-                content['gh'] = opentable[i]['gh_id']
-                content['sksj'] = opentable[i]['sksj']
-                content['km'] = classtable1[i]['km']
-                content['xf'] = classtable1[i]['xf']
-                content['xs'] = classtable1[i]['xs']
-                content['yxh'] = classtable1[i]['yxh_id']
-                # 查学院
-                tmp = D.objects.filter(yxh=content['yxh'])
-                yxm = obj2dict(tmp[0])['yxm']
-                content['yxm'] = yxm
-                for item1 in teachertable:
-                    if item1['gh'] == opentable[i]['gh_id']:  # 存在一个老师开多门课，此时需找到每门课程对应的工号，再寻找教师名称
-                        print(">>>111")
-                        print(item1['gh'])
-                        content['jsmc'] = item1['xm']
-            classtable.append(content)
-        print(">>>classtable")
-        print(classtable)
-        context['classtable'] = classtable
+        # context=filterE(context,request)
+        print(">>>context before")
+        print(context)
+        context=filterEnew(context,request)
+        print(">>>context after")
+        print(context)
         return render(request, 'student_AddCourse.html', context=context)
     elif request.method == 'POST': # 表单选课
         print(">>>POST")
@@ -968,8 +897,10 @@ def student_AddCourse(request):
                 result_id = []
                 for item in result:
                     content = obj2dict(item)
+                    print(">>>content",content)
                     result_id.append(content)
-                if E.objects.filter(id=result_id[0]['id'], xh=request.user.username).exists(): # xx学号的学生选课表内已有id课程
+                print("result_id[0]['cid_id']",result_id[0]['cid_id'])
+                if E.objects.filter(cid=result_id[0]['cid_id'], xh=request.user.username).exists(): # xx学号的学生选课表内已有id课程
                     m['kh'] = context['kh' + str(i)]
                     m['gh'] = context['gh' + str(i)]
                     m['res'] = '选课失败：已选此课程'
@@ -977,7 +908,8 @@ def student_AddCourse(request):
                     continue
                 else:
                     item = E.objects.create(
-                        id=result_id[0]['id'],
+                        # cid=result_id[0]['id'],
+                        cid=C.objects.filter(kh=context['kh' + str(i)])[0],  # 课程序号
                         xn='2020-2021学年',
                         xq=context['xq_now'],
                         gh=T.objects.filter(gh=context['gh' + str(i)])[0], # E表的外键，T表的主键，需要使用另一张表的原型
@@ -1006,69 +938,8 @@ def student_AddCourse(request):
                 m['res'] = '选课失败：信息未填写完整'
                 msg.append(m)
         context['msg'] = msg
-        result = E.objects.filter(xq=context['xq_now'], xh=request.user.username)
-        opentable = []  # 开课表，记录工号和上课时间
-        teachertable = []  # 教师表，记录工号和姓名
-        ghlist = []  # 列表记录使用教师名称在教师表查询到的内容，从其中取出工号
-        classtable1 = []  # 列表记录课程名称、学分、学时和院系号
-        classtable = []
-        for item in result:  # 将对象转换为字典
-            content = obj2dict(item)
-            result1 = O.objects.filter(id=content['id'])  # 进行提取工号和上课时间
-            for item1 in result1:  # 将对象转换为字典
-                content1 = obj2dict(item1)
-                opentable.append(content1)
-                ghlist.append(content1['gh_id'])
-                # classtable[]
-            print(">>>opentable")
-            print(opentable)
-            print(">>>ghlist")
-            print(ghlist)
-            result2 = T.objects.filter(gh__in=ghlist)  # 成功
-            for item2 in result2:  # 将对象转换为字典
-                content2 = obj2dict(item2)
-                teachertable.append(content2)
-                # classtable[]
-            print(">>>teachertable")
-            print(teachertable)
-            print(content['id'])
-            result3 = C.objects.filter(id=content['id'])  # 进行提取课程名称学分学时院系号
-            for item3 in result3:  # 将对象转换为字典
-                content3 = obj2dict(item3)
-                classtable1.append(content3)
-                # classtable[]
-            print(">>>classtable1")
-            print(classtable1)
-        idlist = []  # 列表记录O表课程id
-        for t1 in opentable:
-            idlist.append(t1['id'])
-        print(">>>idlist")
-        print(idlist)
-        for item in result:  # 将对象转换为字典
-            content = obj2dict(item)
-            ############# 考虑查询结果如何显示 #####################################
-            if content['id'] in idlist:  # 通过课程id将查询结果中的C表与O表T表对应
-                i = idlist.index(content['id'])  # 找出下标对应的课程id
-                content['gh'] = opentable[i]['gh_id']
-                content['sksj'] = opentable[i]['sksj']
-                content['km'] = classtable1[i]['km']
-                content['xf'] = classtable1[i]['xf']
-                content['xs'] = classtable1[i]['xs']
-                content['yxh'] = classtable1[i]['yxh_id']
-                # 查学院
-                tmp = D.objects.filter(yxh=content['yxh'])
-                yxm = obj2dict(tmp[0])['yxm']
-                content['yxm'] = yxm
-                for item1 in teachertable:
-                    if item1['gh'] == opentable[i]['gh_id']:  # 存在一个老师开多门课，此时需找到每门课程对应的工号，再寻找教师名称
-                        print(">>>111")
-                        print(item1['gh'])
-                        content['jsmc'] = item1['xm']
-            classtable.append(content)
-        print(">>>classtable")
-        print(classtable)
-        context['classtable'] = classtable
-        print(">>>context")
+        context = filterEnew(context,request)
+        print(">>>context after")
         print(context)
         return render(request, 'student_AddCourse.html', context=context)
 
@@ -1081,68 +952,9 @@ def student_DeleteCourse(request):
     context['xq_now'] = settings.XQ
     if request.method == 'GET': # 首次进入显示
         print(">>>GET")
-        result = E.objects.filter(xq=context['xq_now'], xh=request.user.username)
-        opentable = []  # 开课表，记录工号和上课时间
-        teachertable = []  # 教师表，记录工号和姓名
-        ghlist = []  # 列表记录使用教师名称在教师表查询到的内容，从其中取出工号
-        classtable1 = []  # 列表记录课程名称、学分、学时和院系号
-        classtable = []
-        for item in result:  # 将对象转换为字典
-            content = obj2dict(item)
-            result1 = O.objects.filter(id=content['id'])  # 进行提取工号和上课时间
-            for item1 in result1:  # 将对象转换为字典
-                content1 = obj2dict(item1)
-                opentable.append(content1)
-                ghlist.append(content1['gh_id'])
-                # classtable[]
-            print(">>>opentable")
-            print(opentable)
-            print(">>>ghlist")
-            print(ghlist)
-            result2 = T.objects.filter(gh__in=ghlist)  # 成功
-            for item2 in result2:  # 将对象转换为字典
-                content2 = obj2dict(item2)
-                teachertable.append(content2)
-                # classtable[]
-            print(">>>teachertable")
-            print(teachertable)
-            print(content['id'])
-            result3 = C.objects.filter(id=content['id']) # 进行提取课程名称学分学时院系号
-            for item3 in result3:  # 将对象转换为字典
-                content3 = obj2dict(item3)
-                classtable1.append(content3)
-                # classtable[]
-            print(">>>classtable1")
-            print(classtable1)
-        idlist = [] # 列表记录O表课程id
-        for t1 in opentable:
-            idlist.append(t1['id'])
-        print(">>>idlist")
-        print(idlist)
-        for item in result:  # 将对象转换为字典
-            content = obj2dict(item)
-            ############# 考虑查询结果如何显示 #####################################
-            if content['id'] in idlist: # 通过课程id将查询结果中的C表与O表T表对应
-                i = idlist.index(content['id']) # 找出下标对应的课程id
-                content['gh'] = opentable[i]['gh_id']
-                content['sksj'] = opentable[i]['sksj']
-                content['km'] = classtable1[i]['km']
-                content['xf'] = classtable1[i]['xf']
-                content['xs'] = classtable1[i]['xs']
-                content['yxh'] = classtable1[i]['yxh_id']
-                # 查学院
-                tmp = D.objects.filter(yxh=content['yxh'])
-                yxm = obj2dict(tmp[0])['yxm']
-                content['yxm'] = yxm
-                for item1 in teachertable:
-                    if item1['gh'] == opentable[i]['gh_id']:  # 存在一个老师开多门课，此时需找到每门课程对应的工号，再寻找教师名称
-                        print(">>>111")
-                        print(item1['gh'])
-                        content['jsmc'] = item1['xm']
-            classtable.append(content)
-        print(">>>classtable")
-        print(classtable)
-        context['classtable'] = classtable
+        context = filterEnew(context, request)
+        print(">>>context after")
+        print(context)
         return render(request, 'student_DeleteCourse.html', context=context)
     elif request.method == 'POST': # 表单退课
         print(">>>POST")
@@ -1170,68 +982,9 @@ def student_DeleteCourse(request):
         print(">>>msg")
         print(msg)
         context['msg'] = msg
-        result = E.objects.filter(xq=context['xq_now'], xh=request.user.username)
-        opentable = []  # 开课表，记录工号和上课时间
-        teachertable = []  # 教师表，记录工号和姓名
-        ghlist = []  # 列表记录使用教师名称在教师表查询到的内容，从其中取出工号
-        classtable1 = []  # 列表记录课程名称、学分、学时和院系号
-        classtable = []
-        for item in result:  # 将对象转换为字典
-            content = obj2dict(item)
-            result1 = O.objects.filter(id=content['id'])  # 进行提取工号和上课时间
-            for item1 in result1:  # 将对象转换为字典
-                content1 = obj2dict(item1)
-                opentable.append(content1)
-                ghlist.append(content1['gh_id'])
-                # classtable[]
-            print(">>>opentable")
-            print(opentable)
-            print(">>>ghlist")
-            print(ghlist)
-            result2 = T.objects.filter(gh__in=ghlist)  # 成功
-            for item2 in result2:  # 将对象转换为字典
-                content2 = obj2dict(item2)
-                teachertable.append(content2)
-                # classtable[]
-            print(">>>teachertable")
-            print(teachertable)
-            print(content['id'])
-            result3 = C.objects.filter(id=content['id'])  # 进行提取课程名称学分学时院系号
-            for item3 in result3:  # 将对象转换为字典
-                content3 = obj2dict(item3)
-                classtable1.append(content3)
-                # classtable[]
-            print(">>>classtable1")
-            print(classtable1)
-        idlist = []  # 列表记录O表课程id
-        for t1 in opentable:
-            idlist.append(t1['id'])
-        print(">>>idlist")
-        print(idlist)
-        for item in result:  # 将对象转换为字典
-            content = obj2dict(item)
-            ############# 考虑查询结果如何显示 #####################################
-            if content['id'] in idlist:  # 通过课程id将查询结果中的C表与O表T表对应
-                i = idlist.index(content['id'])  # 找出下标对应的课程id
-                content['gh'] = opentable[i]['gh_id']
-                content['sksj'] = opentable[i]['sksj']
-                content['km'] = classtable1[i]['km']
-                content['xf'] = classtable1[i]['xf']
-                content['xs'] = classtable1[i]['xs']
-                content['yxh'] = classtable1[i]['yxh_id']
-                # 查学院
-                tmp = D.objects.filter(yxh=content['yxh'])
-                yxm = obj2dict(tmp[0])['yxm']
-                content['yxm'] = yxm
-                for item1 in teachertable:
-                    if item1['gh'] == opentable[i]['gh_id']:  # 存在一个老师开多门课，此时需找到每门课程对应的工号，再寻找教师名称
-                        print(">>>111")
-                        print(item1['gh'])
-                        content['jsmc'] = item1['xm']
-            classtable.append(content)
-        print(">>>classtable")
-        print(classtable)
-        context['classtable'] = classtable
+        context = filterEnew(context, request)
+        print(">>>context after")
+        print(context)
         return render(request, 'student_DeleteCourse.html', context=context)
         # return HttpResponse(json.dumps({
         #     "kh_array": context['kh_array'],
@@ -1243,70 +996,9 @@ def student_QueryGrades(request):
     print(">>>student_QueryGrades")
     context = get_user_info(request)
     context['xq_now'] = settings.XQ
-    result = E.objects.filter(xq=context['xq_now'], xh=request.user.username)
-    opentable = []  # 开课表，记录工号和上课时间
-    teachertable = []  # 教师表，记录工号和姓名
-    ghlist = []  # 列表记录使用教师名称在教师表查询到的内容，从其中取出工号
-    classtable1 = []  # 列表记录课程名称、学分、学时和院系号
-    classtable = []
-    for item in result:  # 将对象转换为字典
-        content = obj2dict(item)
-        result1 = O.objects.filter(id=content['id'])  # 进行提取工号和上课时间
-        for item1 in result1:  # 将对象转换为字典
-            content1 = obj2dict(item1)
-            opentable.append(content1)
-            ghlist.append(content1['gh_id'])
-            # classtable[]
-        print(">>>opentable")
-        print(opentable)
-        print(">>>ghlist")
-        print(ghlist)
-        result2 = T.objects.filter(gh__in=ghlist)  # 成功
-        for item2 in result2:  # 将对象转换为字典
-            content2 = obj2dict(item2)
-            teachertable.append(content2)
-            # classtable[]
-        print(">>>teachertable")
-        print(teachertable)
-        print(content['id'])
-        result3 = C.objects.filter(id=content['id'])  # 进行提取课程名称学分学时院系号
-        for item3 in result3:  # 将对象转换为字典
-            content3 = obj2dict(item3)
-            classtable1.append(content3)
-            # classtable[]
-        print(">>>classtable1")
-        print(classtable1)
-    idlist = []  # 列表记录O表课程id
-    for t1 in opentable:
-        idlist.append(t1['id'])
-    print(">>>idlist")
-    print(idlist)
-    for item in result:  # 将对象转换为字典
-        content = obj2dict(item)
-        ############# 考虑查询结果如何显示 #####################################
-        if content['id'] in idlist:  # 通过课程id将查询结果中的C表与O表T表对应
-            i = idlist.index(content['id'])  # 找出下标对应的课程id
-            content['gh'] = opentable[i]['gh_id']
-            content['sksj'] = opentable[i]['sksj']
-            content['km'] = classtable1[i]['km']
-            content['xf'] = classtable1[i]['xf']
-            content['xs'] = classtable1[i]['xs']
-            content['yxh'] = classtable1[i]['yxh_id']
-            # 查学院
-            tmp = D.objects.filter(yxh=content['yxh'])
-            yxm = obj2dict(tmp[0])['yxm']
-            content['yxm'] = yxm
-            for item1 in teachertable:
-                if item1['gh'] == opentable[i]['gh_id']:  # 存在一个老师开多门课，此时需找到每门课程对应的工号，再寻找教师名称
-                    print(">>>111")
-                    print(item1['gh'])
-                    content['jsmc'] = item1['xm']
-            # 计算绩点
-        content['grade'] = calGrade(content['zpcj'])
-        classtable.append(content)
-    print(">>>classtable")
-    print(classtable)
-    context['classtable'] = classtable
+    context = filterEnew(context, request)
+    print(">>>context after")
+    print(context)
     return render(request, 'student_QueryGrades.html', context=context)
 
 @login_required
@@ -1365,3 +1057,104 @@ def calGrade(score):
     else:
         grade = 666
     return grade
+
+# 筛选已选课程
+def filterE(context,request):
+    result = E.objects.filter(xq=context['xq_now'], xh=request.user.username)
+    opentable = []  # 开课表，记录工号和上课时间
+    teachertable = []  # 教师表，记录工号和姓名
+    ghlist = []  # 列表记录使用教师名称在教师表查询到的内容，从其中取出工号
+    classtable1 = []  # 列表记录课程名称、学分、学时和院系号
+    classtable = []
+    for item in result:  # 将对象转换为字典
+        content = obj2dict(item)
+        result1 = O.objects.filter(cid=content['id'])  # 进行提取工号和上课时间
+        for item1 in result1:  # 将对象转换为字典
+            content1 = obj2dict(item1)
+            opentable.append(content1)
+            ghlist.append(content1['gh_id'])
+            # classtable[]
+        print(">>>opentable")
+        print(opentable)
+        print(">>>ghlist")
+        print(ghlist)
+        result2 = T.objects.filter(gh__in=ghlist)  # 成功
+        for item2 in result2:  # 将对象转换为字典
+            content2 = obj2dict(item2)
+            teachertable.append(content2)
+            # classtable[]
+        print(">>>teachertable")
+        print(teachertable)
+        print(content['id'])
+        result3 = C.objects.filter(id=content['id'])  # 进行提取课程名称学分学时院系号
+        for item3 in result3:  # 将对象转换为字典
+            content3 = obj2dict(item3)
+            classtable1.append(content3)
+            # classtable[]
+        print(">>>classtable1")
+        print(classtable1)
+    cidlist = []  # 列表记录O表课程id
+    for t1 in opentable:
+        cidlist.append(t1['cid_id'])
+    print(">>>cidlist")
+    print(cidlist)
+    for item in result:  # 将对象转换为字典
+        content = obj2dict(item)
+        ############# 考虑查询结果如何显示 #####################################
+        if content['id'] in cidlist:  # 通过课程id将查询结果中的C表与O表T表对应
+            i = cidlist.index(content['id'])  # 找出下标对应的课程id
+            content['gh'] = opentable[i]['gh_id']
+            content['sksj'] = opentable[i]['sksj']
+            content['km'] = classtable1[i]['km']
+            content['xf'] = classtable1[i]['xf']
+            content['xs'] = classtable1[i]['xs']
+            content['yxh'] = classtable1[i]['yxh_id']
+            # 查学院
+            tmp = D.objects.filter(yxh=content['yxh'])
+            yxm = obj2dict(tmp[0])['yxm']
+            content['yxm'] = yxm
+            for item1 in teachertable:
+                if item1['gh'] == opentable[i]['gh_id']:  # 存在一个老师开多门课，此时需找到每门课程对应的工号，再寻找教师名称
+                    print(">>>111")
+                    print(item1['gh'])
+                    content['jsmc'] = item1['xm']
+        classtable.append(content)
+    print(">>>classtable")
+    print(classtable)
+    context['classtable'] = classtable
+    return context
+
+# 新筛选已选课程
+def filterEnew(context,request):
+    result = E.objects.filter(xq=context['xq_now'], xh=request.user.username)
+    classtable = []
+    for item in result:  # 将对象转换为字典
+        content = obj2dict(item)
+        print(">>>classtable content", content)
+        # 查课程
+        resultC = C.objects.filter(id=content['cid_id'])
+        contentC = obj2dict(resultC[0])
+        print(">>>contentC", contentC)
+        content['km'] = contentC['km']
+        content['xf'] = contentC['xf']
+        content['xs'] = contentC['xs']
+        # 查开课
+        resultO = O.objects.filter(cid=content['cid_id'],gh=content['gh_id']) # 同一课程序号加工号只能在开课表查出一门课程，而且选课只能选一门
+        contentO = obj2dict(resultO[0])
+        print(">>>contentO", contentO)
+        content['sksj'] = contentO['sksj']
+        # 查教师名称
+        resultT = T.objects.filter(gh=content['gh_id']) # 一个工号对应一个教师
+        contentT = obj2dict(resultT[0])
+        content['jsmc'] = contentT['xm']
+        # 查学院
+        resultD = D.objects.filter(yxh=contentC['yxh_id'])
+        yxm = obj2dict(resultD[0])['yxm']
+        content['yxm'] = yxm
+        classtable.append(content)
+        # 计算绩点
+        content['grade'] = calGrade(content['zpcj'])
+    print(">>>classtable")
+    print(classtable)
+    context['classtable'] = classtable
+    return context
