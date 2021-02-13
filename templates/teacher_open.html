@@ -141,6 +141,7 @@
             {% csrf_token %}
                 <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" name='stats' value="开设新课程">
                 <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" name='stats' value="下学期课程提交">
+                <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" name='stats' value="审核情况查询">
         </form>
         {% if messages %}
                 <script>
@@ -195,6 +196,36 @@
             <input hidden type='text' name='m' value={{ ck }} >
             <input type="submit" style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9;" value="提交">
         </form>
+        {% endif %}
+
+        {% if ck >= 3 %}
+            <b><font size="4"> 审核情况查询： </font></b>
+            <br><br>
+            {% if ck == 4 %}
+                没有需要查询的内容
+            {% else %}
+                <table class="table">
+                <thead>
+                    <tr>
+                        <th> 学期 </th>
+                        <th> 课程名称 </th>
+                        <th> 申请类型 </th>
+                        <th> 审核状态 </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for kc in sch %}
+                    <tr>
+                        <td> {{kc.xq}}</td>
+                        <td> {{kc.km}} </td>
+                        <td> {{kc.tp}} </td>
+                        <td> {{kc.st}} </td>
+                    </tr>
+                {% endfor %}
+                </form>
+            </tbody>
+        </table>
+                {% endif %}
         {% endif %}
     </div>
     {% endif %}

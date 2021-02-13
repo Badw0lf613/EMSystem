@@ -207,14 +207,33 @@ def write(request):
 
 def open(request):
     b = find(request)
-    try:
+    if(request.POST.dict().__contains__('stats')):
         stats = request.POST['stats']
         if (stats == '开设新课程'):
             b['ck'] = 1
         elif(stats == '下学期课程提交'):
             b['ck'] = 2
+        elif(stats == '审核情况查询'):
+            b['ck'] = 3
+            sql = 'select * from emsystem_temp where gh = %s'
+            param = [b['gh']]
+            result = get_from_table(sql, param)
+            sub = []
+            for i in result:
+                print(i)
+                temp={'xq':i['xq'],'km':i['km'],'tp':'新课程提交','st':'待审核'}
+                if(i['xf']==0):
+                    temp['tp'] = '任课申请'
+                if(i['stats'] == '3'):
+                    temp['st'] = '通过'
+                elif(i['stats'] == '4'):
+                    temp['st'] = '拒绝'
+                sub.append(temp)
+            if (sub ==[]):
+                b['ck']=4
+            b['sch'] = sub
         return render(request, "teacher_open.html", context=b)
-    except:
+    else:
         if request.POST.getlist('m') != []:
             xq = request.POST['m']
             x = request.POST
