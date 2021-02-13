@@ -999,6 +999,7 @@ def student_QueryGrades(request):
     context = filterEnew(context, request)
     print(">>>context after")
     print(context)
+    calGPA(context)
     return render(request, 'student_QueryGrades.html', context=context)
 
 @login_required
@@ -1158,3 +1159,20 @@ def filterEnew(context,request):
     print(classtable)
     context['classtable'] = classtable
     return context
+
+# 计算总学分和均绩
+def calGPA(context):
+    print(">>>calGPA")
+    print(">>>classtable",context['classtable'])
+    xftotal = 0 # 总计学分
+    gradetotal = 0 # 所有课程绩点总和
+    for i in context['classtable']:
+        xftotal = xftotal + i['xf']
+        gradetotal = gradetotal + i['xf'] * i['grade']
+    print(">>>xftotal",xftotal)
+    print(">>>gradetotal",gradetotal)
+    GPA = round(gradetotal / xftotal + 0.001, 2) # 四舍五入
+    print(">>>gradetotal / xftotal",gradetotal / xftotal)
+    print(">>>GPA",GPA)
+    context['xftotal'] = xftotal
+    context['GPA'] = GPA
