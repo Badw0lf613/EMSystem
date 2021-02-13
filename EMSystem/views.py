@@ -1332,9 +1332,9 @@ def calGPA(context):
     # print(">>>gradetotal",gradetotal)
     if xftotal != 0:
         GPA = round(gradetotal / xftotal + 0.00001, 2) # 四舍五入
+        print(">>>gradetotal / xftotal",gradetotal / xftotal)
     else: # 防止除0
         GPA = 0
-    print(">>>gradetotal / xftotal",gradetotal / xftotal)
     print(">>>GPA",GPA)
     context['xftotal'] = xftotal
     context['GPA'] = GPA
