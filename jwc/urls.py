@@ -50,6 +50,9 @@ urlpatterns = [
     path('admin/Management<int:type>/search/add', views.add),  # 添加学生
     path('admin/Management<int:type>/search/', views.search, name="search_all"),  # 搜索学生
     path('admin/Management<int:type>/search/<int:flag>', views.search, name="search"),  # 搜索学生
+    path('admin/Management<int:type>/apply', views.apply, name="apply"),
+    path('admin/Management<int:type>/apply/commit', views.apply_commit, name="apply_commit"),
+    path('admin/Management<int:type>/apply/refuse', views.apply_refuse, name="apply_refuse"),
 
     path('test', views.testcheckbox),  # 测试复选框样式
     path('test2', views.testcheckbox2),  # 测试复选框样式2

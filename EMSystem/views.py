@@ -137,13 +137,6 @@ def admin_index(request):
     res = C.objects.all()
     res = res.filter(xq=xq)
 
-    # days = ['一', '二', '三', '四', '五']
-    # times = ['1-2', '3-4', '5-6', '7-8', '9-10', '11-13']
-    # dt = []
-    # for i in range(5):
-    #     for j in range(6):
-    #         dt.append([days[i], times[j]])
-
     for item in res:
         dt_temp = dt[:]
         item_dict = obj2dict(item)
@@ -153,13 +146,18 @@ def admin_index(request):
         temp = TEMP.objects.all()
 
         if temp.filter(km=kh).count() != 0:               # 如果需要有教师认领课程，那么就把课程分配给他
-            gh = obj2dict(temp.filter(km=kh)[0])['gh']
-            sksj = get_sksj(gh, xf, dt_temp)
-            t = T.objects.get(gh=gh)
-            # gh = T.objects.filter(gh=['gh' + str(i)])[0],  # E表的外键，T表的主键，需要使用另一张表的原型
-            print("C.objects.filter(kh=kh)[0]", C.objects.filter(kh=kh)[0])
-            cid = C.objects.filter(kh=kh)[0]  # 课程序号
-            new_o = O.objects.create(kh=kh, gh=t, sksj=sksj, cid=cid)
+            ghs = []
+            res = temp.filter(km=kh)
+            for item in res:
+                gh = obj2dict(item)['gh']
+                ghs.append(gh)
+            for gh in ghs:
+                sksj = get_sksj(gh, xf, dt_temp)
+                t = T.objects.get(gh=gh)
+                # gh = T.objects.filter(gh=['gh' + str(i)])[0],  # E表的外键，T表的主键，需要使用另一张表的原型
+                print("C.objects.filter(kh=kh)[0]", C.objects.filter(kh=kh)[0])
+                cid = C.objects.filter(kh=kh)[0]  # 课程序号
+                new_o = O.objects.create(kh=kh, gh=t, sksj=sksj, cid=cid)
 
         else:                                             # 如果还没有教师认领课程，那么久随机分配一个本院系的老师上这门课
             yxh = obj2dict(item)['yxh_id']
@@ -713,7 +711,64 @@ def search(request, type, flag=None):                     # 搜索学生,flag是
                       context={'courses': courses, 'chosen_xq': chosen_xq ,'chosen_kh': chosen_kh,
                                'search': search, 'type': type, 'xq':xq})
 
-def obj2dict(obj):                                        # 数据库记录object转换成python字典
+def apply(request, type):                                # 审核课程信息
+    xq = settings.XQ
+    res = TEMP.objects.filter(stats=0)
+    courses = []
+    for item in res:
+        item_dict = obj2dict(item)
+        d = D.objects.all()
+        tmp = d.filter(yxh=item_dict['yxh_id'])
+        yxm = obj2dict(tmp[0])['yxm']
+        del item_dict['yxh_id']
+        item_dict['yxm'] = yxm
+        courses.append(item_dict)
+
+    return render(request, 'deal_with_apply.html',context={'xq':xq,'courses':courses})
+
+
+@login_required
+@csrf_exempt
+def apply_commit(request, type):
+    print(">>>commit")
+    data = json.loads(request.body.decode('utf-8'))
+    xqs = data.get('xq_array')
+    kms = data.get('km_array')
+    xfs = data.get('xf_array')
+    yxs = data.get('yx_array')
+    print(xqs)
+    print(kms)
+    print(xfs)
+    print(yxs)
+    for xq, km, xf, yx in zip(xqs, kms, xfs, yxs):
+        TEMP.objects.filter(xq=xq, km=km).update(stats=3)
+        rand = random.sample(['1','2','3','4','5','6','7','8','9','0'], 6)
+        kh = '08'
+        for r in rand:
+            kh = kh + r
+        d = D.objects.filter(yxm=yx)
+        yxh = getattr(d[0], 'yxh')
+        new_c = C.objects.create(xq=xq,kh=kh,km=km,xf=int(xf),xs=int(xf)*10,yxh_id=yxh)
+    return redirect("apply", 4)
+
+@login_required
+@csrf_exempt
+def apply_refuse(request, type):
+    print(">>>refuse")
+    data = json.loads(request.body.decode('utf-8'))
+    xqs = data.get('xq_array')
+    kms = data.get('km_array')
+    xfs = data.get('xf_array')
+    yxs = data.get('yx_array')
+    print(xqs)
+    print(kms)
+    print(xfs)
+    print(yxs)
+    for xq, km, xf, yx in zip(xqs, kms, xfs, yxs):
+        TEMP.objects.filter(xq=xq, km=km).update(stats=4)
+    return redirect("apply", 4)
+
+def obj2dict(obj):                                           # 数据库记录object转换成python字典
     res = {}
     for field in obj._meta.fields:
         name = field.attname
