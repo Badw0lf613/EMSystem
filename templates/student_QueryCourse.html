@@ -148,7 +148,7 @@
             {% csrf_token %}
             <div class="form-group">
                 学期：
-                <input type="text" name="xq" class="form-control form-control-inline" value={% if xq %}{{xq}}{% else %} 2020-2021学年春季学期 {% endif%}>
+                <input type="text" name="xq" class="form-control form-control-inline" value={% if xq %}{{xq}}{% else %} {{ xq_now }} {% endif%}>
                 课程号：
                 <input type="text" name="kh" class="form-control form-control-inline" style="width:100px;" value={{kh}}>
                 课程名称：
@@ -199,7 +199,7 @@
                         <td> {{kc.xf}} </td>
                         <td> {{kc.xs}} </td>
                         <td> {{kc.yxm}} </td>
-                        <td> {{kc.xq}} </td>
+                        <td style="color: red"> {{kc.xq}} </td>
                         <!--<td><button type="submit"> 选课 </button></td>-->
                     </tr>
                     {% else %}
