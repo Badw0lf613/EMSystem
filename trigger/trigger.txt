@@ -1,0 +1,46 @@
+CREATE TRIGGER tri_upd_jj
+AFTER INSERT ON emsystem_e
+FOR EACH ROW
+BEGIN
+select c.xf into @xf from emsystem_c c WHERE c.id=NEW.cid_id;
+select s.xfh into @xfh from emsystem_s s WHERE s.xh=NEW.xh_id;
+select s.jj into @jjold from emsystem_s s WHERE s.xh=NEW.xh_id;
+UPDATE emsystem_s s1 SET s1.jj = (@jjold * @xfh + @xf) / (@xfh + @xf);
+END
+
+CREATE TRIGGER tri_upd_jj
+AFTER INSERT ON `emsystem_e`
+FOR EACH ROW
+BEGIN
+select c1.xf from `emsystem_c` c1 WHERE c1.id=NEW.cid_id;
+END
+
+
+UPDATE emsystem_c c,emsystem_s s SET s.jj = s.jj WHERE s.xh = NEW.xh_id and c.xf in (select c1.xf from emsystem_c c1 WHERE c1.id = NEW.cid_id);
+ / (s.xfh + c.xf) * s.xfh
+CREATE TRIGGER tri_upd_jj
+AFTER INSERT ON emsystem_e
+FOR EACH ROW
+BEGIN
+UPDATE emsystem_c c,emsystem_s s,emsystem_e e SET s.jj = s.jj / (xfold + c.xf) * xfold WHERE c.id = e.cid_id and s.xh = e.xh_id and s.xh in (
+select s.xh, sum(xf) xfold from c WHERE c.id in (select e.cid_id from e group by e.xh_id having e.xh_id=NEW.xh_id))
+and c.xf in (select c.xf from c WHERE c.id = NEW.cid_id);
+END
+
+CREATE TRIGGER tri_upd_jj
+AFTER INSERT ON emsystem_e
+FOR EACH ROW
+BEGIN
+UPDATE emsystem_s SET jj = jj / (xfold + xf) * xfold WHERE xfold in (
+select sum(xf) xfold from emsystem_c WHERE id in (select cid_id from emsystem_e group by xh_id having xh_id=NEW.xh_id))
+and xf in (select xf from emsystem_c WHERE id = NEW.cid_id);
+END
+
+CREATE TRIGGER tri_upd_jj
+AFTER INSERT ON emsystem_e
+FOR EACH ROW
+BEGIN
+UPDATE emsystem_s SET jj = jj / (xfold + xf) * xfold WHERE xh in (
+select sum(xf) xfold from emsystem_c WHERE id in (select cid_id from emsystem_e group by xh_id having xh_id=NEW.xh_id))
+and xf in (select xf from emsystem_c WHERE id = NEW.cid_id);
+END

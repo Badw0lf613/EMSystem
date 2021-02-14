@@ -7,7 +7,7 @@ https://oauth.shu.edu.cn/static/images/headerbg.jpg <br>
 https://oauth.shu.edu.cn/static/images/footerbg.jpg <br>
 https://oauth.shu.edu.cn/static/images/login-bg.jpg <br>
 https://oauth.shu.edu.cn/static/images/logo-white.png
-### 学生端选课限制（时间段or学分上限）触发器
+### 学生端选课限制（~~时间段~~or学分上限）触发器
 ### ~~学生端课程查询student_QueryCourse~~
 ![image](https://github.com/Badw0lf613/EMSystem/blob/master/static/images/kccx.png)
 学生查询课程时可以选择学期，因此可以查到非当前学期/当前学期未开设的课程。<br>
@@ -25,7 +25,7 @@ https://oauth.shu.edu.cn/static/images/logo-white.png
 ### ~~学生端成绩查询student_QueryGrades~~
 ![image](https://github.com/Badw0lf613/EMSystem/blob/master/static/images/cjcx.png)
 触发器：更新GPA
-### 学生端课表student_CourseTable
+~~### 学生端课表student_CourseTable~~
 ![image](https://github.com/Badw0lf613/EMSystem/blob/master/static/images/kb.png)
 ### 院系号变院系
 ### C变O
@@ -39,9 +39,9 @@ ysy更新GPA：<br>
 yce管理员：添加角色再加入auth_user表，例如添加学生的同时加入auth_user，并分配初始密码。<br>
 开课申请表&认领课程表（0、1区分）：开课人工号，课名，学期，学分
 开课表：加一列，对该老师的评价
-### 管理员切换学期时/课程管理变换学期或删除课程修改课程时需要将开课表内容更新！！！
+### ~~管理员切换学期时/课程管理变换学期或删除课程修改课程时需要将开课表内容更新！！！~~
 ### 课程temp表多了个春季学期，
 ### 课程查询加一个选课人数，django的count
-### 学生院系号变成院系
-### 教师查询不能是学号要是工号
-### E表存了所有学期的课程，已选该课程的判定？？没问题，首先查开课表有无该课程，只需要对开课表更新
+### ~~学生院系号变成院系~~
+### ~~教师查询不能是学号要是工号~~
+### ~~E表存了所有学期的课程，已选该课程的判定？？没问题，首先查开课表有无该课程，只需要对开课表更新~~

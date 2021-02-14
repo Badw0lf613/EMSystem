@@ -9,7 +9,8 @@ class S(models.Model):                                                     # 学
     jg = models.CharField(max_length=32)                                   # 籍贯
     sjhm = models.CharField(max_length=32, unique=True)                    # 手机号码
     yxh = models.ForeignKey('D', to_field='yxh', on_delete=models.CASCADE)      # 院系号(外键)
-
+    jj = models.FloatField(null=True,blank=True)       # 所有学期均绩
+    xfh = models.FloatField(null=True,blank=True)       # 所有学期学分和
 
 class D(models.Model):                                                     # 院系表
     yxh = models.CharField(max_length=8, primary_key=True)                 # 院系号
