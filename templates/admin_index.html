@@ -13,7 +13,7 @@
             var str = "<input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=" + key + ">"
             swal({
                 title: "<span style=\"text-align: center; font-size: 30px\">请选择当前学期</span>",
-                text: "    <form method=\"post\" action=\"{% url 'admin' %}\">\n" + str +
+                text: "    <form method=\"post\" action=\"{% url 'update_xq' %}\">\n" + str +
                     "        <select name=\"xq\">\n" +
                     "            <option value =\"2020-2021学年秋季学期\"> 2020-2021学年秋季学期 <option>\n" +
                     "            <option value =\"2020-2021学年冬季学期\"> 2020-2021学年冬季学期 <option>\n" +

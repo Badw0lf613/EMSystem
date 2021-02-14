@@ -53,6 +53,7 @@ urlpatterns = [
     path('admin/Management<int:type>/apply', views.apply, name="apply"),
     path('admin/Management<int:type>/apply/commit', views.apply_commit, name="apply_commit"),
     path('admin/Management<int:type>/apply/refuse', views.apply_refuse, name="apply_refuse"),
+    path('admin/update_xq', views.update_xq, name="update_xq"),
 
     path('test', views.testcheckbox),  # 测试复选框样式
     path('test2', views.testcheckbox2),  # 测试复选框样式2

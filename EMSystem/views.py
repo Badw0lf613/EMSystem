@@ -127,12 +127,17 @@ def admin_index(request):
     print(">>>admin")
     user_info = get_admin_info(request)
     print(user_info)
-    xq = request.POST.get('xq')
-    if xq is None:
-        xq = settings.XQ
-    else:
-        settings.XQ = xq
+    xq = settings.XQ
 
+    # print(xq)
+    # print(settings.XQ)
+    return render(request, 'admin_index.html', {'name': user_info['name'], 'yhm': user_info['yhm'], 'xq': xq})
+
+@login_required
+def update_xq(request):
+    print(">>>update")
+    xq = request.POST.get('xq')
+    settings.XQ = xq
     if O.objects.all().count() != 0:          # 如果O表不为空，则首先清空O表
         O.objects.all().delete()
     res = C.objects.all()
@@ -173,12 +178,10 @@ def admin_index(request):
             new_o = O.objects.create(kh=kh, gh=t[idx], sksj=sksj, cid=cid)
         new_o.save()
 
-    # print(xq)
-    # print(settings.XQ)
-    return render(request, 'admin_index.html', {'name': user_info['name'], 'yhm': user_info['yhm'], 'xq': xq})
+    return redirect("admin")
 
 def get_sksj(gh, xf, dt):
-    dt_temp = dt
+    dt_temp = dt[:]
     old_times = []
     o_item = O.objects.filter(gh=gh)
     for o in o_item:
@@ -295,7 +298,8 @@ def add(request, type):                 # 添加
                 idx = random.randint(0, num - 1)
                 gh = getattr(t[idx], 'gh')
                 sksj = get_sksj(gh, keys['xf'], dt[:])               # 上课时间也需要重新分配
-                new_o = O.objects.create(kh=keys['kh'], gh=t[idx], sksj=sksj)
+                cid = C.objects.filter(kh=keys['kh'])[0]  # 课程序号
+                new_o = O.objects.create(kh=keys['kh'], gh=t[idx], sksj=sksj, cid=cid)
 
         return redirect("search", type=4, flag=1)
 
@@ -322,7 +326,6 @@ def delete(request, type):                    # 删除
         gh = data.get('data_array')
         print(gh)
         for num in gh[:]:
-            print(num)
             T.objects.filter(gh=num).delete()
             if User.objects.filter(username=num).count() != 0:
                 User.objects.filter(username__exact=num).delete()  # 从用户表里面也删除这个老师
@@ -402,7 +405,7 @@ def edit(request, type):                        # 编辑信息
         xq = request.POST.get('xq')
         kh = request.POST.get('kh')
         km = request.POST.get('km')
-        gh = request.POST.get('gh')
+        js = request.POST.get('js')
         sksj = request.POST.get('sksj')
         xf = request.POST.get('xf')
         xs = request.POST.get('xs')
@@ -415,6 +418,8 @@ def edit(request, type):                        # 编辑信息
             temp_o = O.objects.get(q)
             old_gh = getattr(temp_o, 'gh')
 
+            t_obj = T.objects.get(xm=js)
+            gh = getattr(t_obj, 'gh')
             if old_gh != gh:
                 sksj = get_sksj(gh, xf, dt)
 
@@ -600,22 +605,27 @@ def search(request, type, flag=None):                     # 搜索学生,flag是
                       context={'departments': departments, 'chosen_yxh': chosen_yxh, 'search': search, 'type': type, 'xq':xq})
 
     if type == 4:
+        number = TEMP.objects.filter(stats=0).count()
         chosen_kh = request.GET.get('chosen_kh')
         chosen_xq = request.GET.get('chosen_xq')
+        chosen_js = request.GET.get('chosen_js')
+        print(chosen_kh)
+        print(chosen_xq)
+        if chosen_js == '':
+            print(chosen_js)
+        keys = {}
+        keys['xq'] = request.POST.get('xq')
+        keys['kh'] = request.POST.get('kh')
+        keys['km'] = request.POST.get('km')
+        keys['js'] = request.POST.get('js')
+        keys['sksj'] = request.POST.get('sksj')
+        keys['xf'] = request.POST.get('xf')
+        keys['xs'] = request.POST.get('xs')
+        keys['yx'] = request.POST.get('yx')
+        print(keys)
 
         if request.method == 'POST':                 # 如果点击查询，则method是post，查询并且渲染符合条件的所有学生
             print("post")
-            keys = {}
-            keys['xq'] = request.POST.get('xq')
-            print(keys['xq'])
-            keys['kh'] = request.POST.get('kh')
-            keys['km'] = request.POST.get('km')
-            keys['gh'] = request.POST.get('gh')
-            keys['sksj'] = request.POST.get('sksj')
-            keys['xf'] = request.POST.get('xf')
-            keys['xs'] = request.POST.get('xs')
-            keys['yx'] = request.POST.get('yx')
-            print(keys)
             result = C.objects.all()
             all = True
 
@@ -628,9 +638,11 @@ def search(request, type, flag=None):                     # 搜索学生,flag是
             if keys['km']:
                 result = result.filter(km__contains=keys['km'])
                 all = False
-            if keys['gh']:
+            if keys['js']:
+                result_t = T.objects.get(xm=keys['js'])
+                gh = getattr(result_t, 'gh')
                 result_o = O.objects.all()
-                result_o = result_o.filter(gh=keys['gh'])
+                result_o = result_o.filter(gh_id=gh)
                 khs = []
                 for item in result_o:
                     khs.append(getattr(item, 'kh'))
@@ -682,7 +694,6 @@ def search(request, type, flag=None):                     # 搜索学生,flag是
             all = True
 
         courses = []
-        print(result.count())
         for item in result:
             res = obj2dict(item)
             d = D.objects.all()
@@ -697,10 +708,13 @@ def search(request, type, flag=None):                     # 搜索学生,flag是
                 for i in range(tmp_o.count()):
                     tmp = res.copy()
                     gh_obj = getattr(tmp_o[i], 'gh')
-                    tmp['gh'] = getattr(gh_obj, 'gh')
+                    tmp['js'] = getattr(gh_obj, 'xm')
                     tmp['sksj'] = getattr(tmp_o[i], 'sksj')
-                    courses.append(tmp)
-            elif keys['gh'] == '':
+                    if tmp['js'] == keys['js'] and keys['js'] != '' or keys['js'] == '' or keys['js'] is None:
+                        courses.append(tmp)
+            elif keys['js'] == '' or keys['js'] is None:
+                res['js'] = ''
+                res['sksj'] = ''
                 courses.append(res)
 
         if all == True:
@@ -709,8 +723,8 @@ def search(request, type, flag=None):                     # 搜索学生,flag是
             search = None
         print(courses)
         return render(request, 'Management.html',
-                      context={'courses': courses, 'chosen_xq': chosen_xq ,'chosen_kh': chosen_kh,
-                               'search': search, 'type': type, 'xq':xq})
+                      context={'courses': courses, 'chosen_xq': chosen_xq ,'chosen_kh': chosen_kh, 'chosen_js': chosen_js,
+                               'search': search, 'type': type, 'xq':xq, 'number':number})
 
 def apply(request, type):                                # 审核课程信息
     xq = settings.XQ
@@ -723,6 +737,11 @@ def apply(request, type):                                # 审核课程信息
         yxm = obj2dict(tmp[0])['yxm']
         del item_dict['yxh_id']
         item_dict['yxm'] = yxm
+
+        t = T.objects.filter(gh=item_dict['gh'])
+        js = getattr(t[0], 'xm')
+        del item_dict['gh']
+        item_dict['js']=js
         courses.append(item_dict)
 
     return render(request, 'deal_with_apply.html',context={'xq':xq,'courses':courses})

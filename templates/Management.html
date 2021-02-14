@@ -14,7 +14,7 @@
             var str = "<input type=\"hidden\" name=\"csrfmiddlewaretoken\" value=" + key + ">"
             swal({
                 title: "<span style=\"text-align: center; font-size: 30px\">请选择当前学期</span>",
-                text: "    <form method=\"post\" action=\"{% url 'admin' %}\">\n" + str +
+                text: "    <form method=\"post\" action=\"{% url 'update_xq' %}\">\n" + str +
                     "        <select name=\"xq\">\n" +
                     "            <option value =\"2020-2021学年秋季学期\"> 2020-2021学年秋季学期 <option>\n" +
                     "            <option value =\"2020-2021学年冬季学期\"> 2020-2021学年冬季学期 <option>\n" +
@@ -184,7 +184,7 @@
                 <div class="form-group">学期：<input class="form-control form-control-inline" name="xq"/></div>
                 <div class="form-group">课程号：<input class="form-control form-control-inline" name="kh"/></div>
                 <div class="form-group">课程名：<input class="form-control form-control-inline" name="km"/></div>
-                <div class="form-group">工号：<input class="form-control form-control-inline" name="gh"/></div>
+                <div class="form-group">教师：<input class="form-control form-control-inline" name="js"/></div>
                 <div class="form-group">上课时间：<input class="form-control
                 form-control-inline" name="sksj"/></div>
                 <div class="form-group">学分：<input class="form-control form-control-inline" name="xf"/></div>
@@ -385,7 +385,7 @@
                     <th>学期</th>
                     <th>课号</th>
                     <th>课名</th>
-                    <th>工号</th>
+                    <th>教师</th>
                     <th>上课时间</th>
                     <th>学分</th>
                     <th>学时</th>
@@ -397,17 +397,17 @@
             <tbody>
                 {% for course in courses %}
                 <tr id="normal">
-                {% if course.kh != chosen_kh or course.xq != chosen_xq%}
+                {% if course.kh != chosen_kh or course.xq != chosen_xq or course.js != chosen_js%}
                     <td>{{ course.xq }} </td>
                     <td>{{ course.kh }} </td>
                     <td>{{ course.km }} </td>
-                    <td>{{ course.gh }}</td>
+                    <td>{{ course.js }}</td>
                     <td>{{ course.sksj }}</td>
                     <td>{{ course.xf }} </td>
                     <td>{{ course.xs }} </td>
                     <td>{{ course.yxm }} </td>
                     <td>
-                        <a href="1?chosen_kh={{ course.kh }}&chosen_xq={{ course.xq }}"> 编辑 </a>
+                        <a href="1?chosen_kh={{ course.kh }}&chosen_xq={{ course.xq }}&chosen_js={{ course.js }}"> 编辑 </a>
                     </td>
                 {% else %}
                     <form method="POST" role="form" action="edit">
@@ -416,9 +416,9 @@
                         <td><input name="kh" readonly="{{ true }}" value="{{ course.kh }}"/></td>
                         <td><input name="km" value="{{ course.km }}"/></td>
                         {% if course.xq == xq %}
-                            <td><input name="gh" value="{{ course.gh }}"/></td>
+                            <td><input name="js" value="{{ course.js }}"/></td>
                         {% else %}
-                            td><input name="gh" value="{{ course.gh }}"/></td>
+                            <td><input name="js" readonly="{{ true }}" value="{{ course.js }}"/></td>
                         {% endif %}
                         <td><input name="sksj" readonly="{{ true }}" value="{{ course.sksj }}"/></td>
                         <td><input name="xf" value="{{ course.xf }}"/></td>
@@ -434,7 +434,7 @@
                     <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9; margin-left: 20px" onclick="submit()">
                         删除
                     </button>
-                    <a href="/admin/Management4/apply"> 您有新的开课申请待审理 </a>
+                    <a href="/admin/Management4/apply"> 您有新的开课申请待审理({{ number }}) </a>
                 {% endif %}
                 <tr id="add" style="visibility: hidden">
                     <form method="POST" action="add">
