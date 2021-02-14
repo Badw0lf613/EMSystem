@@ -17,7 +17,6 @@ class D(models.Model):                                                     # 院
     lxdh = models.CharField(max_length=32, unique=True)                    # 联系电话
     dz = models.CharField(max_length=64)                                   # 地址
 
-
 class T(models.Model):
     gh = models.CharField(max_length=32, unique=True, primary_key=True)    # 工号(主键)
     xm = models.CharField(max_length=32)                                   # 姓名
@@ -28,7 +27,6 @@ class T(models.Model):
     yxh = models.ForeignKey('D', to_field='yxh',on_delete=models.CASCADE)      # 院系号(外键)
     pf = models.FloatField()                                               # 评分
 
-
 class C(models.Model):
     xq = models.CharField(max_length=32)                 # 学期
     kh = models.CharField(max_length=32)                 # 课号
@@ -38,7 +36,6 @@ class C(models.Model):
     yxh = models.ForeignKey('D', to_field='yxh',on_delete=models.CASCADE)      # 院系号(外键)
     class Meta:
         unique_together=("xq", "kh")              # 联合主键(学期，课号)
-
 
 class O(models.Model):
     cid = models.ForeignKey('C', to_field='id',on_delete=models.CASCADE)      # 课程序号(外键)

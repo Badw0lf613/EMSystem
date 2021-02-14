@@ -167,7 +167,7 @@
     <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>
     <script src="{% static 'js/sweetalert-dev.js' %}"></script>
 </body>
-<script>
+<script type="text/javascript">
     $(function(){
         function initTableCheckbox() {
             var $thr = $('table thead tr');
@@ -243,8 +243,15 @@
             type: "POST",
             data: JSON.stringify({xq_array: xq_array, km_array: km_array, xf_array:xf_array, yx_array:yx_array}),
             contentType: "application/json",
-            success: function (data) {
+            success: function (response) {
+                console.log(response)
                 swal('通过成功！');
+                setTimeout( function(){
+                    window.location.reload();
+                }, 1500 );
+            },
+            error: function (response) {
+                swal('该老师可申请的课程数量以达上限！')
                 setTimeout( function(){
                     window.location.reload();
                 }, 1500 );
