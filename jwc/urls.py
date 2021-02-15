@@ -23,7 +23,7 @@ from EMSystem import views, teacher_views
 urlpatterns = [
     path('django_admin/', admin.site.urls),
     # url(r'^EMSystem/', include('EMSystem.urls'))
-    path('', views.login_view),  # 登录
+    path('', views.login_view, name="login"),  # 登录
     path('admin/', views.admin_index, name="admin"),  # 管理员
     path('teacher/', teacher_views.index),  # 教师
     path('teacher/check',teacher_views.check,name="teacher_check"),

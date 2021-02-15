@@ -84,7 +84,8 @@ def get_user_info(request):
     print("request",request.user.username)
     result = S.objects.filter(xh=request.user.username)
     if result.exists():
-        ret = {'xh': result[0].xh, 'xm': result[0].xm, 'jj': result[0].jj, 'xfh': result[0].xfh}
+        jj = round(result[0].jj + 0.00001, 2)  # 四舍五入
+        ret = {'xh': result[0].xh, 'xm': result[0].xm, 'jj': jj, 'xfh': result[0].xfh}
     return ret
 
 def get_admin_info(request):

@@ -53,7 +53,7 @@
                 </a>
             </li>
             <li class="active">
-                <a href="" style="padding: 25px 15px">
+                <a href="{% url 'login' %}" style="padding: 25px 15px">
                     <img src="/static/images/logout.png" style="width: 20px">
                     <span class="nav-function-text" style="font-size: 15px; color: #ffffff">
                         安全退出
@@ -78,7 +78,7 @@
                     <br>
                     所属院系：{{yx}}
                     <br>
-                    <font color="red"><b><a href="" style="color:red;font-weight:bold;">【安全退出】</a></b></font>
+                    <font color="red"><b><a href="{% url 'login' %}" style="color:red;font-weight:bold;">【安全退出】</a></b></font>
                 </p>
             </font>
             <li class="header" style="color: #CCCCCC;background: #1a2226; height: 40px">

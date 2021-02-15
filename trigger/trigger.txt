@@ -1,3 +1,4 @@
+delimiter ||
 1.学生选课（插入课程）
 由于是插入课程，没有分数，因此绩点为0
 drop TRIGGER tri_upd_jj_xfh_insert||
@@ -5,9 +6,9 @@ CREATE TRIGGER tri_upd_jj_xfh_insert
 AFTER INSERT ON emsystem_e
 FOR EACH ROW
 BEGIN
-select c.xf into @xf from emsystem_c c WHERE c.id=NEW.cid_id;
-select s.xfh into @xfh from emsystem_s s WHERE s.xh=NEW.xh_id;
-select s.jj into @jjold from emsystem_s s WHERE s.xh=NEW.xh_id;
+select c.xf into @xf from emsystem_c c WHERE c.id=NEW.cid_id limit 1;
+select s.xfh into @xfh from emsystem_s s WHERE s.xh=NEW.xh_id limit 1;
+select s.jj into @jjold from emsystem_s s WHERE s.xh=NEW.xh_id limit 1;
 UPDATE emsystem_s s1 SET s1.jj = (@jjold * @xfh + 0 * @xf) / (@xfh + @xf) WHERE s1.xh=NEW.xh_id;
 UPDATE emsystem_s s1 SET s1.xfh = @xfh + @xf WHERE s1.xh=NEW.xh_id;
 END||
@@ -19,10 +20,10 @@ BEFORE DELETE ON emsystem_e
 FOR EACH ROW
 BEGIN
 DECLARE grade float;
-select c.xf into @xf from emsystem_c c WHERE c.id=OLD.cid_id;
-select s.xfh into @xfh from emsystem_s s WHERE s.xh=OLD.xh_id;
-select s.jj into @jjold from emsystem_s s WHERE s.xh=OLD.xh_id;
-select e.zpcj into @zpcj from emsystem_e e WHERE e.cid_id=OLD.cid_id;
+select c.xf into @xf from emsystem_c c WHERE c.id=OLD.cid_id limit 1;
+select s.xfh into @xfh from emsystem_s s WHERE s.xh=OLD.xh_id limit 1;
+select s.jj into @jjold from emsystem_s s WHERE s.xh=OLD.xh_id limit 1;
+select e.zpcj into @zpcj from emsystem_e e WHERE e.cid_id=OLD.cid_id limit 1;
 CASE
     WHEN @zpcj >= 90 THEN
     SET grade = 4.0;
@@ -63,11 +64,11 @@ FOR EACH ROW
 BEGIN
 DECLARE grade float;
 DECLARE gradeold float;
-select c.xf into @xf from emsystem_c c WHERE c.id=NEW.cid_id;
-select s.xfh into @xfh from emsystem_s s WHERE s.xh=NEW.xh_id;
-select s.jj into @jjold from emsystem_s s WHERE s.xh=NEW.xh_id;
-select OLD.zpcj into @zpcjold from emsystem_e e WHERE e.cid_id=OLD.cid_id;
-select e.zpcj into @zpcj from emsystem_e e WHERE e.cid_id=NEW.cid_id;
+select c.xf into @xf from emsystem_c c WHERE c.id=NEW.cid_id limit 1;
+select s.xfh into @xfh from emsystem_s s WHERE s.xh=NEW.xh_id limit 1;
+select s.jj into @jjold from emsystem_s s WHERE s.xh=NEW.xh_id limit 1;
+select OLD.zpcj into @zpcjold from emsystem_e e WHERE e.cid_id=OLD.cid_id limit 1;
+select e.zpcj into @zpcj from emsystem_e e WHERE e.cid_id=NEW.cid_id limit 1;
 CASE
     WHEN @zpcj >= 90 THEN
     SET grade = 4.0;
