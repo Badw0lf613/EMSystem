@@ -84,8 +84,16 @@ def get_user_info(request):
     print("request",request.user.username)
     result = S.objects.filter(xh=request.user.username)
     if result.exists():
-        jj = round(result[0].jj + 0.00001, 2)  # 四舍五入
-        ret = {'xh': result[0].xh, 'xm': result[0].xm, 'jj': jj, 'xfh': result[0].xfh}
+        if result[0].jj is None:
+            jj = 0
+        else:
+            jj = result[0].jj
+        if result[0].xfh is None:
+            xfh = 0
+        else:
+            xfh = result[0].xfh
+        jj = round(jj + 0.00001, 2)  # 四舍五入
+        ret = {'xh': result[0].xh, 'xm': result[0].xm, 'jj': jj, 'xfh': xfh}
     return ret
 
 def get_admin_info(request):
@@ -238,7 +246,7 @@ def add(request, type):                 # 添加
             d_item = D.objects.filter(yxm__contains=keys['yx'])
             yxh = getattr(d_item[0], 'yxh')
             new_s = S.objects.create(xh=keys['xh'], xm=keys['xm'], xb=keys['xb'], csrq=keys['csrq'],
-                                     jg=keys['jg'], sjhm=keys['sjhm'], yxh_id=yxh)
+                                     jg=keys['jg'], sjhm=keys['sjhm'], yxh_id=yxh, jj=0, xfh=0)
             new_s.save()
 
         return redirect("search", type=1, flag=1)
@@ -526,7 +534,7 @@ def search(request, type, flag=None):                     # 搜索学生,flag是
             result = T.objects.all()
             all = True
             if keys['gh']:
-                result = result.filter(xh=keys['gh'])
+                result = result.filter(gh=keys['gh'])
                 all = False
             if keys['xm']:
                 result = result.filter(xm__contains=keys['xm'])
@@ -538,7 +546,7 @@ def search(request, type, flag=None):                     # 搜索学生,flag是
                 result = result.filter(csrq=keys['csrq'])
                 all = False
             if keys['xl']:
-                result = result.filter(sjhm=keys['xl'])
+                result = result.filter(xl=keys['xl'])
                 all = False
             if keys['yx']:
                 d = D.objects.all()
@@ -1002,7 +1010,8 @@ def student_AddCourse(request):
                 # 切出上课时间，判断时间段是否冲突
                 print("result_id[0]['sksj']",result_id[0]['sksj'])
                 flag = 0
-                for xt in content['sksj'].strip('上机').split('-'):
+                content['sksj'] = content['sksj'].replace(':', '').replace(' ', '')
+                for xt in content['sksj'].split('-'):
                     print("xt", xt)
                     if xt[0].isdigit():
                         try:
@@ -1311,7 +1320,10 @@ def filterEnew(context,request):
         # print(">>>classtable content after", content)
         classtable.append(content)
         # 提取上课时间
-        for xt in content['sksj'].strip('上机').split('-'):
+        print(">>>content['sksj'] before",content['sksj'])
+        content['sksj'] = content['sksj'].replace(':', '').replace(' ', '')
+        print(">>>content['sksj'] after",content['sksj'])
+        for xt in content['sksj'].split('-'):
             # print("xt", xt)
             if xt[0].isdigit():
                 try:

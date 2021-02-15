@@ -106,7 +106,8 @@ def check(request):
                 temp['ct']=len(rt)
                 k.append(temp)
                 temp = {'km':i['km'],'sj':''}
-                for xt in i['sksj'].strip('上机').split('-'):
+                i['sksj'] = i['sksj'].replace(':', '').replace(' ', '')
+                for xt in i['sksj'].split('-'):
                     print(xt)
                     if xt[0].isdigit():
                         try:
