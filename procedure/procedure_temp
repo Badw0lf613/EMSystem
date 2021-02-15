@@ -1,0 +1,21 @@
+1. 通过课程申请
+drop procedure commit||
+create procedure commit(in xq_in varchar(20), in km_in varchar(20), in xf_in integer, in yx_in varchar(20))
+begin
+declare kh varchar(20);
+declare yxh_in varchar(20);
+update emsystem_temp set stats=3 where xq=xq_in and km=km_in;
+set kh = concat(ceiling(rand()*90000000+10000000), '');
+set yxh_in = (select yxh from emsystem_d where yxm=yx_in);
+insert into emsystem_c(xq, kh, km, xf, xs, yxh_id) values(xq_in, kh, km_in, xf_in, xf_in*10, yxh_in);
+end||
+
+2. 拒绝课程申请
+drop procedure refuse||
+create procedure refuse(in xq_in varchar(20), in km_in varchar(20), in js_in varchar(20))
+begin
+declare gh_in varchar(20);
+set gh_in = (select gh from emsystem_t where xm=js_in);
+update emsystem_temp set stats=4 where xq=xq_in and km=km_in and gh=gh_in;
+end||
+

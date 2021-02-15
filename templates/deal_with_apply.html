@@ -224,6 +224,7 @@
         var km_array = new Array();
         var xf_array = new Array();
         var yx_array = new Array();
+        var js_array = new Array();
         console.log($chkBoxes);
         $chkBoxes.each(function () {
             var mytr = $(this).parent()
@@ -231,17 +232,19 @@
             var mykm = mytr[0].nextElementSibling.nextElementSibling.innerText;
             var myxf = mytr[0].nextElementSibling.nextElementSibling.nextElementSibling.innerText;
             var myyx = mytr[0].nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.innerText;
+            var myjs = mytr[0].nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.innerText;
             xq_array.push(myxq);
             km_array.push(mykm);
             xf_array.push(myxf);
             yx_array.push(myyx);
+            js_array.push(myjs);
         });
         console.log(xq_array)
         console.log(km_array)
         $.ajax({
             url: 'apply/commit',
             type: "POST",
-            data: JSON.stringify({xq_array: xq_array, km_array: km_array, xf_array:xf_array, yx_array:yx_array}),
+            data: JSON.stringify({xq_array: xq_array, km_array: km_array, xf_array:xf_array, yx_array:yx_array, js_array:js_array}),
             contentType: "application/json",
             success: function (response) {
                 console.log(response)
@@ -270,6 +273,7 @@
         var km_array = new Array();
         var xf_array = new Array();
         var yx_array = new Array();
+        var js_array = new Array();
         console.log($chkBoxes);
         $chkBoxes.each(function () {
             var mytr = $(this).parent()
@@ -277,17 +281,19 @@
             var mykm = mytr[0].nextElementSibling.nextElementSibling.innerText;
             var myxf = mytr[0].nextElementSibling.nextElementSibling.nextElementSibling.innerText;
             var myyx = mytr[0].nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.innerText;
+            var myjs = mytr[0].nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.innerText;
             xq_array.push(myxq);
             km_array.push(mykm);
             xf_array.push(myxf);
             yx_array.push(myyx);
+            js_array.push(myjs);
         });
         console.log(xq_array)
         console.log(km_array)
         $.ajax({
             url: 'apply/refuse',
             type: "POST",
-            data: JSON.stringify({xq_array: xq_array, km_array: km_array, xf_array:xf_array, yx_array:yx_array}),
+            data: JSON.stringify({xq_array: xq_array, km_array: km_array, xf_array:xf_array, yx_array:yx_array, js_array: js_array}),
             contentType: "application/json",
             success: function (data) {
                 swal('拒绝成功！');

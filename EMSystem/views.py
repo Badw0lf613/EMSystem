@@ -15,6 +15,7 @@ import random
 from math import floor
 from django.db.models import Q
 import numpy as np
+import MySQLdb
 
 
 # Create your views here.
@@ -594,7 +595,6 @@ def search(request, type, flag=None):                     # 搜索学生,flag是
             result = D.objects.all()
             all = True
 
-
         departments = []
         for item in result:
             res = obj2dict(item)
@@ -754,6 +754,8 @@ def apply(request, type):                                # 审核课程信息
 @csrf_exempt
 def apply_commit(request, type):
     print(">>>commit")
+    mysqlCon = MySQLdb.connect(user='root',passwd='1234',db='jwc',port=3306,charset='utf8')  # 连接数据库
+    mysqlCur = mysqlCon.cursor()
     data = json.loads(request.body.decode('utf-8'))
     xqs = data.get('xq_array')
     kms = data.get('km_array')
@@ -764,31 +766,40 @@ def apply_commit(request, type):
     print(xfs)
     print(yxs)
     for xq, km, xf, yx in zip(xqs, kms, xfs, yxs):
-        TEMP.objects.filter(xq=xq, km=km).update(stats=3)
-        rand = random.sample(['1','2','3','4','5','6','7','8','9','0'], 6)
-        kh = '08'
-        for r in rand:
-            kh = kh + r
-        d = D.objects.filter(yxm=yx)
-        yxh = getattr(d[0], 'yxh')
-        new_c = C.objects.create(xq=xq,kh=kh,km=km,xf=int(xf),xs=int(xf)*10,yxh_id=yxh)
+        # TEMP.objects.filter(xq=xq, km=km).update(stats=3)
+        # rand = random.sample(['1','2','3','4','5','6','7','8','9','0'], 6)
+        # kh = '08'
+        # for r in rand:
+        #     kh = kh + r
+        # d = D.objects.filter(yxm=yx)
+        # yxh = getattr(d[0], 'yxh')
+        # new_c = C.objects.create(xq=xq,kh=kh,km=km,xf=int(xf),xs=int(xf)*10,yxh_id=yxh)
+        print(xq, km, int(xf), yx)
+        mysqlCur.callproc('commit', (xq, km, int(xf), yx))              # 调用存储过程
+        mysqlCon.commit()
+        print(mysqlCur.fetchall())
+
+    mysqlCur.close()
+    mysqlCon.close()
     return redirect("apply", 4)
 
 @login_required
 @csrf_exempt
 def apply_refuse(request, type):
     print(">>>refuse")
+    mysqlCon = MySQLdb.connect(user='root',passwd='1234',db='jwc',port=3306,charset='utf8')  # 连接数据库
+    mysqlCur = mysqlCon.cursor()
     data = json.loads(request.body.decode('utf-8'))
     xqs = data.get('xq_array')
     kms = data.get('km_array')
-    xfs = data.get('xf_array')
-    yxs = data.get('yx_array')
+    jss = data.get('js_array')
     print(xqs)
     print(kms)
-    print(xfs)
-    print(yxs)
-    for xq, km, xf, yx in zip(xqs, kms, xfs, yxs):
-        TEMP.objects.filter(xq=xq, km=km).update(stats=4)
+    print(jss)
+    for xq, km, js in zip(xqs, kms, jss):
+        mysqlCur.callproc('refuse', (xq, km, js))  # 调用存储过程
+        mysqlCon.commit()
+        print(mysqlCur.fetchall())
     return redirect("apply", 4)
 
 def obj2dict(obj):                                           # 数据库记录object转换成python字典
