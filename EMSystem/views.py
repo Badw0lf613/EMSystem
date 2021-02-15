@@ -763,7 +763,7 @@ def apply(request, type):                                # 审核课程信息
 @csrf_exempt
 def apply_commit(request, type):
     print(">>>commit")
-    mysqlCon = MySQLdb.connect(user='root',passwd='1234',db='jwc',port=3306,charset='utf8')  # 连接数据库
+    mysqlCon = MySQLdb.connect(user='root',passwd='root',db='jwc',port=3306,charset='utf8')  # 连接数据库
     mysqlCur = mysqlCon.cursor()
     data = json.loads(request.body.decode('utf-8'))
     xqs = data.get('xq_array')
@@ -796,7 +796,7 @@ def apply_commit(request, type):
 @csrf_exempt
 def apply_refuse(request, type):
     print(">>>refuse")
-    mysqlCon = MySQLdb.connect(user='root',passwd='1234',db='jwc',port=3306,charset='utf8')  # 连接数据库
+    mysqlCon = MySQLdb.connect(user='root',passwd='root',db='jwc',port=3306,charset='utf8')  # 连接数据库
     mysqlCur = mysqlCon.cursor()
     data = json.loads(request.body.decode('utf-8'))
     xqs = data.get('xq_array')
@@ -1142,15 +1142,39 @@ def student_DeleteCourse(request):
         # }))
 
 @login_required
+@csrf_exempt
 def student_QueryGrades(request):
     print(">>>student_QueryGrades")
-    context = get_user_info(request)
-    context['xq_now'] = settings.XQ
-    context = filterEnew(context, request)
-    print(">>>context after")
-    print(context)
-    calGPA(context)
-    return render(request, 'student_QueryGrades.html', context=context)
+    if request.method == 'GET': # 首次进入显示
+        print(">>>GET")
+        context = get_user_info(request)
+        context['xq_now'] = settings.XQ
+        context = filterEnew(context, request)
+        print(">>>context after")
+        print(context)
+        calGPA(context)
+        for i in context['classtable']:
+            result = T.objects.filter(gh=i['gh_id'])
+            i['pf'] = obj2dict(result[0])['pf']
+            print("i['pf']",i['pf'])
+        return render(request, 'student_QueryGrades.html', context=context)
+    elif request.method == 'POST': # 表单退课
+        print(">>>POST")
+        context = get_user_info(request)
+        context['xq_now'] = settings.XQ
+        context = filterEnew(context, request)
+        calGPA(context)
+        data = json.loads(request.body.decode('utf-8'))
+        pf = data.get('pf_array')
+        print("pf",pf)
+        cnt = 0
+        for i in context['classtable']:
+            i['pf'] = pf[cnt]
+            T.objects.filter(gh=i['gh_id']).update(pf=i['pf'])
+            cnt = cnt + 1
+        print(">>>context after")
+        print(context)
+        return render(request, 'student_QueryGrades.html', context=context)
 
 @login_required
 def student_CourseTable(request):

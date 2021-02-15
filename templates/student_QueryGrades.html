@@ -145,6 +145,9 @@
 
     <div class="col-sm-3 col-md-8" style="padding: 10px 30px;">
         <b><font size="4"> 本学期成绩查询结果： </font></b>
+        <button style="color: #ffffff; background-color: #3c8dbc; border-color: #367fa9; margin-left: 20px" onclick="submit()">
+            提交评分
+        </button>
         <table class="table" id="classtable">
             <thead>
                 <tr>
@@ -160,6 +163,9 @@
                     <th> 考试成绩 </th>
                     <th> 总评成绩 </th>
                     <th> 绩点 </th>
+                    <th style="color: blue">
+                        评分
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -200,6 +206,9 @@
                           {% endif %}
                         </td>
                         <td> {{kc.grade}} </td>
+                        <td id="pf">
+                            <input type="text" name="pf" style="width:80px;display: inline-block; line-height: 20px;" value={{kc.pf}} >
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -213,5 +222,44 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="{% static 'bootstrap-3.3.7-dist/js/bootstrap.js' %}"></script>
     <script src="{% static 'js/sweetalert-dev.js' %}"></script>
+    <script >
+        function submit(){
+            var $tbr = $('#classtable tbody tr #pf');
+            console.log($tbr);
+            var pf_array = new Array();
+            $tbr.each(function () {
+                var index = $tbr.index(this);
+                console.log($tbr[index].firstElementChild.value);
+                var mypf = $tbr[index].firstElementChild.value;
+                {#console.log(mykh);#}
+                {#console.log(mygh);#}
+                pf_array.push(mypf);
+            });
+            console.log(pf_array);
+            {#var post_data = new Array();#}
+            {#post_data['kh_array'] = kh_array;#}
+            {#post_data['gh_array'] = gh_array;#}
+            {#console.log(post_data)#}
+            $.ajax({
+                url: '', // http://127.0.0.1:8000/student/DeleteCourse
+                type: "POST",
+                data: JSON.stringify({pf_array:pf_array}), // JSON.stringify(post_data)
+                contentType: "application/json",
+                success: function (data) {
+                    // console.log(data)
+                    // data = JSON.parse(data)
+                    swal('提交成功！');
+                    setTimeout( function(){
+                        window.location.reload();
+                    }, 1500);//延迟1500毫秒
+                },
+                error: function (data) {
+                    // console.log(data)
+                    alert("ajax请求失败")
+                }
+            });
+            return false;
+        }
+    </script>
 </body>
 </html>
