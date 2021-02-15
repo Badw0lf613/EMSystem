@@ -1,0 +1,8 @@
+触发器：
+DELIMITER ||
+create trigger ct
+before update on emsystem_t
+for each row
+begin set new.pf = old.pf + new.pf/ (select count(xh_id) from emsystem_e where gh_id=old.gh group by gh_id);
+end
+||
