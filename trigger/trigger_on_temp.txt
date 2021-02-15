@@ -4,8 +4,9 @@ FOR EACH ROW
 BEGIN
 if (3<(select count(km) from emsystem_temp where gh=OLD.gh
 and stats=3 and xf <> 0)) or (5<(select count(km) from emsystem_temp where gh=OLD.gh
-and stats=3 and xf = 0)) then
-UPDATE emsystem_temp SET stats=4 
+and stats=3 and xf = 0)) and OLD.stats <> NEW.stats then
+UPDATE emsystem_temp SET stats=4
 WHERE km=OLD.km and xq=OLD.xq and gh=OLD.gh;
 end if;
 END
+

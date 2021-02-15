@@ -531,20 +531,23 @@
 
         var xh_array = new Array();
         var kh_array = new Array();
+        var js_array = new Array();
         console.log($chkBoxes);
         $chkBoxes.each(function () {
             var mytr = $(this).parent()
             var myxh = mytr[0].nextElementSibling.innerText;
             var mykh = mytr[0].nextElementSibling.nextElementSibling.innerText;
+            var myjs = mytr[0].nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.innerText;
             xh_array.push(myxh);
-            kh_array.push(mykh)
+            kh_array.push(mykh);
+            js_array.push(myjs);
         });
 
         console.log(xh_array);
         $.ajax({
             url: '../search/delete',
             type: "POST",
-            data: JSON.stringify({data_array: xh_array, kh_array: kh_array}),
+            data: JSON.stringify({data_array: xh_array, kh_array: kh_array, js_array: js_array}),
             contentType: "application/json",
             success: function (data) {
                 swal('删除成功！');

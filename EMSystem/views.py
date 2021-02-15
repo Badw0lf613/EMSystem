@@ -189,8 +189,10 @@ def get_sksj(gh, xf, dt):
         sj = sj_str.split(' ')
         for s in sj:
             old_times.append(s.split(':'))
+    print(old_times)
     for tt in old_times:
         dt_temp.remove(tt)
+        print(dt_temp)
     l = len(dt_temp)
     print("xf", xf)
     id = random.sample(range(0, l - 1), floor((int(xf) + 1) / 2))
@@ -345,12 +347,17 @@ def delete(request, type):                    # 删除
         data = json.loads(request.body.decode('utf-8'))
         xq = data.get('data_array')
         kh = data.get('kh_array')
+        js = data.get('js_array')
         print(xq)
         print(kh)
-        for i, j in zip(xq[:], kh[:]):
-            C.objects.filter(xq=i, kh=j).delete()
+        print(js)
+        for i, j, k in zip(xq[:], kh[:], js[:]):
+            if O.objects.filter(kh=j).count() <= 1:
+                C.objects.filter(xq=i, kh=j).delete()
             if i == settings.XQ:
-                O.objects.filter(kh=j).delete()
+                t = T.objects.filter(xm=k)
+                gh = getattr(t[0], 'gh')
+                O.objects.filter(kh=j, gh=gh).delete()
 
         return redirect("search", type=4, flag=1)
 
@@ -397,7 +404,6 @@ def edit(request, type):                        # 编辑信息
         lxdh = request.POST.get('lxdh')
         dz = request.POST.get('dz')
         D.objects.filter(yxh=yxh).update(yxh=yxh, yxm=yxm, lxdh=lxdh, dz=dz)
-
         return redirect("search", type=3, flag=1)
 
     elif type == 4:
@@ -416,12 +422,11 @@ def edit(request, type):                        # 编辑信息
             q.children.append(('sksj', sksj))
             temp_o = O.objects.get(q)
             old_gh = getattr(temp_o, 'gh')
-
+            old_gh = getattr(old_gh, 'gh')
             t_obj = T.objects.get(xm=js)
             gh = getattr(t_obj, 'gh')
             if old_gh != gh:
-                sksj = get_sksj(gh, xf, dt)
-
+                sksj = get_sksj(gh, xf, dt[:])
             d = D.objects.all()                                                                    # 更新数据库记录
             tmp = d.filter(yxm__contains=yx)
             yx = obj2dict(tmp[0])['yxh']
@@ -742,7 +747,6 @@ def apply(request, type):                                # 审核课程信息
         del item_dict['gh']
         item_dict['js']=js
         courses.append(item_dict)
-
     return render(request, 'deal_with_apply.html',context={'xq':xq,'courses':courses})
 
 

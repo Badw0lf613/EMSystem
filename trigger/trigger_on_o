@@ -1,0 +1,15 @@
+CREATE TRIGGER tri_upd_o
+AFTER UPDATE ON emsystem_o
+FOR EACH ROW
+BEGIN
+if NEW.gh_id <> OLD.gh_id then
+UPDATE emsystem_e SET gh_id=NEW.gh_id WHERE cid_id=NEW.cid_id;
+end if;
+END
+
+CREATE TRIGGER tri_del_o
+AFTER DELETE ON emsystem_o
+FOR EACH ROW
+BEGIN
+DELETE FROM emsystem_e WHERE cid_id=OLD.cid_id;
+END
