@@ -175,7 +175,9 @@ def write(request):
             for i,j,k,l in zip(rf.getlist('pscj'),rf.getlist('kscj'),rf.getlist('zpcj'),result):
                 sql = 'UPDATE emsystem_e SET pscj=%s,kscj=%s,zpcj=%s WHERE xh_id=%s and gh_id=%s and kh=%s'
                 param = [i,j,k,l['xh_id'],l['gh_id'],x]
+                print(param)
                 update_from_table(sql,param)
+                print(param)
             toast(request,2)
             k = write_ready(request)
             b['k'] = k
@@ -258,7 +260,7 @@ def open(request):
                         continue
                     sql = 'insert into emsystem_temp (xq,km,xf,gh,yxh_id,stats) values (%s,%s,%s,%s,%s,%s)'
                     param = [XQ,x[i],0,b['gh'],b['yxh_id'],'1']
-                    sql2 = 'select kh from emsystem_o where kh=%s'
+                    sql2 = 'select kh from emsystem_c where kh=%s'
                     param2 = [x[i]]
                     t_d = get_from_table(sql2, param2)
                     if(t_d == []):

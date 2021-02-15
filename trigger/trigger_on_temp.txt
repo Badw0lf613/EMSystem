@@ -8,5 +8,5 @@ and stats=3 and xf = 0)) and OLD.stats <> NEW.stats then
 UPDATE emsystem_temp SET stats=4
 WHERE km=OLD.km and xq=OLD.xq and gh=OLD.gh;
 end if;
-END
+END||
 
