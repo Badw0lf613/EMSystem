@@ -48,9 +48,13 @@ CASE
     SET grade = 0.0;
     else SET grade = 666;
 END CASE;
-UPDATE emsystem_s s1 SET s1.jj = (@jjold * @xfh - grade * @xf) / (@xfh - @xf) WHERE s1.xh=OLD.xh_id;
+if @xfh - @xf=0 then
+    UPDATE emsystem_s s1 SET s1.jj = 0 WHERE s1.xh=OLD.xh_id;
+else
+    UPDATE emsystem_s s1 SET s1.jj = (@jjold * @xfh - grade * @xf) / (@xfh - @xf) WHERE s1.xh=OLD.xh_id;
+end if;
 UPDATE emsystem_s s1 SET s1.xfh = @xfh - @xf WHERE s1.xh=OLD.xh_id;
-END
+END||
 3.教师修改成绩
 drop TRIGGER tri_upd_jj_xfh_update||
 CREATE TRIGGER tri_upd_jj_xfh_update
@@ -115,7 +119,7 @@ CASE
     else SET gradeold = 666;
 END CASE;
 UPDATE emsystem_s s1 SET s1.jj = (@jjold * @xfh - gradeold * @xf + grade * @xf) / @xfh WHERE s1.xh=NEW.xh_id;
-END
+END||
 /////下为测试/////
 CREATE TRIGGER tri_upd_jj
 AFTER INSERT ON `emsystem_e`
