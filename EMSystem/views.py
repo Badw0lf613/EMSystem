@@ -82,9 +82,8 @@ def get_user_info(request):
     ret={}
     print("request",request.user.username)
     result = S.objects.filter(xh=request.user.username)
-    print(result)
     if result.exists():
-        ret = {'xh': result[0].xh, 'xm': result[0].xm}
+        ret = {'xh': result[0].xh, 'xm': result[0].xm, 'jj': result[0].jj, 'xfh': result[0].xfh}
     return ret
 
 def get_admin_info(request):
@@ -1181,7 +1180,7 @@ def calGrade(score):
         grade = 1.7
     elif score >= 64 and score < 66:
         grade = 1.5
-    elif score >= 60 and score < 63:
+    elif score >= 60 and score < 64:
         grade = 1.0
     elif score < 60:
         grade = 0.0

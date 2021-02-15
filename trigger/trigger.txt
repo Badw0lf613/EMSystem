@@ -1,13 +1,122 @@
-CREATE TRIGGER tri_upd_jj
+1.学生选课（插入课程）
+由于是插入课程，没有分数，因此绩点为0
+drop TRIGGER tri_upd_jj_xfh_insert||
+CREATE TRIGGER tri_upd_jj_xfh_insert
 AFTER INSERT ON emsystem_e
 FOR EACH ROW
 BEGIN
 select c.xf into @xf from emsystem_c c WHERE c.id=NEW.cid_id;
 select s.xfh into @xfh from emsystem_s s WHERE s.xh=NEW.xh_id;
 select s.jj into @jjold from emsystem_s s WHERE s.xh=NEW.xh_id;
-UPDATE emsystem_s s1 SET s1.jj = (@jjold * @xfh + @xf) / (@xfh + @xf);
+UPDATE emsystem_s s1 SET s1.jj = (@jjold * @xfh + 0 * @xf) / (@xfh + @xf) WHERE s1.xh=NEW.xh_id;
+UPDATE emsystem_s s1 SET s1.xfh = @xfh + @xf WHERE s1.xh=NEW.xh_id;
+END||
+2.学生退课（删除课程）
+退课需要计算绩点
+drop TRIGGER tri_upd_jj_xfh_delete||
+CREATE TRIGGER tri_upd_jj_xfh_delete
+BEFORE DELETE ON emsystem_e
+FOR EACH ROW
+BEGIN
+DECLARE grade float;
+select c.xf into @xf from emsystem_c c WHERE c.id=OLD.cid_id;
+select s.xfh into @xfh from emsystem_s s WHERE s.xh=OLD.xh_id;
+select s.jj into @jjold from emsystem_s s WHERE s.xh=OLD.xh_id;
+select e.zpcj into @zpcj from emsystem_e e WHERE e.cid_id=OLD.cid_id;
+CASE
+    WHEN @zpcj >= 90 THEN
+    SET grade = 4.0;
+    WHEN (@zpcj >= 85 AND @zpcj < 90) THEN
+    SET grade = 3.7;
+    WHEN (@zpcj >= 82 AND @zpcj < 85) THEN
+    SET grade = 3.3;
+    WHEN (@zpcj >= 78 AND @zpcj < 82) THEN
+    SET grade = 3.0;
+    WHEN (@zpcj >= 75 AND @zpcj < 78) THEN
+    SET grade = 2.7;
+    WHEN (@zpcj >= 72 AND @zpcj < 75) THEN
+    SET grade = 2.3;
+    WHEN (@zpcj >= 68 AND @zpcj < 72) THEN
+    SET grade = 2.0;
+    WHEN (@zpcj >= 66 AND @zpcj < 68) THEN
+    SET grade = 1.7;
+    WHEN (@zpcj >= 64 AND @zpcj < 66) THEN
+    SET grade = 1.3;
+    WHEN (@zpcj >= 60 AND @zpcj < 64) THEN
+    SET grade = 1.0;
+    WHEN (@zpcj < 60 or @zpcj is null) THEN
+    SET grade = 0.0;
+    else SET grade = 666;
+END CASE;
+UPDATE emsystem_s s1 SET s1.jj = (@jjold * @xfh - grade * @xf) / (@xfh - @xf) WHERE s1.xh=OLD.xh_id;
+UPDATE emsystem_s s1 SET s1.xfh = @xfh - @xf WHERE s1.xh=OLD.xh_id;
 END
-
+3.教师修改成绩
+drop TRIGGER tri_upd_jj_xfh_update||
+CREATE TRIGGER tri_upd_jj_xfh_update
+AFTER UPDATE ON emsystem_e
+FOR EACH ROW
+BEGIN
+DECLARE grade float;
+DECLARE gradeold float;
+select c.xf into @xf from emsystem_c c WHERE c.id=NEW.cid_id;
+select s.xfh into @xfh from emsystem_s s WHERE s.xh=NEW.xh_id;
+select s.jj into @jjold from emsystem_s s WHERE s.xh=NEW.xh_id;
+select OLD.zpcj into @zpcjold from emsystem_e e WHERE e.cid_id=OLD.cid_id;
+select e.zpcj into @zpcj from emsystem_e e WHERE e.cid_id=NEW.cid_id;
+CASE
+    WHEN @zpcj >= 90 THEN
+    SET grade = 4.0;
+    WHEN (@zpcj >= 85 AND @zpcj < 90) THEN
+    SET grade = 3.7;
+    WHEN (@zpcj >= 82 AND @zpcj < 85) THEN
+    SET grade = 3.3;
+    WHEN (@zpcj >= 78 AND @zpcj < 82) THEN
+    SET grade = 3.0;
+    WHEN (@zpcj >= 75 AND @zpcj < 78) THEN
+    SET grade = 2.7;
+    WHEN (@zpcj >= 72 AND @zpcj < 75) THEN
+    SET grade = 2.3;
+    WHEN (@zpcj >= 68 AND @zpcj < 72) THEN
+    SET grade = 2.0;
+    WHEN (@zpcj >= 66 AND @zpcj < 68) THEN
+    SET grade = 1.7;
+    WHEN (@zpcj >= 64 AND @zpcj < 66) THEN
+    SET grade = 1.3;
+    WHEN (@zpcj >= 60 AND @zpcj < 64) THEN
+    SET grade = 1.0;
+    WHEN (@zpcj < 60 or @zpcj is null) THEN
+    SET grade = 0.0;
+    else SET grade = 666;
+END CASE;
+CASE
+    WHEN @zpcjold >= 90 THEN
+    SET gradeold = 4.0;
+    WHEN (@zpcjold >= 85 AND @zpcjold < 90) THEN
+    SET gradeold = 3.7;
+    WHEN (@zpcjold >= 82 AND @zpcjold < 85) THEN
+    SET gradeold = 3.3;
+    WHEN (@zpcjold >= 78 AND @zpcjold < 82) THEN
+    SET gradeold = 3.0;
+    WHEN (@zpcjold >= 75 AND @zpcjold < 78) THEN
+    SET gradeold = 2.7;
+    WHEN (@zpcjold >= 72 AND @zpcjold < 75) THEN
+    SET gradeold = 2.3;
+    WHEN (@zpcjold >= 68 AND @zpcjold < 72) THEN
+    SET gradeold = 2.0;
+    WHEN (@zpcjold >= 66 AND @zpcjold < 68) THEN
+    SET gradeold = 1.7;
+    WHEN (@zpcjold >= 64 AND @zpcjold < 66) THEN
+    SET gradeold = 1.3;
+    WHEN (@zpcjold >= 60 AND @zpcjold < 64) THEN
+    SET gradeold = 1.0;
+    WHEN (@zpcjold < 60 or @zpcjold is null) THEN
+    SET gradeold = 0.0;
+    else SET gradeold = 666;
+END CASE;
+UPDATE emsystem_s s1 SET s1.jj = (@jjold * @xfh - gradeold * @xf + grade * @xf) / @xfh WHERE s1.xh=NEW.xh_id;
+END
+/////下为测试/////
 CREATE TRIGGER tri_upd_jj
 AFTER INSERT ON `emsystem_e`
 FOR EACH ROW
