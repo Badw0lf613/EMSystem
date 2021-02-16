@@ -19,3 +19,11 @@ set gh_in = (select gh from emsystem_t where xm=js_in);
 update emsystem_temp set stats=4 where xq=xq_in and km=km_in and gh=gh_in;
 end||
 
+3。
+DELIMITER ||
+drop procedure fresh||
+ALTER TABLE emsystem_t MODIFY pf double DEFAULT 0||
+create procedure fresh()
+begin
+update emsystem_t set pf=0 ;
+end||

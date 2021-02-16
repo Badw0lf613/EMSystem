@@ -149,6 +149,10 @@ def update_xq(request):
     settings.XQ = xq
     if O.objects.all().count() != 0:          # 如果O表不为空，则首先清空O表
         O.objects.all().delete()
+        mysqlCon = MySQLdb.connect(user='root', passwd='123456', db='wcj', port=3306, charset='utf8')  # 连接数据库
+        mysqlCur = mysqlCon.cursor()
+        mysqlCur.callproc('fresh', ())  # 调用存储过程
+        mysqlCon.commit()
     res = C.objects.all()
     res = res.filter(xq=xq)
 
@@ -762,7 +766,7 @@ def apply(request, type):                                # 审核课程信息
 @csrf_exempt
 def apply_commit(request, type):
     print(">>>commit")
-    mysqlCon = MySQLdb.connect(user='root',passwd='1234',db='jwc',port=3306,charset='utf8')  # 连接数据库
+    mysqlCon = MySQLdb.connect(user='root',passwd='123456',db='wcj',port=3306,charset='utf8')  # 连接数据库
     mysqlCur = mysqlCon.cursor()
     data = json.loads(request.body.decode('utf-8'))
     xqs = data.get('xq_array')
@@ -796,7 +800,7 @@ def apply_commit(request, type):
 @csrf_exempt
 def apply_refuse(request, type):
     print(">>>refuse")
-    mysqlCon = MySQLdb.connect(user='root',passwd='1234',db='jwc',port=3306,charset='utf8')  # 连接数据库
+    mysqlCon = MySQLdb.connect(user='root',passwd='123456',db='wcj',port=3306,charset='utf8')  # 连接数据库
     mysqlCur = mysqlCon.cursor()
     data = json.loads(request.body.decode('utf-8'))
     xqs = data.get('xq_array')
@@ -1317,6 +1321,7 @@ def filterEnew(context,request):
     idx = 0 # 当前课程下标
     for item in result:  # 将对象转换为字典
         content = obj2dict(item)
+        print(content)
         # print(">>>classtable content before", content)
         # 查课程
         resultC = C.objects.filter(id=content['cid_id'])
@@ -1327,6 +1332,8 @@ def filterEnew(context,request):
         content['xs'] = contentC['xs']
         # 查开课
         resultO = O.objects.filter(cid=content['cid_id'],gh=content['gh_id']) # 同一课程序号加工号只能在开课表查出一门课程，而且选课只能选一门
+        for i in resultO:
+            print(obj2dict(i))
         contentO = obj2dict(resultO[0])
         # print(">>>contentO", contentO)
         content['sksj'] = contentO['sksj']
