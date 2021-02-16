@@ -234,7 +234,6 @@ def add(request, type):                 # 添加
         keys['csrq'] = request.POST.get('csrq')
         keys['sjhm'] = request.POST.get('sjhm')
         keys['yx'] = request.POST.get('yx')
-
         if User.objects.filter(username=keys['xh']).count() == 0:
             user = User.objects.create_user(username=keys['xh'])      # 向S表插入学生的同时，也向User表中插入学生
             user.is_staff = False
@@ -763,7 +762,7 @@ def apply(request, type):                                # 审核课程信息
 @csrf_exempt
 def apply_commit(request, type):
     print(">>>commit")
-    mysqlCon = MySQLdb.connect(user='root',passwd='root',db='jwc',port=3306,charset='utf8')  # 连接数据库
+    mysqlCon = MySQLdb.connect(user='root',passwd='1234',db='jwc',port=3306,charset='utf8')  # 连接数据库
     mysqlCur = mysqlCon.cursor()
     data = json.loads(request.body.decode('utf-8'))
     xqs = data.get('xq_array')
@@ -783,10 +782,11 @@ def apply_commit(request, type):
         # d = D.objects.filter(yxm=yx)
         # yxh = getattr(d[0], 'yxh')
         # new_c = C.objects.create(xq=xq,kh=kh,km=km,xf=int(xf),xs=int(xf)*10,yxh_id=yxh)
-        print(xq, km, int(xf), yx)
-        mysqlCur.callproc('commit', (xq, km, int(xf), yx))              # 调用存储过程
-        mysqlCon.commit()
-        print(mysqlCur.fetchall())
+        if xq != '学期':
+            print(xq, km, int(xf), yx)
+            mysqlCur.callproc('commit', (xq, km, int(xf), yx))              # 调用存储过程
+            mysqlCon.commit()
+            print(mysqlCur.fetchall())
 
     mysqlCur.close()
     mysqlCon.close()
@@ -796,7 +796,7 @@ def apply_commit(request, type):
 @csrf_exempt
 def apply_refuse(request, type):
     print(">>>refuse")
-    mysqlCon = MySQLdb.connect(user='root',passwd='root',db='jwc',port=3306,charset='utf8')  # 连接数据库
+    mysqlCon = MySQLdb.connect(user='root',passwd='1234',db='jwc',port=3306,charset='utf8')  # 连接数据库
     mysqlCur = mysqlCon.cursor()
     data = json.loads(request.body.decode('utf-8'))
     xqs = data.get('xq_array')
@@ -806,9 +806,10 @@ def apply_refuse(request, type):
     print(kms)
     print(jss)
     for xq, km, js in zip(xqs, kms, jss):
-        mysqlCur.callproc('refuse', (xq, km, js))  # 调用存储过程
-        mysqlCon.commit()
-        print(mysqlCur.fetchall())
+        if xq != '学期':
+            mysqlCur.callproc('refuse', (xq, km, js))  # 调用存储过程
+            mysqlCon.commit()
+            print(mysqlCur.fetchall())
     return redirect("apply", 4)
 
 def obj2dict(obj):                                           # 数据库记录object转换成python字典
