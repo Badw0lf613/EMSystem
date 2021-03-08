@@ -1,6 +1,6 @@
 # EMSystem（教务管理系统）
 ## 上海大学数据库课程项目
-## 持续更新中...
+## 报告水完了，不更了...
 ### ~~登录页面~~
 背景图链接： <br>
 https://oauth.shu.edu.cn/static/images/headerbg.jpg <br>
